@@ -1,0 +1,17 @@
+<classpath>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4.1/mail-1.4.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-fileupload/commons-fileupload/1.2.1/commons-fileupload-1.2.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/freemarker/freemarker/2.3.16/freemarker-2.3.16.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/osgi/org.osgi.core/4.0.0/org.osgi.core-4.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/restlet/jee/org.restlet/2.0.4/org.restlet-2.0.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/restlet/jee/org.restlet.ext.fileupload/2.0.4/org.restlet.ext.fileupload-2.0.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/restlet/jee/org.restlet.ext.freemarker/2.0.4/org.restlet.ext.freemarker-2.0.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/restlet/jee/org.restlet.ext.servlet/2.0.4/org.restlet.ext.servlet-2.0.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/restlet/jee/org.restlet.ext.xml/2.0.4/org.restlet.ext.xml-2.0.4.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+</classpath>
