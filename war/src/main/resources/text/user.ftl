@@ -1,4 +1,4 @@
-<#assign keys=properties?keys>
-<#list keys as key>
-${key}=${properties[key]}
-</#list>
+${properties['uid']}
+${properties['mail']}
+${properties['givenName']}
+${properties['sn']}

@@ -10,17 +10,17 @@
     <table>  
       <thead>
         <tr>
-          <td>size</td>
-          <td>tag</td>
-          <td>uuid</td>
+          <td>name</td>
+          <td>uid</td>
+          <td>cn</td>
         </tr>
       </thead>
       <tbody>
-        <#list disks as disk>
+        <#list users as user>
         <tr>
-          <td>${disk.size}</td>
-          <td>${disk.tag!}</td>
-          <td><a href="${disk.link}">${disk.uuid}</a></td>
+          <td>${user.name}</td>
+          <td><a href="${user.uid}">${user.uid}</a></td>
+          <td>${user.cn}</td>
         </tr>
         </#list>
       </tbody>
