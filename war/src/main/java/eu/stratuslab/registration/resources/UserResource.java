@@ -31,12 +31,10 @@ import org.restlet.Request;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
-import org.restlet.ext.freemarker.TemplateRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
-import org.restlet.resource.Post;
 import org.restlet.resource.Put;
 import org.restlet.resource.ResourceException;
 
@@ -61,7 +59,6 @@ public class UserResource extends BaseResource {
 
         Request request = getRequest();
         String uid = (String) request.getAttributes().get("uid");
-        Representation tpl = templateRepresentation(templateName);
 
         Hashtable<String, String> ldapEnv = RequestUtils
                 .extractLdapEnvironment(request);
@@ -69,7 +66,7 @@ public class UserResource extends BaseResource {
         Map<String, Object> infoTree = new HashMap<String, Object>();
         infoTree.put("properties", UserEntry.getUserProperties(uid, ldapEnv));
 
-        return new TemplateRepresentation(tpl, infoTree, mediaType);
+        return templateRepresentation(templateName, infoTree, mediaType);
     }
 
     @Delete

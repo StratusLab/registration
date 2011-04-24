@@ -1,12 +1,23 @@
 <html>
 
+  <head>
+    <meta http-equiv="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+    <title>Registration Form</title>
+    <script src="http://cdn.jquerytools.org/1.2.5/jquery.tools.min.js"></script>
+    
+    <!-- standalone page styling (can be removed) --> 
+    <link rel="stylesheet" type="text/css" href="../../docs/stratuslab.css"/>   
+    
+    <!-- tab styling --> 
+    <link rel="stylesheet" type="text/css" href="http://static.flowplayer.org/tools/css/tabs.css" /> 
+    
+  </head>
+
   <body>
   
     <p>
       You can update your information by submitting this form with new values. 
     </p>
-
-    <hr/>
 
     <form action="./?method=put" enctype="application/x-www-form-urlencoded" method="POST">
       <table>
@@ -42,7 +53,5 @@
       </table>
     </form>
     
-    <hr/>
-
   </body>
 </html>

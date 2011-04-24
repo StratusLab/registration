@@ -1,15 +1,22 @@
 package eu.stratuslab.registration.resources;
 
-import org.restlet.data.LocalReference;
-import org.restlet.representation.Representation;
-import org.restlet.resource.ClientResource;
+import java.util.Map;
+
+import org.restlet.data.MediaType;
+import org.restlet.ext.freemarker.TemplateRepresentation;
 import org.restlet.resource.ServerResource;
+
+import eu.stratuslab.registration.main.RegistrationApplication;
 
 public class BaseResource extends ServerResource {
 
-    protected Representation templateRepresentation(String tpl) {
-        LocalReference ref = LocalReference.createClapReference(tpl);
-        return new ClientResource(ref).get();
+    protected TemplateRepresentation templateRepresentation(String tpl,
+            Map<String, Object> info, MediaType mediaType) {
+
+        return new TemplateRepresentation(tpl,
+                ((RegistrationApplication) getApplication())
+                        .getFreeMarkerConfig(), info, mediaType);
+
     }
 
 }

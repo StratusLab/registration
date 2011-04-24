@@ -29,7 +29,6 @@ import java.util.Map;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
-import org.restlet.ext.freemarker.TemplateRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
@@ -96,8 +95,7 @@ public class UsersResource extends BaseResource {
 
         Map<String, Object> userInfo = UserEntry.listUsers(ldapEnv);
 
-        Representation tpl = templateRepresentation(template);
-        return new TemplateRepresentation(tpl, userInfo, mediaType);
+        return templateRepresentation(template, userInfo, mediaType);
     }
 
 }

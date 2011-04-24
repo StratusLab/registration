@@ -7,7 +7,7 @@ import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
 
-public class RegisterResource extends BaseResource {
+public class LoginResource extends BaseResource {
 
     @Get("html")
     public Representation toHtml() {
@@ -15,7 +15,7 @@ public class RegisterResource extends BaseResource {
         Map<String, Object> info = new HashMap<String, Object>();
         info.put("baseurl", getRequest().getRootRef().toString());
 
-        return templateRepresentation("/html/register.ftl", info,
+        return templateRepresentation("/html/login.ftl", info,
                 MediaType.TEXT_HTML);
     }
 
