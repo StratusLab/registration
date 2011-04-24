@@ -53,7 +53,8 @@ public class RegistrationApplication extends Application {
         Configuration cfg = new Configuration();
         cfg.setLocalizedLookup(false);
 
-        LocalReference fmBaseRef = LocalReference.createClapReference("/tmpl/");
+        LocalReference fmBaseRef = LocalReference
+                .createClapReference("/freemarker/");
         cfg.setTemplateLoader(new ContextTemplateLoader(context, fmBaseRef));
 
         return cfg;
