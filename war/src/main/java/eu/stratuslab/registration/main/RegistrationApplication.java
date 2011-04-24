@@ -18,7 +18,6 @@ import org.restlet.security.LocalVerifier;
 import eu.stratuslab.registration.resources.ForceTrailingSlashResource;
 import eu.stratuslab.registration.resources.ProfileResource;
 import eu.stratuslab.registration.resources.RegisterResource;
-import eu.stratuslab.registration.resources.UserResource;
 import eu.stratuslab.registration.resources.UsersResource;
 import eu.stratuslab.registration.utils.LDAPUtils;
 import eu.stratuslab.registration.utils.RequestUtils;
@@ -68,9 +67,6 @@ public class RegistrationApplication extends Application {
         freeMarkerConfig = createFreeMarkerConfig(getContext());
 
         Router router = new RootRouter(getContext());
-
-        router.attach("/users/{uid}/", UserResource.class);
-        router.attach("/users/{uid}", ForceTrailingSlashResource.class);
 
         router.attach("/users/", UsersResource.class);
         router.attach("/users", ForceTrailingSlashResource.class);

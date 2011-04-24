@@ -13,8 +13,7 @@ public class RegisterResource extends BaseResource {
 
         Map<String, Object> info = createInfoStructure(null);
 
-        return templateRepresentation("/html/register.ftl", info,
-                MediaType.TEXT_HTML);
+        return templateRepresentation("register.ftl", info, MediaType.TEXT_HTML);
     }
 
 }
