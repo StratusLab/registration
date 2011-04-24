@@ -7,13 +7,16 @@ import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.data.ChallengeScheme;
 import org.restlet.data.LocalReference;
 import org.restlet.ext.freemarker.ContextTemplateLoader;
 import org.restlet.resource.Directory;
 import org.restlet.routing.Router;
+import org.restlet.security.ChallengeAuthenticator;
+import org.restlet.security.LocalVerifier;
 
 import eu.stratuslab.registration.resources.ForceTrailingSlashResource;
-import eu.stratuslab.registration.resources.LoginResource;
+import eu.stratuslab.registration.resources.ProfileResource;
 import eu.stratuslab.registration.resources.RegisterResource;
 import eu.stratuslab.registration.resources.UserResource;
 import eu.stratuslab.registration.resources.UsersResource;
@@ -75,8 +78,8 @@ public class RegistrationApplication extends Application {
         router.attach("/register/", RegisterResource.class);
         router.attach("/register", ForceTrailingSlashResource.class);
 
-        router.attach("/login/", LoginResource.class);
-        router.attach("/login", ForceTrailingSlashResource.class);
+        router.attach("/profile/", setupGuard(ProfileResource.class));
+        router.attach("/profile", ForceTrailingSlashResource.class);
 
         Directory docsDir = new Directory(getContext(), "war:///docs");
         docsDir.setNegotiatingContent(false);
@@ -98,6 +101,18 @@ public class RegistrationApplication extends Application {
         return router;
     }
 
+    public ChallengeAuthenticator setupGuard(Class<?> targetClass) {
+
+        ChallengeAuthenticator guard = new ChallengeAuthenticator(null,
+                ChallengeScheme.HTTP_BASIC, "testRealm");
+
+        guard.setVerifier(new TestVerifier());
+
+        guard.setNext(targetClass);
+
+        return guard;
+    }
+
     public class RootRouter extends Router {
 
         public RootRouter(Context context) {
@@ -107,7 +122,17 @@ public class RegistrationApplication extends Application {
         @Override
         public void doHandle(Restlet next, Request request, Response response) {
             RequestUtils.insertLdapEnvironment(request, LDAP_JNDI_ENV);
+            RequestUtils.insertFreeMarkerConfig(request, freeMarkerConfig);
             super.doHandle(next, request, response);
+        }
+
+    }
+
+    public static class TestVerifier extends LocalVerifier {
+
+        @Override
+        public char[] getLocalSecret(String identifier) {
+            return "secret".toCharArray();
         }
 
     }

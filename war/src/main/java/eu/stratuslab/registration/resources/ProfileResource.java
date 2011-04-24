@@ -19,21 +19,19 @@
  */
 package eu.stratuslab.registration.resources;
 
-import static org.restlet.data.MediaType.APPLICATION_WWW_FORM;
 import static org.restlet.data.MediaType.TEXT_HTML;
 import static org.restlet.data.MediaType.TEXT_PLAIN;
 
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
+import org.restlet.data.Reference;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
-import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.resource.Put;
 import org.restlet.resource.ResourceException;
@@ -42,75 +40,59 @@ import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
 import eu.stratuslab.registration.utils.RequestUtils;
 
-public class UserResource extends BaseResource {
+public class ProfileResource extends BaseResource {
 
-    @Get("txt")
-    public Representation toText() {
-        return toRepresentation("/text/user.ftl", TEXT_PLAIN);
-    }
+    private static final String MESSAGE = "profile updated";
 
     @Get("html")
     public Representation toHtml() {
-        return toRepresentation("/html/user.ftl", TEXT_HTML);
+        return toRepresentation("/html/profile.ftl", TEXT_HTML);
     }
 
     private Representation toRepresentation(String templateName,
             MediaType mediaType) {
 
-        Request request = getRequest();
-        String uid = (String) request.getAttributes().get("uid");
+        String uid = getBasicUsername();
 
         Hashtable<String, String> ldapEnv = RequestUtils
-                .extractLdapEnvironment(request);
+                .extractLdapEnvironment(getRequest());
 
-        Map<String, Object> infoTree = new HashMap<String, Object>();
-        infoTree.put("properties", UserEntry.getUserProperties(uid, ldapEnv));
+        Map<String, Object> info = createInfoStructure(null);
+        info.put("properties", UserEntry.getUserProperties(uid, ldapEnv));
 
-        return templateRepresentation(templateName, infoTree, mediaType);
-    }
-
-    @Delete
-    public void removeUser() {
-
-        // TODO: Actually remove the user from the database.
+        return templateRepresentation(templateName, info, mediaType);
     }
 
     @Put
     public Representation updateUser(Representation entity) {
-
-        if (entity == null) {
-            throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
-                    "put with null entity");
-        }
-
-        MediaType mediaType = entity.getMediaType();
-        if (!APPLICATION_WWW_FORM.equals(mediaType, true)) {
-            System.err.println("DEBUG DEBUG DEBUG: " + mediaType.getName());
-            throw new ResourceException(
-                    Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE, mediaType
-                            .getName());
-        }
 
         Form form = RequestUtils.processWebForm(entity);
 
         Hashtable<String, String> ldapEnv = RequestUtils
                 .extractLdapEnvironment(getRequest());
 
+        String userid = getBasicUsername();
+        String formUserid = form.getFirstValue(UserAttribute.UID.key);
+
+        if (!userid.equals(formUserid)) {
+            throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED,
+                    "cannot update another user's profile");
+        }
+
         UserEntry.updateUser(form, ldapEnv);
 
-        setStatus(Status.SUCCESS_OK);
+        Reference redirectRef = getRequest().getResourceRef();
+        redirectRef.addQueryParameter("message", MESSAGE);
 
-        String userid = form.getFirstValue(UserAttribute.UID.key);
+        Response response = getResponse();
+        response.redirectTemporary(redirectRef);
 
-        Representation rep = new StringRepresentation("user updated",
-                TEXT_PLAIN);
+        return new StringRepresentation(MESSAGE, TEXT_PLAIN);
 
-        String diskRelativeUrl = "/users/" + userid;
-        rep.setLocationRef(getRequest().getResourceRef().getIdentifier()
-                + diskRelativeUrl);
+    }
 
-        return rep;
-
+    private String getBasicUsername() {
+        return getRequest().getClientInfo().getUser().getIdentifier();
     }
 
 }

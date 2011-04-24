@@ -1,6 +1,5 @@
 package eu.stratuslab.registration.resources;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.restlet.data.MediaType;
@@ -12,8 +11,7 @@ public class RegisterResource extends BaseResource {
     @Get("html")
     public Representation toHtml() {
 
-        Map<String, Object> info = new HashMap<String, Object>();
-        info.put("baseurl", getRequest().getRootRef().toString());
+        Map<String, Object> info = createInfoStructure(null);
 
         return templateRepresentation("/html/register.ftl", info,
                 MediaType.TEXT_HTML);

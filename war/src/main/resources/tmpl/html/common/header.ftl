@@ -6,6 +6,6 @@
   <base href="${baseurl}">
 
   <script src="http://cdn.jquerytools.org/1.2.5/jquery.tools.min.js"></script>    
-  <link rel="stylesheet" type="text/css" href="docs/stratuslab.css"/>
+  <link rel="stylesheet" type="text/css" href="css/stratuslab.css"/>
 
 </head>
