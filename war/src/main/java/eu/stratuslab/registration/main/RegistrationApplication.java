@@ -12,10 +12,14 @@ import org.restlet.data.LocalReference;
 import org.restlet.ext.freemarker.ContextTemplateLoader;
 import org.restlet.resource.Directory;
 import org.restlet.routing.Router;
+import org.restlet.routing.Template;
+import org.restlet.routing.TemplateRoute;
 import org.restlet.security.ChallengeAuthenticator;
 import org.restlet.security.LocalVerifier;
 
 import eu.stratuslab.registration.resources.ForceTrailingSlashResource;
+import eu.stratuslab.registration.resources.HomeResource;
+import eu.stratuslab.registration.resources.PoliciesResource;
 import eu.stratuslab.registration.resources.ProfileResource;
 import eu.stratuslab.registration.resources.RegisterResource;
 import eu.stratuslab.registration.resources.UsersResource;
@@ -69,31 +73,31 @@ public class RegistrationApplication extends Application {
 
         Router router = new RootRouter(getContext());
 
+        TemplateRoute route = null;
+
         router.attach("/users/", UsersResource.class);
-        router.attach("/users", ForceTrailingSlashResource.class);
+        route = router.attach("/users", ForceTrailingSlashResource.class);
+        route.setMatchingMode(Template.MODE_EQUALS);
 
         router.attach("/register/", RegisterResource.class);
-        router.attach("/register", ForceTrailingSlashResource.class);
+        route = router.attach("/register", ForceTrailingSlashResource.class);
+        route.setMatchingMode(Template.MODE_EQUALS);
 
         router.attach("/profile/", setupGuard(ProfileResource.class));
-        router.attach("/profile", ForceTrailingSlashResource.class);
+        route = router.attach("/profile", ForceTrailingSlashResource.class);
+        route.setMatchingMode(Template.MODE_EQUALS);
 
-        Directory docsDir = new Directory(getContext(), "war:///docs");
-        docsDir.setNegotiatingContent(false);
-        docsDir.setIndexName("index.html");
-        router.attach("/docs/", docsDir);
-        router.attach("/docs", ForceTrailingSlashResource.class);
+        router.attach("/policies/", PoliciesResource.class);
+        route = router.attach("/policies", ForceTrailingSlashResource.class);
+        route.setMatchingMode(Template.MODE_EQUALS);
 
         Directory cssDir = new Directory(getContext(), "war:///css");
-        docsDir.setNegotiatingContent(false);
-        docsDir.setIndexName("index.html");
+        cssDir.setNegotiatingContent(false);
+        cssDir.setIndexName("index.html");
         router.attach("/css/", cssDir);
         router.attach("/css", ForceTrailingSlashResource.class);
 
-        Directory indexDir = new Directory(getContext(), "war:///");
-        indexDir.setNegotiatingContent(false);
-        indexDir.setIndexName("index.html");
-        router.attach("/", indexDir);
+        router.attachDefault(HomeResource.class);
 
         return router;
     }
