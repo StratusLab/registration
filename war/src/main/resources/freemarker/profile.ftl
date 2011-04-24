@@ -12,7 +12,7 @@
       You can update your profile by submitting this form with new values. 
     </p>
 
-    <form id="form_with_tooltips" action="./?method=put" enctype="application/x-www-form-urlencoded" method="POST">
+    <form id="form_with_tooltips" action="profile/?method=put" enctype="application/x-www-form-urlencoded" method="POST">
       <table>
         <tbody>
           <tr>
