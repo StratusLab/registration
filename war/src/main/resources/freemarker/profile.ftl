@@ -1,22 +1,11 @@
 <html>
 
-  <head>
-    <meta http-equiv="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-    <title>Registration Form</title>
-    <script src="http://cdn.jquerytools.org/1.2.5/jquery.tools.min.js"></script>
-    
-    <!-- standalone page styling (can be removed) --> 
-    <link rel="stylesheet" type="text/css" href="../../docs/stratuslab.css"/>   
-    
-    <!-- tab styling --> 
-    <link rel="stylesheet" type="text/css" href="http://static.flowplayer.org/tools/css/tabs.css" /> 
-    
-  </head>
+  <#include "header.ftl">
 
   <body>
   
     <p>
-      You can update your information by submitting this form with new values. 
+      You can update your profile by submitting this form with new values. 
     </p>
 
     <form action="./?method=put" enctype="application/x-www-form-urlencoded" method="POST">

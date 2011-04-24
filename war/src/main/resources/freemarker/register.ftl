@@ -1,6 +1,6 @@
 <html>
 
-  <#include "/html/common/header.ftl">
+  <#include "header.ftl">
 
   <body>
     
