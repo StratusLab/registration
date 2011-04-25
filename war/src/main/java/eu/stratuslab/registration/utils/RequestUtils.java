@@ -12,45 +12,42 @@ import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
 
+import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.data.UserEntry;
 import freemarker.template.Configuration;
 
 public final class RequestUtils {
 
-    private static final String LDAP_JNDI_ENV_KEY = "LDAP_JNDI_ENV";
-
-    private static final String FREE_MARKER_CONFIG = "FREE_MARKER_CONFIG";
+    private static final String APP_CONFIGURATION = "APP_CONFIGURATION";
 
     private RequestUtils() {
 
     }
 
-    public static void insertLdapEnvironment(Request request,
-            Hashtable<String, String> env) {
+    public static void insertAppConfiguration(Request request,
+            AppConfiguration appConfiguration) {
 
         Map<String, Object> attributes = request.getAttributes();
-        attributes.put(LDAP_JNDI_ENV_KEY, env);
+        attributes.put(APP_CONFIGURATION, appConfiguration);
     }
 
-    @SuppressWarnings("unchecked")
+    public static AppConfiguration extractAppConfiguration(Request request) {
+
+        Map<String, Object> attributes = request.getAttributes();
+        return (AppConfiguration) attributes.get(APP_CONFIGURATION);
+    }
+
     public static Hashtable<String, String> extractLdapEnvironment(
             Request request) {
 
-        Map<String, Object> attributes = request.getAttributes();
-        return (Hashtable<String, String>) attributes.get(LDAP_JNDI_ENV_KEY);
-    }
-
-    public static void insertFreeMarkerConfig(Request request,
-            Configuration config) {
-
-        Map<String, Object> attributes = request.getAttributes();
-        attributes.put(FREE_MARKER_CONFIG, config);
+        AppConfiguration cfg = extractAppConfiguration(request);
+        return cfg.getLdapEnv();
     }
 
     public static Configuration extractFreeMarkerConfig(Request request) {
 
-        Map<String, Object> attributes = request.getAttributes();
-        return (Configuration) attributes.get(FREE_MARKER_CONFIG);
+        AppConfiguration cfg = extractAppConfiguration(request);
+        return cfg.getFreeMarkerConfig();
     }
 
     public static Form processWebForm(Representation entity) {
