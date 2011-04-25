@@ -29,7 +29,7 @@ import freemarker.template.Configuration;
 
 public class RegistrationApplication extends Application {
 
-    private final Hashtable<String, String> LDAP_JNDI_ENV;
+    private final Hashtable<String, String> ldapJndiEnv;
 
     private Configuration freeMarkerConfig;
 
@@ -44,7 +44,7 @@ public class RegistrationApplication extends Application {
 
         getTunnelService().setUserAgentTunnel(true);
 
-        LDAP_JNDI_ENV = LDAPUtils.createLdapConnectionEnvironment();
+        ldapJndiEnv = LDAPUtils.createLdapConnectionEnvironment();
 
     }
 
@@ -122,7 +122,7 @@ public class RegistrationApplication extends Application {
 
         @Override
         public void doHandle(Restlet next, Request request, Response response) {
-            RequestUtils.insertLdapEnvironment(request, LDAP_JNDI_ENV);
+            RequestUtils.insertLdapEnvironment(request, ldapJndiEnv);
             RequestUtils.insertFreeMarkerConfig(request, freeMarkerConfig);
             super.doHandle(next, request, response);
         }

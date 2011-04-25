@@ -15,7 +15,7 @@ import org.restlet.resource.ResourceException;
 import eu.stratuslab.registration.data.UserEntry;
 import freemarker.template.Configuration;
 
-public class RequestUtils {
+public final class RequestUtils {
 
     private static final String LDAP_JNDI_ENV_KEY = "LDAP_JNDI_ENV";
 

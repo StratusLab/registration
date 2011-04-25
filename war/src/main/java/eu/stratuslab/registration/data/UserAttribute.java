@@ -111,7 +111,7 @@ public enum UserAttribute {
         this.isRequiredForUpdate = isRequiredForUpdate;
     }
 
-    abstract public boolean isValid(Object o);
+    public abstract boolean isValid(Object o);
 
     public static UserAttribute valueWithKey(String key) {
         UserAttribute attr = ID_TO_VALUE.get(key);

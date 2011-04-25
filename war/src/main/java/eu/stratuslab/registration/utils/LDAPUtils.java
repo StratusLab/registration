@@ -4,7 +4,7 @@ import java.util.Hashtable;
 
 import javax.naming.Context;
 
-public class LDAPUtils {
+public final class LDAPUtils {
 
     private static final String LDAP_CONTEXT_FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
 

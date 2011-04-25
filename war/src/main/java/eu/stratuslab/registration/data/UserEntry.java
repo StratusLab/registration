@@ -20,11 +20,13 @@ import org.restlet.data.Parameter;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 
-public class UserEntry {
+public final class UserEntry {
 
     public static final String COMMON_NAME_KEY = "cn";
 
     public static final String OBJECT_CLASS_KEY = "objectClass";
+
+    private static final String DATABASE_CONNECT_ERROR = "error contacting database";
 
     private UserEntry() {
 
@@ -119,13 +121,13 @@ public class UserEntry {
 
             e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "error contacting database");
+                    DATABASE_CONNECT_ERROR);
 
         } catch (NamingException e) {
 
             e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "error contacting database");
+                    DATABASE_CONNECT_ERROR);
 
         } finally {
 
@@ -208,13 +210,13 @@ public class UserEntry {
 
             e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "error contacting database");
+                    DATABASE_CONNECT_ERROR);
 
         } catch (NamingException e) {
 
             e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "error contacting database");
+                    DATABASE_CONNECT_ERROR);
 
         } finally {
 
@@ -310,7 +312,7 @@ public class UserEntry {
 
             e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "error contacting database");
+                    DATABASE_CONNECT_ERROR);
 
         }
 
@@ -350,13 +352,13 @@ public class UserEntry {
 
             e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "error contacting database");
+                    DATABASE_CONNECT_ERROR);
 
         } catch (NamingException e) {
 
             e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "error contacting database");
+                    DATABASE_CONNECT_ERROR);
 
         } finally {
 
