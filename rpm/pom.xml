@@ -26,7 +26,6 @@
   
   <properties> 
     <installation.dir>/opt/stratuslab/registration</installation.dir>
-    <persistent-disk-war>registration-war-${project.version}.war</persistent-disk-war>
     <maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format> 
     <RELEASE>0.${maven.build.timestamp}</RELEASE>
   </properties>
@@ -91,7 +90,7 @@
               <artifactItems>
                 <artifactItem>
                   <groupId>eu.stratuslab.registration</groupId>
-                  <artifactId>persistent-disk</artifactId>
+                  <artifactId>registration-war</artifactId>
                   <type>war</type>
                 </artifactItem>
               </artifactItems>
