@@ -10,38 +10,68 @@ import javax.mail.internet.InternetAddress;
 
 public enum UserAttribute {
 
-    UID("uid", false) {
+    UID("uid", false, true, true) {
         @Override
         public boolean isValid(Object o) {
             return isValidUsername(o);
         }
     }, //
 
-    EMAIL("mail", true) {
+    EMAIL("mail", true, true, false) {
         @Override
         public boolean isValid(Object o) {
             return isValidEmailAddress(o);
         }
     }, //
 
-    GIVEN_NAME("givenName", true) {
+    GIVEN_NAME("givenName", true, true, false) {
         @Override
         public boolean isValid(Object o) {
-            return isValidName(o);
+            return isNotEmptyString(o);
         }
     }, //
 
-    SURNAME("sn", true) {
+    SURNAME("sn", true, true, false) {
         @Override
         public boolean isValid(Object o) {
-            return isValidName(o);
+            return isNotEmptyString(o);
         }
     }, //
 
-    PASSWORD("userPassword", true) {
+    PASSWORD("userPassword", true, false, true) {
         @Override
         public boolean isValid(Object o) {
             return isValidPassword(o);
+        }
+    }, //
+
+    NEW_PASSWORD("newUserPassword", true, true, false) {
+        @Override
+        public boolean isValid(Object o) {
+            return isValidPassword(o);
+        }
+    }, //
+
+    NEW_PASSWORD_CHECK("newUserPasswordCheck", true, true, false) {
+        @Override
+        public boolean isValid(Object o) {
+            return isValidPassword(o);
+        }
+    }, //
+
+    MESSAGE("message", true, true, false) {
+        @Override
+        public boolean isValid(Object o) {
+            return isNotEmptyString(o);
+        }
+    }, //
+
+    AGREEMENT("agreement", true, true, false) {
+        @Override
+        public boolean isValid(Object o) {
+            // Only sent if the checkbox is ticked.
+            // Must check separately if it is missing.
+            return true;
         }
     };
 
@@ -65,9 +95,16 @@ public enum UserAttribute {
 
     public final boolean isModifiable;
 
-    UserAttribute(String key, boolean isModifiable) {
+    public final boolean isRequiredForCreate;
+
+    public final boolean isRequiredForUpdate;
+
+    UserAttribute(String key, boolean isModifiable,
+            boolean isRequiredForCreate, boolean isRequiredForUpdate) {
         this.key = key;
         this.isModifiable = isModifiable;
+        this.isRequiredForCreate = isRequiredForCreate;
+        this.isRequiredForUpdate = isRequiredForUpdate;
     }
 
     abstract public boolean isValid(Object o);
@@ -113,7 +150,7 @@ public enum UserAttribute {
         }
     }
 
-    private static boolean isValidName(Object name) {
+    public static boolean isNotEmptyString(Object name) {
         if (name == null) {
             return false;
         }

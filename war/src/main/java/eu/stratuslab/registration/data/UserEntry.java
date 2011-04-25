@@ -1,10 +1,6 @@
 package eu.stratuslab.registration.data;
 
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.AuthenticationException;
@@ -34,6 +30,8 @@ public class UserEntry {
 
     }
 
+    // Removes unknown keys from form and parameters with empty values.
+    // This method does NOT validate the parameters.
     public static Form sanitizeForm(Form form) {
 
         Form sanitizedForm = new Form();
@@ -42,24 +40,16 @@ public class UserEntry {
             String key = parameter.getName();
             try {
                 UserAttribute.valueWithKey(key);
-                sanitizedForm.add(parameter);
+                String value = parameter.getValue();
+                if (UserAttribute.isNotEmptyString(value)) {
+                    sanitizedForm.add(parameter);
+                }
             } catch (IllegalArgumentException consumed) {
                 // Do not copy the parameter into the new form.
             }
         }
 
         return sanitizedForm;
-    }
-
-    public static void checkCompleteForm(Form form) {
-
-        for (UserAttribute attr : UserAttribute.values()) {
-            if (form.getFirstValue(attr.key) == null) {
-                throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
-                        "missing " + attr.key);
-            }
-        }
-
     }
 
     public static void validateEntries(Form form) {
@@ -87,13 +77,15 @@ public class UserEntry {
 
         form.add(COMMON_NAME_KEY, cn);
 
-        form.add(OBJECT_CLASS_KEY, "top");
-        form.add(OBJECT_CLASS_KEY, "person");
+        // form.add(OBJECT_CLASS_KEY, "top");
+        // form.add(OBJECT_CLASS_KEY, "person");
         form.add(OBJECT_CLASS_KEY, "inetOrgPerson");
 
     }
 
     public static void createUser(Form form, Hashtable<String, String> ldapEnv) {
+
+        checkUserCreateFormCorrect(form);
 
         String uid = form.getFirstValue(UserAttribute.UID.key);
         String dn = UserAttribute.UID.key + "=" + uid;
@@ -115,6 +107,7 @@ public class UserEntry {
 
         } catch (NameAlreadyBoundException e) {
 
+            e.printStackTrace();
             throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
                     "username (" + uid + ") already exists");
 
@@ -150,7 +143,41 @@ public class UserEntry {
 
     }
 
+    public static void checkUserCreateFormCorrect(Form form) {
+
+        // All required attributes exist.
+        for (UserAttribute attr : UserAttribute.values()) {
+            if (attr.isRequiredForCreate) {
+                if (form.getFirstValue(attr.key) == null) {
+                    throw new ResourceException(
+                            Status.CLIENT_ERROR_BAD_REQUEST, "missing "
+                                    + attr.key);
+                }
+            }
+        }
+
+        // Passwords match.
+        String pswd1 = form.getFirstValue(UserAttribute.NEW_PASSWORD.key);
+        String pswd2 = form.getFirstValue(UserAttribute.NEW_PASSWORD_CHECK.key);
+
+        if (!pswd1.equals(pswd2)) {
+            throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
+                    "mismatched passwords");
+        }
+
+        // Copy password to 'userPassword'.
+        form.set(UserAttribute.PASSWORD.key, pswd1);
+
+        // Remove values not stored in LDAP.
+        form.removeAll(UserAttribute.NEW_PASSWORD.key);
+        form.removeAll(UserAttribute.NEW_PASSWORD_CHECK.key);
+        form.removeAll(UserAttribute.AGREEMENT.key);
+        form.removeAll(UserAttribute.MESSAGE.key);
+    }
+
     public static void updateUser(Form form, Hashtable<String, String> ldapEnv) {
+
+        checkUserUpdateFormCorrect(form, ldapEnv);
 
         String uid = form.getFirstValue(UserAttribute.UID.key);
         String dn = UserAttribute.UID.key + "=" + uid;
@@ -202,48 +229,85 @@ public class UserEntry {
 
     }
 
-    public static Map<String, Object> listUsers(
+    public static void checkUserUpdateFormCorrect(Form form,
             Hashtable<String, String> ldapEnv) {
 
-        String[] desiredAttrs = new String[] { "uid", "cn" };
+        // All required attributes exist.
+        for (UserAttribute attr : UserAttribute.values()) {
+            if (attr.isRequiredForUpdate) {
+                if (form.getFirstValue(attr.key) == null) {
+                    throw new ResourceException(
+                            Status.CLIENT_ERROR_BAD_REQUEST, "missing "
+                                    + attr.key);
+                }
+            }
+        }
 
-        List<Properties> userInfoList = new LinkedList<Properties>();
+        // Check the current password.
+        String uid = form.getFirstValue(UserAttribute.UID.key);
+        String currentPassword = form.getFirstValue(UserAttribute.PASSWORD.key);
+        checkCurrentPassword(uid, currentPassword, ldapEnv);
 
-        // Get a connection from the pool.
-        DirContext ctx = null;
+        // New passwords match, if given.
+        String pswd1 = form.getFirstValue(UserAttribute.NEW_PASSWORD.key);
+        String pswd2 = form.getFirstValue(UserAttribute.NEW_PASSWORD_CHECK.key);
+
+        if (pswd1 != null || pswd2 != null) {
+            if (pswd1 == null || !pswd1.equals(pswd2)) {
+                throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
+                        "mismatched passwords");
+            }
+        }
+
+        // Copy password to 'userPassword'.
+        form.set(UserAttribute.PASSWORD.key, pswd1);
+
+        // Remove values not stored in LDAP.
+        form.removeAll(UserAttribute.NEW_PASSWORD.key);
+        form.removeAll(UserAttribute.NEW_PASSWORD_CHECK.key);
+        form.removeAll(UserAttribute.AGREEMENT.key);
+        form.removeAll(UserAttribute.MESSAGE.key);
+    }
+
+    public static void checkCurrentPassword(String uid, String currentPassword,
+            Hashtable<String, String> ldapEnv) {
+
+        Attributes attrs = getUserAttributes(uid, ldapEnv);
+        String ldapPassword = null;
+        try {
+            ldapPassword = (String) attrs.get(UserAttribute.PASSWORD.key).get();
+        } catch (NamingException consumed) {
+            // Do nothing.
+        }
+
+        if (!currentPassword.equals(ldapPassword)) {
+            throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED,
+                    "incorrect password");
+        }
+
+    }
+
+    public static Properties getUserProperties(String uid,
+            Hashtable<String, String> ldapEnv) {
+
+        Properties userProperties = new Properties();
+
+        Attributes attrs = getUserAttributes(uid, ldapEnv);
 
         try {
 
-            ctx = new InitialDirContext(ldapEnv);
+            NamingEnumeration<String> ids = attrs.getIDs();
+            while (ids.hasMore()) {
+                String id = ids.next();
+                Attribute attr = attrs.get(id);
+                Object value = attr.get();
 
-            NamingEnumeration<SearchResult> results = ctx.search("", null,
-                    desiredAttrs);
-            while (results.hasMore()) {
-                SearchResult result = results.next();
-                String name = result.getName();
-                Attributes attrs = result.getAttributes();
-                Attribute uid = attrs.get("uid");
-                Attribute cn = attrs.get("cn");
-
-                Properties userProperties = new Properties();
-                userProperties.put("name", name);
-                userProperties.put("uid", uid.get());
-                userProperties.put("cn", cn.get());
-
-                userInfoList.add(userProperties);
+                // Ensure that password is not sent back through browser.
+                if (UserAttribute.PASSWORD.key.equals(id)) {
+                    value = "";
+                }
+                userProperties.put(id, value);
             }
-
-        } catch (InvalidAttributesException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "incomplete user entry");
-
-        } catch (AuthenticationException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "error contacting database");
 
         } catch (NamingException e) {
 
@@ -251,28 +315,15 @@ public class UserEntry {
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     "error contacting database");
 
-        } finally {
-
-            // Return the connection to the pool.
-            if (ctx != null) {
-                try {
-                    ctx.close();
-                } catch (NamingException consumed) {
-                    // TODO: Log this.
-                }
-            }
         }
 
-        Map<String, Object> info = new HashMap<String, Object>();
-        info.put("users", userInfoList);
-
-        return info;
+        return userProperties;
     }
 
-    public static Properties getUserProperties(String uid,
+    public static Attributes getUserAttributes(String uid,
             Hashtable<String, String> ldapEnv) {
 
-        Properties userProperties = new Properties();
+        Attributes attrs = null;
 
         // Get a connection from the pool.
         DirContext ctx = null;
@@ -289,21 +340,7 @@ public class UserEntry {
 
             while (results.hasMore()) {
                 SearchResult result = results.next();
-
-                Attributes attrs = result.getAttributes();
-                NamingEnumeration<String> ids = attrs.getIDs();
-                while (ids.hasMore()) {
-                    String id = ids.next();
-                    Attribute attr = attrs.get(id);
-                    Object value = attr.get();
-
-                    // Ensure that password is not sent back through browser.
-                    if (UserAttribute.PASSWORD.key.equals(id)) {
-                        value = "";
-                    }
-                    userProperties.put(id, value);
-                }
-
+                attrs = result.getAttributes();
             }
 
         } catch (InvalidAttributesException e) {
@@ -336,7 +373,7 @@ public class UserEntry {
             }
         }
 
-        return userProperties;
+        return attrs;
     }
 
 }

@@ -61,19 +61,17 @@ public class RequestUtils {
 
     public static Form processWebForm(Representation entity) {
 
-        checkForInvalidForm(entity);
+        Form form = validateInputForm(entity);
 
-        Form form = new Form(entity);
         Form sanitizedForm = UserEntry.sanitizeForm(form);
 
-        UserEntry.checkCompleteForm(sanitizedForm);
         UserEntry.validateEntries(sanitizedForm);
         UserEntry.addDerivedAttributes(sanitizedForm);
 
         return sanitizedForm;
     }
 
-    public static void checkForInvalidForm(Representation entity) {
+    public static Form validateInputForm(Representation entity) {
 
         if (entity == null) {
             throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
@@ -86,6 +84,8 @@ public class RequestUtils {
                     Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE, mediaType
                             .getName());
         }
+
+        return new Form(entity);
 
     }
 

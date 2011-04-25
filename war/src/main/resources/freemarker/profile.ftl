@@ -12,7 +12,11 @@
       You can update your profile by submitting this form with new values. 
     </p>
 
-    <form id="form_with_tooltips" action="profile/?method=put" enctype="application/x-www-form-urlencoded" method="POST">
+    <form id="form_with_tooltips" 
+          action="profile/?method=put" 
+          enctype="application/x-www-form-urlencoded" 
+          method="POST">
+
       <table>
         <tbody>
           <tr>
@@ -57,7 +61,7 @@
             </td>
           </tr>
           <tr>
-            <td>Password</td>
+            <td>Current Password</td>
             <td>
               <input type="password" 
                      name="userPassword" 
@@ -67,10 +71,20 @@
             </td>
           </tr>
           <tr>
-            <td>Password (again)</td>
+            <td>New Password</td>
             <td>
               <input type="password" 
-                     name="userPasswordCheck" 
+                     name="newUserPassword" 
+                     size="40"
+                     maxlength="20"
+                     title="password double check">
+            </td>
+          </tr>
+          <tr>
+            <td>New Password (again)</td>
+            <td>
+              <input type="password" 
+                     name="newUserPasswordCheck" 
                      size="40"
                      maxlength="20"
                      title="password double check">

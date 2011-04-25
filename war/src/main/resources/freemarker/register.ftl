@@ -10,13 +10,17 @@
 
     <p>
       Please complete the following form to create a new account 
-      on the StratusLab reference cloud infrastructure(s).
+      on the StratusLab reference cloud infrastructures.
     </p>
     <p>
       <strong>All fields are mandatory.</strong> 
     </p>
 
-    <form id="form_with_tooltips" action="../users/" enctype="application/x-www-form-urlencoded" method="POST">
+    <form id="form_with_tooltips" 
+          action="../users/" 
+          enctype="application/x-www-form-urlencoded" 
+          method="POST">
+
       <table>
         <tbody>
           <tr>
@@ -60,7 +64,7 @@
             <td>Password</td>
             <td>
               <input type="password" 
-                     name="userPassword" 
+                     name="newUserPassword" 
                      size="40"
                      maxlength="20"
                      title="sequence of 8 to 20 printable characters">
@@ -70,10 +74,20 @@
             <td>Password (again)</td>
             <td>
               <input type="password" 
-                     name="userPasswordCheck" 
+                     name="newUserPasswordCheck" 
                      size="40"
                      maxlength="20"
                      title="password double check">
+            </td>
+          </tr>
+          <tr>
+            <td>Message</td>
+            <td>
+              <textarea name="message" 
+                        cols="40"
+                        rows="5"
+                        title="tell us why you'd like to use the cloud and how you heard about StratusLab">
+              </textarea>
             </td>
           </tr>
           <tr>
@@ -81,7 +95,7 @@
               <label>I agree to the defined 
                      <a href="policies/">terms, conditions, and policies</a>
                 <input type="checkbox" 
-                       name="termsAgreement" 
+                       name="agreement" 
                        title="you must agree to create an account">
               </label>
             </td>
