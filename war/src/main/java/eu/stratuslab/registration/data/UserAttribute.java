@@ -10,63 +10,64 @@ import javax.mail.internet.InternetAddress;
 
 public enum UserAttribute {
 
-    UID("uid", false, true, true) {
+    UID("uid", "username", false, true, true) {
         @Override
         public boolean isValid(Object o) {
             return isValidUsername(o);
         }
     }, //
 
-    EMAIL("mail", true, true, false) {
+    EMAIL("mail", "email address", true, true, false) {
         @Override
         public boolean isValid(Object o) {
             return isValidEmailAddress(o);
         }
     }, //
 
-    GIVEN_NAME("givenName", true, true, false) {
+    GIVEN_NAME("givenName", "given name", true, true, false) {
         @Override
         public boolean isValid(Object o) {
-            return isNotEmptyString(o);
+            return isNotWhitespace(o);
         }
     }, //
 
-    SURNAME("sn", true, true, false) {
+    SURNAME("sn", "family name", true, true, false) {
         @Override
         public boolean isValid(Object o) {
-            return isNotEmptyString(o);
+            return isNotWhitespace(o);
         }
     }, //
 
-    PASSWORD("userPassword", true, false, true) {
-        @Override
-        public boolean isValid(Object o) {
-            return isValidPassword(o);
-        }
-    }, //
-
-    NEW_PASSWORD("newUserPassword", true, true, false) {
+    PASSWORD("userPassword", "password", true, false, true) {
         @Override
         public boolean isValid(Object o) {
             return isValidPassword(o);
         }
     }, //
 
-    NEW_PASSWORD_CHECK("newUserPasswordCheck", true, true, false) {
+    NEW_PASSWORD("newUserPassword", "new password", true, true, false) {
         @Override
         public boolean isValid(Object o) {
             return isValidPassword(o);
         }
     }, //
 
-    MESSAGE("message", true, true, false) {
+    NEW_PASSWORD_CHECK("newUserPasswordCheck", "new password", true, true,
+            false) {
         @Override
         public boolean isValid(Object o) {
-            return isNotEmptyString(o);
+            return isValidPassword(o);
         }
     }, //
 
-    AGREEMENT("agreement", true, true, false) {
+    MESSAGE("message", "message", true, true, false) {
+        @Override
+        public boolean isValid(Object o) {
+            return isNotWhitespace(o);
+        }
+    }, //
+
+    AGREEMENT("agreement", "agreement", true, true, false) {
         @Override
         public boolean isValid(Object o) {
             // Only sent if the checkbox is ticked.
@@ -78,7 +79,7 @@ public enum UserAttribute {
     private static final Pattern VALID_USERNAME = Pattern
             .compile("^\\w{3,20}$");
 
-    private static final Pattern WHITESPACE_ONLY = Pattern.compile("^\\s*$");
+    public static final Pattern WHITESPACE_ONLY = Pattern.compile("^\\s*$");
 
     private static final Pattern VALID_PASSWORD = Pattern
             .compile("^\\S{8,20}$");
@@ -93,15 +94,18 @@ public enum UserAttribute {
 
     public final String key;
 
+    public final String name;
+
     public final boolean isModifiable;
 
     public final boolean isRequiredForCreate;
 
     public final boolean isRequiredForUpdate;
 
-    UserAttribute(String key, boolean isModifiable,
+    UserAttribute(String key, String name, boolean isModifiable,
             boolean isRequiredForCreate, boolean isRequiredForUpdate) {
         this.key = key;
+        this.name = name;
         this.isModifiable = isModifiable;
         this.isRequiredForCreate = isRequiredForCreate;
         this.isRequiredForUpdate = isRequiredForUpdate;
@@ -118,7 +122,7 @@ public enum UserAttribute {
         return attr;
     }
 
-    private static boolean isValidUsername(Object username) {
+    public static boolean isValidUsername(Object username) {
 
         if (username == null) {
             return false;
@@ -132,7 +136,7 @@ public enum UserAttribute {
         return true;
     }
 
-    private static boolean isValidEmailAddress(Object email) {
+    public static boolean isValidEmailAddress(Object email) {
 
         if (email == null) {
             return false;
@@ -150,12 +154,12 @@ public enum UserAttribute {
         }
     }
 
-    public static boolean isNotEmptyString(Object name) {
-        if (name == null) {
+    public static boolean isNotWhitespace(Object string) {
+        if (string == null) {
             return false;
         }
 
-        Matcher matcher = WHITESPACE_ONLY.matcher(name.toString());
+        Matcher matcher = WHITESPACE_ONLY.matcher(string.toString());
         if (matcher.matches()) {
             return false;
         }
@@ -163,7 +167,7 @@ public enum UserAttribute {
         return true;
     }
 
-    private static boolean isValidPassword(Object password) {
+    public static boolean isValidPassword(Object password) {
 
         if (password == null) {
             return false;

@@ -29,9 +29,7 @@ public class RequestUtils {
             Hashtable<String, String> env) {
 
         Map<String, Object> attributes = request.getAttributes();
-
         attributes.put(LDAP_JNDI_ENV_KEY, env);
-        request.setAttributes(attributes);
     }
 
     @SuppressWarnings("unchecked")
@@ -39,7 +37,6 @@ public class RequestUtils {
             Request request) {
 
         Map<String, Object> attributes = request.getAttributes();
-
         return (Hashtable<String, String>) attributes.get(LDAP_JNDI_ENV_KEY);
     }
 
@@ -47,15 +44,12 @@ public class RequestUtils {
             Configuration config) {
 
         Map<String, Object> attributes = request.getAttributes();
-
         attributes.put(FREE_MARKER_CONFIG, config);
-        request.setAttributes(attributes);
     }
 
     public static Configuration extractFreeMarkerConfig(Request request) {
 
         Map<String, Object> attributes = request.getAttributes();
-
         return (Configuration) attributes.get(FREE_MARKER_CONFIG);
     }
 

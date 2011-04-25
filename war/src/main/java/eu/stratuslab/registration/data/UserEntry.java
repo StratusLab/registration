@@ -41,7 +41,7 @@ public class UserEntry {
             try {
                 UserAttribute.valueWithKey(key);
                 String value = parameter.getValue();
-                if (UserAttribute.isNotEmptyString(value)) {
+                if (UserAttribute.isNotWhitespace(value)) {
                     sanitizedForm.add(parameter);
                 }
             } catch (IllegalArgumentException consumed) {
@@ -62,7 +62,7 @@ public class UserEntry {
 
             if (!attr.isValid(value)) {
                 throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
-                        "invalid " + key);
+                        "invalid " + attr.name);
             }
         }
 
@@ -77,8 +77,6 @@ public class UserEntry {
 
         form.add(COMMON_NAME_KEY, cn);
 
-        // form.add(OBJECT_CLASS_KEY, "top");
-        // form.add(OBJECT_CLASS_KEY, "person");
         form.add(OBJECT_CLASS_KEY, "inetOrgPerson");
 
     }
@@ -168,7 +166,10 @@ public class UserEntry {
         // Copy password to 'userPassword'.
         form.set(UserAttribute.PASSWORD.key, pswd1);
 
-        // Remove values not stored in LDAP.
+        stripNonLdapAttributes(form);
+    }
+
+    public static void stripNonLdapAttributes(Form form) {
         form.removeAll(UserAttribute.NEW_PASSWORD.key);
         form.removeAll(UserAttribute.NEW_PASSWORD_CHECK.key);
         form.removeAll(UserAttribute.AGREEMENT.key);
@@ -262,11 +263,7 @@ public class UserEntry {
         // Copy password to 'userPassword'.
         form.set(UserAttribute.PASSWORD.key, pswd1);
 
-        // Remove values not stored in LDAP.
-        form.removeAll(UserAttribute.NEW_PASSWORD.key);
-        form.removeAll(UserAttribute.NEW_PASSWORD_CHECK.key);
-        form.removeAll(UserAttribute.AGREEMENT.key);
-        form.removeAll(UserAttribute.MESSAGE.key);
+        stripNonLdapAttributes(form);
     }
 
     public static void checkCurrentPassword(String uid, String currentPassword,
