@@ -48,7 +48,7 @@
       </tr>
       <tr>
         <td><a href="mailto:support_NOSPAM_@stratuslab.eu">Email</a></td>
-        <td>Send questions and comments to the support team.</td>
+        <td>Contact the support team (remove _NOSPAM_).</td>
       </tr>
       <tr>
         <td><a href="http://stratuslab.eu/">Web</a></td>
