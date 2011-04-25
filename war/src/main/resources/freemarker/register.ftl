@@ -79,7 +79,7 @@
           <tr>
             <td colspan="2">
               <label>I agree to the defined 
-                     <a href="policies/" terms, conditions, and policies</a>
+                     <a href="policies/">terms, conditions, and policies</a>
                 <input type="checkbox" 
                        name="termsAgreement" 
                        title="you must agree to create an account">
