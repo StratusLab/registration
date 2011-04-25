@@ -8,7 +8,14 @@
     
     <#include "breadcrumbs.ftl">
 
-    <p></p>
+    <p>
+      A good starting point for using the StratusLab reference cloud infrastructure
+      is the <a href="http://www.stratuslab.org/doku.php?id=tutorial:usertutorial">User 
+      Tutorial</a> available from the project's web site. You can also check the 
+      <a href="http://www.youtube.com/watch?v=eR8OgKsuBoo">video</a> for a quick 
+      introduction of StratusLab's command line tools.
+    </p>
+
     <table>
       <tr>
         <td><a href="policies/">Policies</a></td><td>View documentation and policies.</td>

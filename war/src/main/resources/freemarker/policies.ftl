@@ -9,21 +9,48 @@
     <#include "breadcrumbs.ftl">
 
     <p>
-      A good starting point for using the StratusLab reference cloud infrastructure
-      is the <a href="http://www.stratuslab.org/doku.php?id=tutorial:usertutorial">User 
-      Tutorial</a> available from the project's web site. You can also check the 
-      <a href="http://www.youtube.com/watch?v=eR8OgKsuBoo">video</a> for a quick 
-      introduction of StratusLab's command line tools.
+      The StratusLab reference cloud infrastructures are a technology preview
+      giving users the opportunity to try out the StratusLab cloud distribution
+      and providing the project feedback on its use and operation. 
     </p>
 
+    <h2>Limited Guarantees</h2>
+
     <p>
-      We remind you that the service is offered as a technology preview with limited 
-      guarantees for what concerns stability and availability. Notice also that the 
-      usage of this cloud service is governed by the 
-      <a href="https://documents.egi.eu/public/ShowDocument?docid=74">EGI Acceptable 
-      Use Policy</a>. By using our service you agree to the terms defined in the that 
-      document and documents referenced from it.
+      The StratusLab reference cloud infrastructures are operated on a best-effort
+      basis and consequently have very limited guarantees regarding stability, 
+      reliability, and availability.
     </p>
+    <p>
+      <strong>  
+      The project does not accept liability for 
+      any damages resulting from the unavailability of the services or from data 
+      loss.
+      </strong>
+    </p>
+    
+    <h2>Applicable Policies</h2>
+ 
+     <p>
+       The usage of the StratusLab reference cloud infrastructures is governed by the 
+       following policies:
+     </p>
+       <ul>
+         <li><a href="https://documents.egi.eu/public/ShowDocument?docid=74">
+                Grid Acceptable Use Policy</a>
+         <li><a href="https://documents.egi.eu/public/ShowDocument?docid=86">
+                Grid Security Policy</a>
+       </ul>
+     <p>
+     as well as policies referenced from those documents.  For all policy documents,
+     the word "grid" should be read to include "cloud" infrastructures as well.  
+     </p>
+     <p>
+      <strong>
+      By using our service you agree to the terms defined in these 
+      documents and documents referenced from them.
+      </strong>
+    </p>   
 
   </body>
 </html>
