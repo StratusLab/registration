@@ -14,11 +14,13 @@ import org.restlet.security.ChallengeAuthenticator;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.guards.LdapVerifier;
+import eu.stratuslab.registration.resources.ActionResource;
 import eu.stratuslab.registration.resources.ForceTrailingSlashResource;
 import eu.stratuslab.registration.resources.HomeResource;
 import eu.stratuslab.registration.resources.PoliciesResource;
 import eu.stratuslab.registration.resources.ProfileResource;
 import eu.stratuslab.registration.resources.RegisterResource;
+import eu.stratuslab.registration.resources.ResetResource;
 import eu.stratuslab.registration.resources.UsersResource;
 import eu.stratuslab.registration.utils.RequestUtils;
 
@@ -65,6 +67,16 @@ public class RegistrationApplication extends Application {
         router.attach("/policies/", PoliciesResource.class);
         route = router.attach("/policies", ForceTrailingSlashResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
+
+        router.attach("/reset/", ResetResource.class);
+        route = router.attach("/reset", ForceTrailingSlashResource.class);
+        route.setMatchingMode(Template.MODE_EQUALS);
+
+        router.attach("/action/", ActionResource.class);
+        route = router.attach("/action", ForceTrailingSlashResource.class);
+        route.setMatchingMode(Template.MODE_EQUALS);
+
+        router.attach("/action/{uuid}", ActionResource.class);
 
         Directory cssDir = new Directory(getContext(), "war:///css");
         cssDir.setNegotiatingContent(false);

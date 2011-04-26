@@ -23,6 +23,7 @@ import static org.restlet.data.MediaType.TEXT_PLAIN;
 
 import java.util.Hashtable;
 
+import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Form;
 import org.restlet.data.Reference;
@@ -30,7 +31,9 @@ import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Post;
 
+import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.data.UserEntry;
+import eu.stratuslab.registration.utils.Notifier;
 import eu.stratuslab.registration.utils.RequestUtils;
 
 public class UsersResource extends BaseResource {
@@ -40,12 +43,14 @@ public class UsersResource extends BaseResource {
     @Post
     public Representation createUser(Representation entity) {
 
+        Request request = getRequest();
+
         Form form = RequestUtils.processWebForm(entity);
 
         Hashtable<String, String> ldapEnv = RequestUtils
-                .extractLdapEnvironment(getRequest());
+                .extractLdapEnvironment(request);
 
-        UserEntry.createUser(form, ldapEnv);
+        String username = UserEntry.createUser(form, ldapEnv);
 
         Reference redirectRef = getRequest().getRootRef();
         redirectRef.addSegment("profile");
@@ -53,6 +58,10 @@ public class UsersResource extends BaseResource {
 
         Response response = getResponse();
         response.redirectSeeOther(redirectRef);
+
+        AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
+        String message = "new user created: " + username;
+        Notifier.sendAdminNotification(message, cfg);
 
         return new StringRepresentation(MESSAGE, TEXT_PLAIN);
 

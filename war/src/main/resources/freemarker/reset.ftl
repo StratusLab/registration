@@ -1,0 +1,43 @@
+<html>
+
+  <#include "header.ftl">
+
+  <body>
+ 
+    <h1>Reset Password</h1>
+    
+    <#include "breadcrumbs.ftl">
+     
+    <p>
+      You can request that your password be reset via this form.  You
+      must click on the link in the confirmation email 
+      <strong>before</strong> your password will be reset.  
+    </p>
+
+    <form id="form_with_tooltips" 
+          action="reset/" 
+          enctype="application/x-www-form-urlencoded" 
+          method="POST">
+
+      <table>
+        <tbody>
+          <tr>
+            <td>Username</td>
+            <td>
+              <input type="text" 
+                     name="uid" 
+                     size="40"
+                     maxlength="20">
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2"><input type="submit" value="reset password"></td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    
+    <#include "tooltip-js.ftl">
+    
+  </body>
+</html>

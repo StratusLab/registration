@@ -91,7 +91,7 @@
             </td>
           </tr>
           <tr>
-            <td><input type="submit" value="update"></td><td></td>
+            <td colspan="2"><input type="submit" value="update"></td>
           </tr>
         </tbody>
       </table>

@@ -2,6 +2,7 @@ package eu.stratuslab.registration.data;
 
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.naming.AuthenticationException;
 import javax.naming.NameAlreadyBoundException;
@@ -19,6 +20,8 @@ import org.restlet.data.Form;
 import org.restlet.data.Parameter;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
+
+import eu.stratuslab.registration.actions.Action;
 
 public final class UserEntry {
 
@@ -83,7 +86,7 @@ public final class UserEntry {
 
     }
 
-    public static void createUser(Form form, Hashtable<String, String> ldapEnv) {
+    public static String createUser(Form form, Hashtable<String, String> ldapEnv) {
 
         checkUserCreateFormCorrect(form);
 
@@ -141,6 +144,7 @@ public final class UserEntry {
             }
         }
 
+        return uid;
     }
 
     public static void checkUserCreateFormCorrect(Form form) {
@@ -182,6 +186,13 @@ public final class UserEntry {
     public static void updateUser(Form form, Hashtable<String, String> ldapEnv) {
 
         checkUserUpdateFormCorrect(form, ldapEnv);
+
+        rawUpdateUser(form, ldapEnv);
+
+    }
+
+    public static void rawUpdateUser(Form form,
+            Hashtable<String, String> ldapEnv) {
 
         String uid = form.getFirstValue(UserAttribute.UID.key);
         String dn = UserAttribute.UID.key + "=" + uid;
@@ -400,6 +411,133 @@ public final class UserEntry {
         }
 
         return attrs;
+    }
+
+    public static String createAction(Action action,
+            Hashtable<String, String> ldapEnv) {
+
+        String uuid = UUID.randomUUID().toString();
+        String dn = "cn=" + uuid;
+
+        // Get a connection from the pool.
+        DirContext ctx = null;
+
+        try {
+
+            ctx = new InitialDirContext(ldapEnv);
+
+            ctx.bind(dn, action);
+
+        } catch (NameAlreadyBoundException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
+                    "entry exists: " + dn);
+
+        } catch (InvalidAttributesException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    "incomplete user entry");
+
+        } catch (AuthenticationException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        } catch (NamingException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        } finally {
+
+            // Return the connection to the pool.
+            if (ctx != null) {
+                try {
+                    ctx.close();
+                } catch (NamingException consumed) {
+                    // TODO: Log this.
+                }
+            }
+        }
+
+        return uuid;
+
+    }
+
+    public static Action retrieveAction(String uuid,
+            Hashtable<String, String> ldapEnv) {
+
+        // Get a connection from the pool.
+        DirContext ctx = null;
+
+        try {
+
+            ctx = new InitialDirContext(ldapEnv);
+
+            String dn = "cn=" + uuid;
+
+            Action action = (Action) ctx.lookup(dn);
+
+            System.err.println("ACTION DN" + dn);
+
+            return action;
+
+        } catch (InvalidAttributesException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    "incomplete user entry");
+
+        } catch (AuthenticationException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        } catch (NamingException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        } finally {
+
+            // Return the connection to the pool.
+            if (ctx != null) {
+                try {
+                    ctx.close();
+                } catch (NamingException consumed) {
+                    // TODO: Log this.
+                }
+            }
+        }
+
+    }
+
+    public static String getEmailAddress(String uid,
+            Hashtable<String, String> ldapEnv) {
+
+        String userEmail = null;
+        Attributes attrs = UserEntry.getUserAttributes(uid, ldapEnv);
+        Attribute attr = attrs.get(UserAttribute.EMAIL.key);
+        if (attr != null) {
+            try {
+                userEmail = (String) attr.get();
+            } catch (NamingException consumed) {
+                consumed.printStackTrace();
+                throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                        "missing email address in record");
+            }
+        } else {
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    "missing email address in record");
+        }
+
+        return userEmail;
     }
 
 }
