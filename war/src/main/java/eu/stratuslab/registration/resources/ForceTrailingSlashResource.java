@@ -60,14 +60,28 @@ public class ForceTrailingSlashResource extends BaseResource {
     }
 
     private void setRedirectRef() {
+        Reference redirect = createRedirectRef();
+        Response response = getResponse();
+        response.redirectPermanent(redirect);
+    }
+
+    private Reference createRedirectRef() {
 
         Request request = getRequest();
         Reference ref = request.getResourceRef();
-        String sref = ref.toString() + "/";
-        Reference redirect = new Reference(sref);
 
-        Response response = getResponse();
-        response.redirectPermanent(redirect);
+        StringBuilder sb = new StringBuilder();
+        sb.append(ref.getScheme());
+        sb.append(":");
+        sb.append(ref.getHierarchicalPart());
+        sb.append("/");
+        if (ref.hasQuery()) {
+            sb.append("?");
+            sb.append(ref.getQuery());
+        }
+
+        return new Reference(sb.toString());
+
     }
 
 }

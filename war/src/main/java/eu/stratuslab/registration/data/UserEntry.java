@@ -166,7 +166,8 @@ public final class UserEntry {
         }
 
         // Copy password to 'userPassword'.
-        form.set(UserAttribute.PASSWORD.key, pswd1);
+        form.removeAll(UserAttribute.PASSWORD.key);
+        form.add(UserAttribute.PASSWORD.key, pswd1);
 
         stripNonLdapAttributes(form);
     }
@@ -262,8 +263,11 @@ public final class UserEntry {
             }
         }
 
-        // Copy password to 'userPassword'.
-        form.set(UserAttribute.PASSWORD.key, pswd1);
+        // Copy password to 'userPassword' only if a new value has been set.
+        form.removeAll(UserAttribute.PASSWORD.key);
+        if (pswd1 != null) {
+            form.set(UserAttribute.PASSWORD.key, pswd1);
+        }
 
         stripNonLdapAttributes(form);
     }
@@ -272,18 +276,33 @@ public final class UserEntry {
             Hashtable<String, String> ldapEnv) {
 
         Attributes attrs = getUserAttributes(uid, ldapEnv);
-        String ldapPassword = null;
-        try {
-            ldapPassword = (String) attrs.get(UserAttribute.PASSWORD.key).get();
-        } catch (NamingException consumed) {
-            // Do nothing.
-        }
+        String ldapPassword = extractPassword(attrs);
 
         if (!currentPassword.equals(ldapPassword)) {
             throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED,
                     "incorrect password");
         }
 
+    }
+
+    public static String extractPassword(Attributes attrs) {
+
+        String ldapPassword = "";
+
+        try {
+
+            Attribute attr = attrs.get(UserAttribute.PASSWORD.key);
+            if (attr != null) {
+                byte[] bytes;
+                bytes = (byte[]) attr.get();
+                ldapPassword = new String(bytes);
+            }
+
+        } catch (NamingException consumed) {
+            // Do nothing; return empty password.
+        }
+
+        return ldapPassword;
     }
 
     public static Properties getUserProperties(String uid,
@@ -337,9 +356,17 @@ public final class UserEntry {
             NamingEnumeration<SearchResult> results = ctx.search("",
                     matchingAttrs, null);
 
-            while (results.hasMore()) {
+            if (results.hasMore()) {
                 SearchResult result = results.next();
                 attrs = result.getAttributes();
+            } else {
+                throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                        "user record not found for " + uid);
+            }
+
+            if (results.hasMore()) {
+                throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                        "multiple records found for " + uid);
             }
 
         } catch (InvalidAttributesException e) {

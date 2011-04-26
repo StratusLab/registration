@@ -47,11 +47,12 @@ public class UsersResource extends BaseResource {
 
         UserEntry.createUser(form, ldapEnv);
 
-        Reference redirectRef = getRequest().getResourceRef();
+        Reference redirectRef = getRequest().getRootRef();
+        redirectRef.addSegment("profile");
         redirectRef.addQueryParameter("message", MESSAGE);
 
         Response response = getResponse();
-        response.redirectTemporary(redirectRef);
+        response.redirectSeeOther(redirectRef);
 
         return new StringRepresentation(MESSAGE, TEXT_PLAIN);
 

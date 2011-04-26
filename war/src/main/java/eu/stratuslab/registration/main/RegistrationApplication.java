@@ -11,9 +11,9 @@ import org.restlet.routing.Router;
 import org.restlet.routing.Template;
 import org.restlet.routing.TemplateRoute;
 import org.restlet.security.ChallengeAuthenticator;
-import org.restlet.security.LocalVerifier;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.guards.LdapVerifier;
 import eu.stratuslab.registration.resources.ForceTrailingSlashResource;
 import eu.stratuslab.registration.resources.HomeResource;
 import eu.stratuslab.registration.resources.PoliciesResource;
@@ -82,7 +82,7 @@ public class RegistrationApplication extends Application {
         ChallengeAuthenticator guard = new ChallengeAuthenticator(null,
                 ChallengeScheme.HTTP_BASIC, "testRealm");
 
-        guard.setVerifier(new TestVerifier());
+        guard.setVerifier(new LdapVerifier());
 
         guard.setNext(targetClass);
 
@@ -99,15 +99,6 @@ public class RegistrationApplication extends Application {
         public void doHandle(Restlet next, Request request, Response response) {
             RequestUtils.insertAppConfiguration(request, appConfiguration);
             super.doHandle(next, request, response);
-        }
-
-    }
-
-    public static class TestVerifier extends LocalVerifier {
-
-        @Override
-        public char[] getLocalSecret(String identifier) {
-            return "secret".toCharArray();
         }
 
     }

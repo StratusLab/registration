@@ -85,7 +85,7 @@ public class ProfileResource extends BaseResource {
         redirectRef.addQueryParameter("message", MESSAGE);
 
         Response response = getResponse();
-        response.redirectTemporary(redirectRef);
+        response.redirectSeeOther(redirectRef);
 
         return new StringRepresentation(MESSAGE, TEXT_PLAIN);
 
