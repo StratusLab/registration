@@ -298,7 +298,7 @@ fi
 #####################################################
 if [ -z "$JETTY_PID" ] 
 then
-  JETTY_PID="$JETTY_RUN/persistent-disk.pid"
+  JETTY_PID="$JETTY_RUN/registration.pid"
 fi
 
 ##################################################
@@ -537,9 +537,9 @@ case "$ACTION" in
     echo "RUN_CMD        =  ${RUN_CMD[*]}"
     echo
     
-    if [ -f "$JETTY_RUN/persistent-disk.pid" ]
+    if [ -f "$JETTY_RUN/registration.pid" ]
     then
-      echo "Jetty running pid=$(< "$JETTY_RUN/persistent-disk.pid")"
+      echo "Jetty running pid=$(< "$JETTY_RUN/registration.pid")"
       exit 0
     fi
     exit 1
