@@ -182,7 +182,7 @@ if [ -z "$JETTY_HOME" ] ; then
         "/opt/stratuslab"
         )
   JETTY_DIR_NAMES=(
-        "persistent-disk"
+        "registration"
         )
         
   for L in "${STANDARD_LOCATIONS[@]}"
