@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.naming.Context;
 
@@ -34,6 +35,8 @@ import javax.naming.Context;
  */
 @SuppressWarnings("serial")
 public class LdapConfig extends Hashtable<String, String> {
+
+    private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
     private static final String LDAP_CONTEXT_FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
 
@@ -67,6 +70,10 @@ public class LdapConfig extends Hashtable<String, String> {
         cfg.put(Context.SECURITY_AUTHENTICATION, "simple");
         cfg.put(Context.SECURITY_PRINCIPAL, managerDn);
         cfg.put(Context.SECURITY_CREDENTIALS, managerPassword);
+
+        // Log the LDAP configuration parameters.
+        LOGGER.info("LDAP URL: '" + ldapUrl + "'");
+        LOGGER.info("LDAP MANAGER DN: '" + managerDn + "'");
 
         return Collections.unmodifiableMap(cfg);
     }
