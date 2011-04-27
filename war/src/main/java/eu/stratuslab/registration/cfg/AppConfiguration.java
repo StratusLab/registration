@@ -96,6 +96,7 @@ public final class AppConfiguration {
             if (f.canRead()) {
                 Properties properties = loadProperties(f);
                 validateConfiguration(properties);
+                LOGGER.info("configuration file: " + f);
                 return properties;
             }
         }
