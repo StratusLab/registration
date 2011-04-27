@@ -21,8 +21,6 @@ package eu.stratuslab.registration.resources;
 
 import static org.restlet.data.MediaType.TEXT_PLAIN;
 
-import java.util.Hashtable;
-
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Form;
@@ -33,6 +31,7 @@ import org.restlet.resource.Post;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.data.UserEntry;
+import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.Notifier;
 import eu.stratuslab.registration.utils.RequestUtils;
 
@@ -47,8 +46,7 @@ public class UsersResource extends BaseResource {
 
         Form form = RequestUtils.processWebForm(entity);
 
-        Hashtable<String, String> ldapEnv = RequestUtils
-                .extractLdapEnvironment(request);
+        LdapConfig ldapEnv = RequestUtils.extractLdapEnvironment(request);
 
         String username = UserEntry.createUser(form, ldapEnv);
 

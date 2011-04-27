@@ -1,6 +1,23 @@
-package eu.stratuslab.registration.guards;
+/*
+ Created as part of the StratusLab project (http://stratuslab.eu),
+ co-funded by the European Commission under the Grant Agreement
+ INFSO-RI-261552.
 
-import java.util.Hashtable;
+ Copyright (c) 2011, Centre National de la Recherche Scientifique (CNRS)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+package eu.stratuslab.registration.guards;
 
 import javax.naming.directory.Attributes;
 
@@ -12,6 +29,7 @@ import org.restlet.security.Verifier;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.data.UserEntry;
+import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.RequestUtils;
 
 public class LdapVerifier implements Verifier {
@@ -64,7 +82,7 @@ public class LdapVerifier implements Verifier {
 
     private static char[] getLdapPassword(String identifier, Request request) {
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
-        Hashtable<String, String> ldapEnv = cfg.getLdapEnv();
+        LdapConfig ldapEnv = cfg.getLdapConfig();
         Attributes attrs = UserEntry.getUserAttributes(identifier, ldapEnv);
         return UserEntry.extractPassword(attrs).toCharArray();
     }

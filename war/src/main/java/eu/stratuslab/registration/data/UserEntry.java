@@ -1,6 +1,24 @@
+/*
+ Created as part of the StratusLab project (http://stratuslab.eu),
+ co-funded by the European Commission under the Grant Agreement
+ INFSO-RI-261552.
+
+ Copyright (c) 2011, Centre National de la Recherche Scientifique (CNRS)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package eu.stratuslab.registration.data;
 
-import java.util.Hashtable;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -24,6 +42,7 @@ import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 
 import eu.stratuslab.registration.actions.Action;
+import eu.stratuslab.registration.utils.LdapConfig;
 
 public final class UserEntry {
 
@@ -90,7 +109,7 @@ public final class UserEntry {
 
     }
 
-    public static String createUser(Form form, Hashtable<String, String> ldapEnv) {
+    public static String createUser(Form form, LdapConfig ldapEnv) {
 
         checkUserCreateFormCorrect(form);
 
@@ -179,7 +198,7 @@ public final class UserEntry {
         form.removeAll(UserAttribute.MESSAGE.key);
     }
 
-    public static void updateUser(Form form, Hashtable<String, String> ldapEnv) {
+    public static void updateUser(Form form, LdapConfig ldapEnv) {
 
         checkUserUpdateFormCorrect(form, ldapEnv);
 
@@ -187,8 +206,7 @@ public final class UserEntry {
 
     }
 
-    public static void rawUpdateUser(Form form,
-            Hashtable<String, String> ldapEnv) {
+    public static void rawUpdateUser(Form form, LdapConfig ldapEnv) {
 
         String uid = form.getFirstValue(UserAttribute.UID.key);
         String dn = UserAttribute.UID.key + "=" + uid;
@@ -232,8 +250,7 @@ public final class UserEntry {
 
     }
 
-    public static void checkUserUpdateFormCorrect(Form form,
-            Hashtable<String, String> ldapEnv) {
+    public static void checkUserUpdateFormCorrect(Form form, LdapConfig ldapEnv) {
 
         // All required attributes exist.
         for (UserAttribute attr : UserAttribute.values()) {
@@ -272,7 +289,7 @@ public final class UserEntry {
     }
 
     public static void checkCurrentPassword(String uid, String currentPassword,
-            Hashtable<String, String> ldapEnv) {
+            LdapConfig ldapEnv) {
 
         Attributes attrs = getUserAttributes(uid, ldapEnv);
         String ldapPassword = extractPassword(attrs);
@@ -304,8 +321,7 @@ public final class UserEntry {
         return ldapPassword;
     }
 
-    public static Properties getUserProperties(String uid,
-            Hashtable<String, String> ldapEnv) {
+    public static Properties getUserProperties(String uid, LdapConfig ldapEnv) {
 
         Properties userProperties = new Properties();
 
@@ -337,8 +353,7 @@ public final class UserEntry {
         return userProperties;
     }
 
-    public static Attributes getUserAttributes(String uid,
-            Hashtable<String, String> ldapEnv) {
+    public static Attributes getUserAttributes(String uid, LdapConfig ldapEnv) {
 
         Attributes attrs = null;
 
@@ -393,8 +408,7 @@ public final class UserEntry {
         return attrs;
     }
 
-    public static String storeAction(Action action,
-            Hashtable<String, String> ldapEnv) {
+    public static String storeAction(Action action, LdapConfig ldapEnv) {
 
         String uuid = UUID.randomUUID().toString();
         String dn = "cn=" + uuid;
@@ -428,8 +442,7 @@ public final class UserEntry {
 
     }
 
-    public static Action retrieveAction(String uuid,
-            Hashtable<String, String> ldapEnv) {
+    public static Action retrieveAction(String uuid, LdapConfig ldapEnv) {
 
         String dn = "cn=" + uuid;
 
@@ -463,8 +476,7 @@ public final class UserEntry {
 
     }
 
-    public static String getEmailAddress(String uid,
-            Hashtable<String, String> ldapEnv) {
+    public static String getEmailAddress(String uid, LdapConfig ldapEnv) {
 
         String userEmail = null;
         Attributes attrs = UserEntry.getUserAttributes(uid, ldapEnv);

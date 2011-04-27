@@ -22,7 +22,6 @@ package eu.stratuslab.registration.resources;
 import static org.restlet.data.MediaType.TEXT_HTML;
 import static org.restlet.data.MediaType.TEXT_PLAIN;
 
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.restlet.Response;
@@ -38,6 +37,7 @@ import org.restlet.resource.ResourceException;
 
 import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
+import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.RequestUtils;
 
 public class ProfileResource extends BaseResource {
@@ -54,8 +54,7 @@ public class ProfileResource extends BaseResource {
 
         String uid = getBasicUsername();
 
-        Hashtable<String, String> ldapEnv = RequestUtils
-                .extractLdapEnvironment(getRequest());
+        LdapConfig ldapEnv = RequestUtils.extractLdapEnvironment(getRequest());
 
         Map<String, Object> info = createInfoStructure(NO_TITLE);
         info.put("properties", UserEntry.getUserProperties(uid, ldapEnv));
@@ -68,8 +67,7 @@ public class ProfileResource extends BaseResource {
 
         Form form = RequestUtils.processWebForm(entity);
 
-        Hashtable<String, String> ldapEnv = RequestUtils
-                .extractLdapEnvironment(getRequest());
+        LdapConfig ldapEnv = RequestUtils.extractLdapEnvironment(getRequest());
 
         String userid = getBasicUsername();
         String formUserid = form.getFirstValue(UserAttribute.UID.key);

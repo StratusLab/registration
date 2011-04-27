@@ -22,7 +22,6 @@ package eu.stratuslab.registration.resources;
 import static org.restlet.data.MediaType.TEXT_HTML;
 import static org.restlet.data.MediaType.TEXT_PLAIN;
 
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.restlet.Request;
@@ -42,6 +41,7 @@ import eu.stratuslab.registration.actions.ResetPassword;
 import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
+import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.Notifier;
 import eu.stratuslab.registration.utils.RequestUtils;
 
@@ -68,8 +68,7 @@ public class ResetResource extends BaseResource {
 
         Form form = RequestUtils.processWebForm(entity);
 
-        Hashtable<String, String> ldapEnv = RequestUtils
-                .extractLdapEnvironment(request);
+        LdapConfig ldapEnv = RequestUtils.extractLdapEnvironment(request);
 
         String formUserid = form.getFirstValue(UserAttribute.UID.key);
 

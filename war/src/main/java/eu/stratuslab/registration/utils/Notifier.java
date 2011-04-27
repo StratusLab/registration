@@ -135,7 +135,7 @@ public final class Notifier {
 
         try {
 
-            String adminEmail = cfg.getParameterValue(ADMIN_EMAIL);
+            String adminEmail = cfg.getValue(ADMIN_EMAIL);
             return new InternetAddress(adminEmail);
 
         } catch (NullPointerException e) {
@@ -150,7 +150,7 @@ public final class Notifier {
 
     private static String getMailPassword(AppConfiguration cfg) {
 
-        String value = cfg.getParameterValue(MAIL_PASSWORD);
+        String value = cfg.getValue(MAIL_PASSWORD);
         return (value != null) ? value : "";
 
     }
@@ -169,28 +169,28 @@ public final class Notifier {
 
         // Determine whether or not to use SSL. By default, SSL is not used
         // when contacting the SMTP server.
-        String useSSL = cfg.getParameterValue(MAIL_SSL);
+        String useSSL = cfg.getValue(MAIL_SSL);
         String protocol = Boolean.parseBoolean(useSSL) ? "smtps" : "smtp";
 
         props.put("mail.transport.protocol", protocol);
 
         // Set the SMTP server parameters. The host name is required; the
         // port is optional.
-        String mailHost = cfg.getParameterValue(MAIL_HOST);
+        String mailHost = cfg.getValue(MAIL_HOST);
 
         props.put("mail." + protocol + ".host", mailHost);
 
-        String mailPort = cfg.getParameterValue(MAIL_PORT);
+        String mailPort = cfg.getValue(MAIL_PORT);
         props.put("mail." + protocol + ".port", mailPort);
 
         // Set the name of the user on the SMTP server. This must be
         // specified.
-        String mailUser = cfg.getParameterValue(MAIL_USER);
+        String mailUser = cfg.getValue(MAIL_USER);
         props.put("mail." + protocol + ".user", mailUser);
 
         // Determine whether or not the debugging should be enabled for java
         // mail. If the option isn't given, then debugging will be off.
-        String mailDebug = cfg.getParameterValue(MAIL_DEBUG);
+        String mailDebug = cfg.getValue(MAIL_DEBUG);
         props.put("mail.debug", Boolean.parseBoolean(mailDebug));
 
         // Create the session object for later use.

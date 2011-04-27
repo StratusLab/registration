@@ -1,3 +1,22 @@
+/*
+ Created as part of the StratusLab project (http://stratuslab.eu),
+ co-funded by the European Commission under the Grant Agreement
+ INFSO-RI-261552.
+
+ Copyright (c) 2011, Centre National de la Recherche Scientifique (CNRS)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package eu.stratuslab.registration.cfg;
 
 import static eu.stratuslab.registration.cfg.Parameter.LDAP_BASE_DN;
@@ -14,18 +33,21 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import org.restlet.Context;
 import org.restlet.data.LocalReference;
 import org.restlet.ext.freemarker.ContextTemplateLoader;
 
-import eu.stratuslab.registration.utils.LDAPUtils;
+import eu.stratuslab.registration.utils.LdapConfig;
 import freemarker.template.Configuration;
 
 public final class AppConfiguration {
+
+    private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
     private static final String CONFIG_FILENAME = "registration.cfg";
 
@@ -33,20 +55,20 @@ public final class AppConfiguration {
 
     private final Configuration freeMarkerConfig;
 
-    private final Hashtable<String, String> ldapEnv;
+    private final Map<String, String> ldapCfgMap;
 
     public AppConfiguration(Context context) {
         List<File> configFileLocations = getConfigurationFileLocations();
         properties = getConfigurationProperties(configFileLocations);
         freeMarkerConfig = createFreeMarkerConfig(context);
 
-        ldapEnv = LDAPUtils.createLdapConnectionEnvironment(
-                getParameterValue(LDAP_SCHEME), //
-                getParameterValue(LDAP_HOST), //
-                getParameterValue(LDAP_PORT), //
-                getParameterValue(LDAP_BASE_DN), //
-                getParameterValue(LDAP_MANAGER_DN), //
-                getParameterValue(LDAP_MANAGER_PASSWORD));
+        ldapCfgMap = LdapConfig.create( //
+                getValue(LDAP_SCHEME), //
+                getValue(LDAP_HOST), //
+                getValue(LDAP_PORT), //
+                getValue(LDAP_BASE_DN), //
+                getValue(LDAP_MANAGER_DN), //
+                getValue(LDAP_MANAGER_PASSWORD));
     }
 
     private static List<File> getConfigurationFileLocations() {
@@ -88,13 +110,15 @@ public final class AppConfiguration {
             Reader reader = new FileReader(configFile);
             try {
                 properties.load(reader);
-            } catch (IOException consumed) {
-                // TODO: Add logging.
+            } catch (IOException e) {
+                LOGGER.warning("error loading properties file (" + configFile
+                        + "): " + e.getMessage());
             } finally {
                 try {
                     reader.close();
-                } catch (IOException consumed) {
-                    // TODO: Add logging.
+                } catch (IOException e) {
+                    LOGGER.warning("error closing properties file ("
+                            + configFile + "): " + e.getMessage());
                 }
             }
         } catch (FileNotFoundException consumed) {
@@ -104,24 +128,32 @@ public final class AppConfiguration {
         return properties;
     }
 
-    public String getParameterValue(Parameter parameter) {
+    public String getValue(Parameter parameter) {
         return parameter.getProperty(properties);
     }
 
-    public boolean getParameterValueAsBoolean(Parameter parameter) {
+    public boolean getValueAsBoolean(Parameter parameter) {
         return Boolean.parseBoolean(parameter.getProperty(properties));
     }
 
-    public int getParameterValueAsInt(Parameter parameter) {
+    public int getValueAsInt(Parameter parameter) {
         return Integer.parseInt(parameter.getProperty(properties));
     }
 
-    public long getParameterValueAsLong(Parameter parameter) {
+    public long getValueAsLong(Parameter parameter) {
         return Long.parseLong(parameter.getProperty(properties));
     }
 
-    public File getParameterValueAsFile(Parameter parameter) {
+    public File getValueAsFile(Parameter parameter) {
         return new File(parameter.getProperty(properties));
+    }
+
+    public Configuration getFreeMarkerConfig() {
+        return freeMarkerConfig;
+    }
+
+    public LdapConfig getLdapConfig() {
+        return new LdapConfig(ldapCfgMap);
     }
 
     private static void validateConfiguration(Properties properties) {
@@ -144,10 +176,6 @@ public final class AppConfiguration {
         }
     }
 
-    public Configuration getFreeMarkerConfig() {
-        return freeMarkerConfig;
-    }
-
     private static Configuration createFreeMarkerConfig(Context context) {
 
         Configuration cfg = new Configuration();
@@ -158,11 +186,6 @@ public final class AppConfiguration {
         cfg.setTemplateLoader(new ContextTemplateLoader(context, fmBaseRef));
 
         return cfg;
-    }
-
-    public Hashtable<String, String> getLdapEnv() {
-        // TODO: Make this more efficient.
-        return new Hashtable<String, String>(ldapEnv);
     }
 
 }
