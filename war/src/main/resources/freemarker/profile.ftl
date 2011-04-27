@@ -77,7 +77,7 @@
                      name="newUserPassword" 
                      size="40"
                      maxlength="20"
-                     title="password double check">
+                     title="new password (sequence of 8 to 20 printable characters)">
             </td>
           </tr>
           <tr>

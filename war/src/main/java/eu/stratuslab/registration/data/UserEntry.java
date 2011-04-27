@@ -46,66 +46,11 @@ import eu.stratuslab.registration.utils.LdapConfig;
 
 public final class UserEntry {
 
-    public static final String COMMON_NAME_KEY = "cn";
-
-    public static final String OBJECT_CLASS_KEY = "objectClass";
-
     private static final String DATABASE_CONNECT_ERROR = "error contacting database";
 
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
     private UserEntry() {
-
-    }
-
-    // Removes unknown keys from form and parameters with empty values.
-    // This method does NOT validate the parameters.
-    public static Form sanitizeForm(Form form) {
-
-        Form sanitizedForm = new Form();
-
-        for (Parameter parameter : form) {
-            String key = parameter.getName();
-            try {
-                UserAttribute.valueWithKey(key);
-                String value = parameter.getValue();
-                if (UserAttribute.isNotWhitespace(value)) {
-                    sanitizedForm.add(parameter);
-                }
-            } catch (IllegalArgumentException consumed) {
-                // Do not copy the parameter into the new form.
-            }
-        }
-
-        return sanitizedForm;
-    }
-
-    public static void validateEntries(Form form) {
-
-        for (Parameter parameter : form) {
-            String key = parameter.getName();
-            String value = parameter.getValue();
-
-            UserAttribute attr = UserAttribute.valueWithKey(key);
-
-            if (!attr.isValid(value)) {
-                throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
-                        "invalid " + attr.name);
-            }
-        }
-
-    }
-
-    public static void addDerivedAttributes(Form form) {
-
-        String surname = form.getFirstValue(UserAttribute.SURNAME.key);
-        String givenName = form.getFirstValue(UserAttribute.GIVEN_NAME.key);
-
-        String cn = givenName + " " + surname;
-
-        form.add(COMMON_NAME_KEY, cn);
-
-        form.add(OBJECT_CLASS_KEY, "inetOrgPerson");
 
     }
 

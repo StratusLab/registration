@@ -28,18 +28,18 @@ import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.ResourceException;
 
-public class RequestUtilsTest {
+public class FormUtilsTest {
 
     @Test(expected = ResourceException.class)
     public void nullEntityThrowsException() {
-        RequestUtils.validateInputForm(null);
+        FormUtils.validateInputForm(null);
     }
 
     @Test(expected = ResourceException.class)
     public void wrongMediaTypeThrowsException() {
         Representation entity = new StringRepresentation("",
                 MediaType.TEXT_PLAIN);
-        RequestUtils.validateInputForm(entity);
+        FormUtils.validateInputForm(entity);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class RequestUtilsTest {
 
         Form form = new Form();
         form.add("key", "value");
-        Form recoveredForm = RequestUtils.validateInputForm(form
+        Form recoveredForm = FormUtils.validateInputForm(form
                 .getWebRepresentation());
         assertEquals(form, recoveredForm);
     }

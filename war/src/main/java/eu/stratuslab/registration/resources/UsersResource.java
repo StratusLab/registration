@@ -30,25 +30,36 @@ import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Post;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
+import eu.stratuslab.registration.utils.FormUtils;
 import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.Notifier;
 import eu.stratuslab.registration.utils.RequestUtils;
 
 public class UsersResource extends BaseResource {
 
-    private static final String MESSAGE = "user created";
+    private static final String MESSAGE = "account created";
+
+    private static final String ADMIN_NOTIFICATION_MESSAGE = //
+    "A new user has registered (%s, %s).\n\n%s\n\n" + //
+            "Please review the users' information.\n" + //
+            "Send an email to the user when the account has been activated.\n";
 
     @Post
     public Representation createUser(Representation entity) {
 
         Request request = getRequest();
 
-        Form form = RequestUtils.processWebForm(entity);
+        Form form = FormUtils.processWebForm(entity);
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapEnvironment(request);
+        String userEmail = form.getFirstValue(UserAttribute.EMAIL.key);
+        String userMsg = form.getFirstValue(UserAttribute.MESSAGE.key);
 
-        String username = UserEntry.createUser(form, ldapEnv);
+        AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
+        LdapConfig ldapConfig = cfg.getLdapConfig();
+
+        String userId = UserEntry.createUser(form, ldapConfig);
 
         Reference redirectRef = getRequest().getRootRef();
         redirectRef.addSegment("profile");
@@ -57,8 +68,9 @@ public class UsersResource extends BaseResource {
         Response response = getResponse();
         response.redirectSeeOther(redirectRef);
 
-        AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
-        String message = "new user created: " + username;
+        String message = String.format(ADMIN_NOTIFICATION_MESSAGE, userId,
+                userEmail, userMsg);
+
         Notifier.sendAdminNotification(message, cfg);
 
         return new StringRepresentation(MESSAGE, TEXT_PLAIN);

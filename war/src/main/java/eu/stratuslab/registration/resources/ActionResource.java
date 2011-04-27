@@ -42,7 +42,7 @@ public class ActionResource extends BaseResource {
 
         String uuid = (String) request.getAttributes().get("uuid");
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapEnvironment(request);
+        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request);
 
         Action action = UserEntry.retrieveAction(uuid, ldapEnv);
 

@@ -37,6 +37,17 @@ import eu.stratuslab.registration.utils.RequestUtils;
 @SuppressWarnings("serial")
 public class ResetPassword implements Action {
 
+    private static final String EMAIL_MESSAGE_TEMPLATE = //
+    "Your password has been reset to '%s'.\n\n" + //
+            "Change this password as soon as possible by updating your profile.\n";
+
+    private static final String EMAIL_SENT_MESSAGE = //
+    "An email with your new password has been sent.";
+
+    private static final String EMAIL_ABORT_MESSAGE = //
+    "The request to update your password has been canceled.\n"
+            + "Your password has NOT been changed.\n";
+
     private String identifier;
 
     private String email;
@@ -47,8 +58,7 @@ public class ResetPassword implements Action {
     }
 
     public String abort(Request request) {
-        return "The request to update your password has been aborted.\n"
-                + "You password has NOT been changed.\n";
+        return EMAIL_ABORT_MESSAGE;
     }
 
     public String execute(Request request) {
@@ -59,14 +69,13 @@ public class ResetPassword implements Action {
         form.add(UserAttribute.UID.key, identifier);
         form.add(UserAttribute.PASSWORD.key, newPassword);
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapEnvironment(request);
+        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request);
 
         UserEntry.rawUpdateUser(form, ldapEnv);
 
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
 
-        String message = String.format("Your new password is '%s'.",
-                newPassword);
+        String message = String.format(EMAIL_MESSAGE_TEMPLATE, newPassword);
 
         try {
             Notifier.sendNotification(email, message, cfg);
@@ -76,7 +85,7 @@ public class ResetPassword implements Action {
                     "error sending email");
         }
 
-        return String.format("An email with your new password has been sent.");
+        return EMAIL_SENT_MESSAGE;
     }
 
     private static String randomPassword() {

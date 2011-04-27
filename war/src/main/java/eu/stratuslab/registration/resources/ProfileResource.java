@@ -37,6 +37,7 @@ import org.restlet.resource.ResourceException;
 
 import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
+import eu.stratuslab.registration.utils.FormUtils;
 import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.RequestUtils;
 
@@ -54,7 +55,7 @@ public class ProfileResource extends BaseResource {
 
         String uid = getBasicUsername();
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapEnvironment(getRequest());
+        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(getRequest());
 
         Map<String, Object> info = createInfoStructure(NO_TITLE);
         info.put("properties", UserEntry.getUserProperties(uid, ldapEnv));
@@ -65,9 +66,9 @@ public class ProfileResource extends BaseResource {
     @Put
     public Representation updateUser(Representation entity) {
 
-        Form form = RequestUtils.processWebForm(entity);
+        Form form = FormUtils.processWebForm(entity);
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapEnvironment(getRequest());
+        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(getRequest());
 
         String userid = getBasicUsername();
         String formUserid = form.getFirstValue(UserAttribute.UID.key);

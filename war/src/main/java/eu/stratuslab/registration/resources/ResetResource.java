@@ -41,6 +41,7 @@ import eu.stratuslab.registration.actions.ResetPassword;
 import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
+import eu.stratuslab.registration.utils.FormUtils;
 import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.Notifier;
 import eu.stratuslab.registration.utils.RequestUtils;
@@ -48,6 +49,10 @@ import eu.stratuslab.registration.utils.RequestUtils;
 public class ResetResource extends BaseResource {
 
     private static final String MESSAGE = "password reset message sent";
+
+    private static final String EMAIL_MESSAGE_TEMPLATE = //
+    "Visit this URL to reset your password: \n\n%1$s\n\n" + //
+            "To cancel the request, follow this link: \n\n%1$s?abort=true\n\n";
 
     @Get("html")
     public Representation toHtml() {
@@ -66,9 +71,9 @@ public class ResetResource extends BaseResource {
 
         Request request = getRequest();
 
-        Form form = RequestUtils.processWebForm(entity);
+        Form form = FormUtils.processWebForm(entity);
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapEnvironment(request);
+        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request);
 
         String formUserid = form.getFirstValue(UserAttribute.UID.key);
 
@@ -107,8 +112,6 @@ public class ResetResource extends BaseResource {
         }
         url.append("action/");
         url.append(actionId);
-        return String.format(
-                "Visit the following URL to reset your password: \n%s\n", url
-                        .toString());
+        return String.format(EMAIL_MESSAGE_TEMPLATE, url.toString());
     }
 }

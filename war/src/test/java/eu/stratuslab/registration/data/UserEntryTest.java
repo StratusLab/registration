@@ -27,6 +27,8 @@ import org.junit.Test;
 import org.restlet.data.Form;
 import org.restlet.resource.ResourceException;
 
+import eu.stratuslab.registration.utils.FormUtils;
+
 public class UserEntryTest {
 
     @Test
@@ -38,7 +40,7 @@ public class UserEntryTest {
             form.add(attr.key, "value");
         }
 
-        form = UserEntry.sanitizeForm(form);
+        form = FormUtils.sanitizeForm(form);
 
         for (UserAttribute attr : UserAttribute.values()) {
             "value".equals(form.getFirstValue(attr.key));
@@ -56,7 +58,7 @@ public class UserEntryTest {
             form.add(attr.key, "\t \f");
         }
 
-        form = UserEntry.sanitizeForm(form);
+        form = FormUtils.sanitizeForm(form);
 
         for (UserAttribute attr : UserAttribute.values()) {
             if (form.getFirstValue(attr.key) != null) {
@@ -76,7 +78,7 @@ public class UserEntryTest {
             form.add(attr.key + "-unknown", "value");
         }
 
-        form = UserEntry.sanitizeForm(form);
+        form = FormUtils.sanitizeForm(form);
 
         // Will throw an exception if unknown key is found.
         for (String key : form.getNames()) {
@@ -92,7 +94,7 @@ public class UserEntryTest {
 
         form.add(UserAttribute.UID.key, "bad username");
 
-        UserEntry.validateEntries(form);
+        FormUtils.validateEntries(form);
 
     }
 
@@ -103,7 +105,7 @@ public class UserEntryTest {
 
         form.add("badkey", "bad value");
 
-        UserEntry.validateEntries(form);
+        FormUtils.validateEntries(form);
 
     }
 
@@ -119,13 +121,13 @@ public class UserEntryTest {
         form.add(UserAttribute.GIVEN_NAME.key, first);
         form.add(UserAttribute.SURNAME.key, last);
 
-        UserEntry.addDerivedAttributes(form);
+        FormUtils.addDerivedAttributes(form);
 
         // Common name (CN) is correct.
-        assertEquals(expected, form.getFirstValue(UserEntry.COMMON_NAME_KEY));
+        assertEquals(expected, form.getFirstValue(FormUtils.COMMON_NAME_KEY));
 
         // Object class attribute was added.
-        assertNotNull(form.getFirstValue(UserEntry.OBJECT_CLASS_KEY));
+        assertNotNull(form.getFirstValue(FormUtils.OBJECT_CLASS_KEY));
 
     }
 

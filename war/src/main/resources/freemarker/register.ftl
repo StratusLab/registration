@@ -13,6 +13,10 @@
       on the StratusLab reference cloud infrastructures.
     </p>
     <p>
+      You will be notified by an administrator when your account
+      is active.
+    </p>
+    <p>
       <strong>All fields are mandatory.</strong> 
     </p>
 
