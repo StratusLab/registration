@@ -57,7 +57,7 @@ public class ProfileResource extends BaseResource {
         Hashtable<String, String> ldapEnv = RequestUtils
                 .extractLdapEnvironment(getRequest());
 
-        Map<String, Object> info = createInfoStructure(null);
+        Map<String, Object> info = createInfoStructure(NO_TITLE);
         info.put("properties", UserEntry.getUserProperties(uid, ldapEnv));
 
         return templateRepresentation(templateName, info, mediaType);

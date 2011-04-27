@@ -57,7 +57,7 @@ public class ResetResource extends BaseResource {
     private Representation toRepresentation(String templateName,
             MediaType mediaType) {
 
-        Map<String, Object> info = createInfoStructure(null);
+        Map<String, Object> info = createInfoStructure(NO_TITLE);
         return templateRepresentation(templateName, info, mediaType);
     }
 
@@ -77,7 +77,7 @@ public class ResetResource extends BaseResource {
 
         Action action = new ResetPassword(formUserid, userEmail);
 
-        String actionId = UserEntry.createAction(action, ldapEnv);
+        String actionId = UserEntry.storeAction(action, ldapEnv);
 
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
 

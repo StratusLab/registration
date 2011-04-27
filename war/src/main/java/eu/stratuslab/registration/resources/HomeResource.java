@@ -11,7 +11,7 @@ public class HomeResource extends BaseResource {
     @Get("html")
     public Representation toHtml() {
 
-        Map<String, Object> info = createInfoStructure(null);
+        Map<String, Object> info = createInfoStructure(NO_TITLE);
 
         return templateRepresentation("home.ftl", info, MediaType.TEXT_HTML);
     }

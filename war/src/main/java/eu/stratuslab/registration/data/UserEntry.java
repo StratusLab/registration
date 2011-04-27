@@ -3,8 +3,10 @@ package eu.stratuslab.registration.data;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.naming.AuthenticationException;
+import javax.naming.Context;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -30,6 +32,8 @@ public final class UserEntry {
     public static final String OBJECT_CLASS_KEY = "objectClass";
 
     private static final String DATABASE_CONNECT_ERROR = "error contacting database";
+
+    private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
     private UserEntry() {
 
@@ -133,15 +137,7 @@ public final class UserEntry {
                     DATABASE_CONNECT_ERROR);
 
         } finally {
-
-            // Return the connection to the pool.
-            if (ctx != null) {
-                try {
-                    ctx.close();
-                } catch (NamingException consumed) {
-                    // TODO: Log this.
-                }
-            }
+            freeContext(ctx);
         }
 
         return uid;
@@ -231,15 +227,7 @@ public final class UserEntry {
                     DATABASE_CONNECT_ERROR);
 
         } finally {
-
-            // Return the connection to the pool.
-            if (ctx != null) {
-                try {
-                    ctx.close();
-                } catch (NamingException consumed) {
-                    // TODO: Log this.
-                }
-            }
+            freeContext(ctx);
         }
 
     }
@@ -399,21 +387,13 @@ public final class UserEntry {
                     DATABASE_CONNECT_ERROR);
 
         } finally {
-
-            // Return the connection to the pool.
-            if (ctx != null) {
-                try {
-                    ctx.close();
-                } catch (NamingException consumed) {
-                    // TODO: Log this.
-                }
-            }
+            freeContext(ctx);
         }
 
         return attrs;
     }
 
-    public static String createAction(Action action,
+    public static String storeAction(Action action,
             Hashtable<String, String> ldapEnv) {
 
         String uuid = UUID.randomUUID().toString();
@@ -431,20 +411,8 @@ public final class UserEntry {
         } catch (NameAlreadyBoundException e) {
 
             e.printStackTrace();
-            throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     "entry exists: " + dn);
-
-        } catch (InvalidAttributesException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "incomplete user entry");
-
-        } catch (AuthenticationException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    DATABASE_CONNECT_ERROR);
 
         } catch (NamingException e) {
 
@@ -453,15 +421,7 @@ public final class UserEntry {
                     DATABASE_CONNECT_ERROR);
 
         } finally {
-
-            // Return the connection to the pool.
-            if (ctx != null) {
-                try {
-                    ctx.close();
-                } catch (NamingException consumed) {
-                    // TODO: Log this.
-                }
-            }
+            freeContext(ctx);
         }
 
         return uuid;
@@ -471,6 +431,8 @@ public final class UserEntry {
     public static Action retrieveAction(String uuid,
             Hashtable<String, String> ldapEnv) {
 
+        String dn = "cn=" + uuid;
+
         // Get a connection from the pool.
         DirContext ctx = null;
 
@@ -478,25 +440,16 @@ public final class UserEntry {
 
             ctx = new InitialDirContext(ldapEnv);
 
-            String dn = "cn=" + uuid;
-
             Action action = (Action) ctx.lookup(dn);
 
-            System.err.println("ACTION DN" + dn);
+            try {
+                ctx.destroySubcontext(dn);
+            } catch (NamingException e) {
+                LOGGER.warning("cannot delete action (" + dn + "): "
+                        + e.getMessage());
+            }
 
             return action;
-
-        } catch (InvalidAttributesException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "incomplete user entry");
-
-        } catch (AuthenticationException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    DATABASE_CONNECT_ERROR);
 
         } catch (NamingException e) {
 
@@ -505,15 +458,7 @@ public final class UserEntry {
                     DATABASE_CONNECT_ERROR);
 
         } finally {
-
-            // Return the connection to the pool.
-            if (ctx != null) {
-                try {
-                    ctx.close();
-                } catch (NamingException consumed) {
-                    // TODO: Log this.
-                }
-            }
+            freeContext(ctx);
         }
 
     }
@@ -538,6 +483,17 @@ public final class UserEntry {
         }
 
         return userEmail;
+    }
+
+    private static void freeContext(Context ctx) {
+        if (ctx != null) {
+            try {
+                ctx.close();
+            } catch (NamingException e) {
+                LOGGER.warning("cannot free directory context: "
+                        + e.getMessage());
+            }
+        }
     }
 
 }

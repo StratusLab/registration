@@ -13,6 +13,8 @@ import freemarker.template.Configuration;
 
 public class BaseResource extends ServerResource {
 
+    protected static final String NO_TITLE = null;
+
     protected TemplateRepresentation templateRepresentation(String tpl,
             Map<String, Object> info, MediaType mediaType) {
 
