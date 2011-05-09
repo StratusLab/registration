@@ -65,6 +65,15 @@
             </td>
           </tr>
           <tr>
+            <td>X500 DN</td>
+            <td>
+              <input type="text" 
+                     name="x500uniqueIdentifier" 
+                     size="40" 
+                     title="certificate DN">
+            </td>
+          </tr>
+          <tr>
             <td>Password</td>
             <td>
               <input type="password" 

@@ -61,6 +61,16 @@
             </td>
           </tr>
           <tr>
+            <td>X500 DN</td>
+            <td>
+              <input type="text" 
+                     name="x500uniqueIdentifier" 
+                     size="40" 
+                     value="${properties['x500uniqueIdentifier']}"
+                     title="certificate DN">
+            </td>
+          </tr>
+          <tr>
             <td>Current Password</td>
             <td>
               <input type="password" 

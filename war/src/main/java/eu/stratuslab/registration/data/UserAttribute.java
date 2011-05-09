@@ -57,6 +57,13 @@ public enum UserAttribute {
         }
     }, //
 
+    X500_DN("x500uniqueIdentifier", "X500 DN", true, true, false) {
+        @Override
+        public boolean isValid(Object o) {
+            return isNotWhitespace(o);
+        }
+    }, //
+
     PASSWORD("userPassword", "password", true, false, true) {
         @Override
         public boolean isValid(Object o) {
