@@ -57,7 +57,7 @@ public enum UserAttribute {
         }
     }, //
 
-    X500_DN("x500uniqueIdentifier", "X500 DN", true, true, false) {
+    X500_DN("seeAlso", "X500 DN", true, true, false) {
         @Override
         public boolean isValid(Object o) {
             return isNotWhitespace(o);

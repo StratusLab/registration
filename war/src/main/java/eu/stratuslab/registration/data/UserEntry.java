@@ -104,7 +104,59 @@ public final class UserEntry {
             freeContext(ctx);
         }
 
+        // createCertDnEntry(dn, form, ldapEnv);
+
         return uid;
+    }
+
+    public static void createCertDnEntry(String userDN, Form form,
+            LdapConfig ldapEnv) {
+
+        String certDN = form.getFirstValue(UserAttribute.X500_DN.key);
+
+        // Get a connection from the pool.
+        DirContext ctx = null;
+
+        try {
+
+            ctx = new InitialDirContext(ldapEnv);
+
+            // Copy all of the attributes.
+            Attributes attrs = new BasicAttributes(true);
+            attrs.put("objectClass", "alias");
+            attrs.put("objectClass", "extensibleObject");
+            attrs.put("aliasedObjectName", userDN);
+
+            ctx.createSubcontext(certDN, attrs);
+
+        } catch (NameAlreadyBoundException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
+                    "certificate DN (" + certDN + ") already exists");
+
+        } catch (InvalidAttributesException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    "incomplete user entry");
+
+        } catch (AuthenticationException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        } catch (NamingException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        } finally {
+            freeContext(ctx);
+        }
+
     }
 
     public static void checkUserCreateFormCorrect(Form form) {

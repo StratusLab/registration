@@ -68,7 +68,7 @@
             <td>X500 DN</td>
             <td>
               <input type="text" 
-                     name="x500uniqueIdentifier" 
+                     name="seeAlso" 
                      size="40" 
                      title="certificate DN">
             </td>

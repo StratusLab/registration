@@ -64,9 +64,9 @@
             <td>X500 DN</td>
             <td>
               <input type="text" 
-                     name="x500uniqueIdentifier" 
+                     name="seeAlso" 
                      size="40" 
-                     value="${properties['x500uniqueIdentifier']}"
+                     value="${properties['seeAlso']!}"
                      title="certificate DN">
             </td>
           </tr>
