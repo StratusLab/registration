@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
 
 public enum UserAttribute {
 
@@ -60,7 +62,7 @@ public enum UserAttribute {
     X500_DN("seeAlso", "X500 DN", true, true, false) {
         @Override
         public boolean isValid(Object o) {
-            return isNotWhitespace(o);
+            return isWhitespace(o) || isValidCertificateDN(o);
         }
     }, //
 
@@ -162,6 +164,22 @@ public enum UserAttribute {
         return true;
     }
 
+    public static boolean isValidCertificateDN(Object name) {
+
+        if (name == null) {
+            return false;
+        }
+
+        String dn = name.toString();
+
+        try {
+            LdapName ldapName = new LdapName(dn);
+            return (!ldapName.isEmpty());
+        } catch (InvalidNameException e) {
+            return false;
+        }
+    }
+
     public static boolean isValidEmailAddress(Object email) {
 
         if (email == null) {
@@ -180,17 +198,18 @@ public enum UserAttribute {
         }
     }
 
-    public static boolean isNotWhitespace(Object string) {
+    public static boolean isWhitespace(Object string) {
+
         if (string == null) {
-            return false;
+            return true;
         }
 
         Matcher matcher = WHITESPACE_ONLY.matcher(string.toString());
-        if (matcher.matches()) {
-            return false;
-        }
+        return matcher.matches();
+    }
 
-        return true;
+    public static boolean isNotWhitespace(Object string) {
+        return !isWhitespace(string);
     }
 
     public static boolean isValidPassword(Object password) {

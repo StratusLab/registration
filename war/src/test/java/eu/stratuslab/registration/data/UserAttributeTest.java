@@ -97,6 +97,7 @@ public class UserAttributeTest {
 
         for (String s : whitespaceStrings) {
             assertFalse(UserAttribute.isNotWhitespace(s));
+            assertTrue(UserAttribute.isWhitespace(s));
         }
 
     }
@@ -109,6 +110,7 @@ public class UserAttributeTest {
 
         for (String s : whitespaceStrings) {
             assertTrue(UserAttribute.isNotWhitespace(s));
+            assertFalse(UserAttribute.isWhitespace(s));
         }
 
     }
@@ -135,6 +137,26 @@ public class UserAttributeTest {
             assertTrue(UserAttribute.isValidPassword(password));
         }
 
+    }
+
+    @Test
+    public void invalidLdapNames() {
+        String[] invalidLdapNames = new String[] { "", " ", "\t",
+                "Invalid String" };
+
+        for (String name : invalidLdapNames) {
+            assertFalse(UserAttribute.isValidCertificateDN(name));
+        }
+    }
+
+    @Test
+    public void validLdapNames() {
+        String[] validLdapNames = new String[] { "CN=Joe Smith",
+                "CN=Jane Smith, C=US" };
+
+        for (String name : validLdapNames) {
+            assertTrue(UserAttribute.isValidCertificateDN(name));
+        }
     }
 
 }
