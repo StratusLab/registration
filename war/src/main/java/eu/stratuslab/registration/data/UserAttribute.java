@@ -59,7 +59,7 @@ public enum UserAttribute {
         }
     }, //
 
-    X500_DN("seeAlso", "X500 DN", true, true, false) {
+    X500_DN("seeAlso", "X500 DN", true, false, false) {
         @Override
         public boolean isValid(Object o) {
             return isWhitespace(o) || isValidCertificateDN(o);

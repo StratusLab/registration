@@ -39,6 +39,7 @@ import org.restlet.resource.ResourceException;
 import eu.stratuslab.registration.actions.Action;
 import eu.stratuslab.registration.actions.ResetPassword;
 import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.data.ActionEntry;
 import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
 import eu.stratuslab.registration.utils.FormUtils;
@@ -81,7 +82,7 @@ public class ResetResource extends BaseResource {
 
         Action action = new ResetPassword(formUserid, userEmail);
 
-        String actionId = UserEntry.storeAction(action, ldapEnv);
+        String actionId = ActionEntry.storeAction(action, ldapEnv);
 
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
 

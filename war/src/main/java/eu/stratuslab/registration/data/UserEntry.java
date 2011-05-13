@@ -20,7 +20,6 @@
 package eu.stratuslab.registration.data;
 
 import java.util.Properties;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.naming.AuthenticationException;
@@ -41,7 +40,6 @@ import org.restlet.data.Parameter;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 
-import eu.stratuslab.registration.actions.Action;
 import eu.stratuslab.registration.utils.LdapConfig;
 
 public final class UserEntry {
@@ -169,6 +167,14 @@ public final class UserEntry {
                             Status.CLIENT_ERROR_BAD_REQUEST, "missing "
                                     + attr.key);
                 }
+            }
+        }
+
+        // If certificate DN is just white space, then remove the attribute.
+        String dn = form.getFirstValue(UserAttribute.X500_DN.key);
+        if (dn != null) {
+            if (UserAttribute.isWhitespace(dn)) {
+                form.removeAll(UserAttribute.X500_DN.key);
             }
         }
 
@@ -403,74 +409,6 @@ public final class UserEntry {
         }
 
         return attrs;
-    }
-
-    public static String storeAction(Action action, LdapConfig ldapEnv) {
-
-        String uuid = UUID.randomUUID().toString();
-        String dn = "cn=" + uuid;
-
-        // Get a connection from the pool.
-        DirContext ctx = null;
-
-        try {
-
-            ctx = new InitialDirContext(ldapEnv);
-
-            ctx.bind(dn, action);
-
-        } catch (NameAlreadyBoundException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "entry exists: " + dn);
-
-        } catch (NamingException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    DATABASE_CONNECT_ERROR);
-
-        } finally {
-            freeContext(ctx);
-        }
-
-        return uuid;
-
-    }
-
-    public static Action retrieveAction(String uuid, LdapConfig ldapEnv) {
-
-        String dn = "cn=" + uuid;
-
-        // Get a connection from the pool.
-        DirContext ctx = null;
-
-        try {
-
-            ctx = new InitialDirContext(ldapEnv);
-
-            Action action = (Action) ctx.lookup(dn);
-
-            try {
-                ctx.destroySubcontext(dn);
-            } catch (NamingException e) {
-                LOGGER.warning("cannot delete action (" + dn + "): "
-                        + e.getMessage());
-            }
-
-            return action;
-
-        } catch (NamingException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    DATABASE_CONNECT_ERROR);
-
-        } finally {
-            freeContext(ctx);
-        }
-
     }
 
     public static String getEmailAddress(String uid, LdapConfig ldapEnv) {

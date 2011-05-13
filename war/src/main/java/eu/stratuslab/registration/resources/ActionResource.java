@@ -29,7 +29,7 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
 
 import eu.stratuslab.registration.actions.Action;
-import eu.stratuslab.registration.data.UserEntry;
+import eu.stratuslab.registration.data.ActionEntry;
 import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.RequestUtils;
 
@@ -44,7 +44,7 @@ public class ActionResource extends BaseResource {
 
         LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request);
 
-        Action action = UserEntry.retrieveAction(uuid, ldapEnv);
+        Action action = ActionEntry.retrieveAction(uuid, ldapEnv);
 
         boolean abort = abortAction(request.getResourceRef());
         String msg = (abort) ? action.abort(request) : action.execute(request);
