@@ -67,7 +67,7 @@
                      name="seeAlso" 
                      size="40" 
                      value="${properties['seeAlso']!}"
-                     title="certificate DN">
+                     title="certificate DN in RFC2253 format">
             </td>
           </tr>
           <tr>

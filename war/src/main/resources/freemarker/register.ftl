@@ -70,7 +70,7 @@
               <input type="text" 
                      name="seeAlso" 
                      size="40" 
-                     title="certificate DN">
+                     title="certificate DN in RFC2253 format">
             </td>
           </tr>
           <tr>
