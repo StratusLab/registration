@@ -22,6 +22,8 @@ package eu.stratuslab.registration.actions;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
+import javax.naming.directory.DirContext;
+
 import org.restlet.Request;
 import org.restlet.data.Form;
 import org.restlet.data.Status;
@@ -66,12 +68,12 @@ public class ResetPassword implements Action {
         String newPassword = randomPassword();
 
         Form form = new Form();
-        form.add(UserAttribute.UID.key, identifier);
         form.add(UserAttribute.PASSWORD.key, newPassword);
 
         LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request);
 
-        UserEntry.rawUpdateUser(form, ldapEnv);
+        UserEntry.rawUpdateUser(identifier, DirContext.REPLACE_ATTRIBUTE, form,
+                ldapEnv);
 
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
 
