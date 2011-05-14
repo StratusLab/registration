@@ -31,6 +31,10 @@ public class Base64 {
         return res;
     }
 
+    public static byte[] decode(String s) {
+        return decode(s.getBytes());
+    }
+
     public static byte[] decode(byte[] b) {
         byte[] res = null;
 
