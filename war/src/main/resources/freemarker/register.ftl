@@ -13,8 +13,11 @@
       on the StratusLab reference cloud infrastructures.
     </p>
     <p>
-      You will be notified by an administrator when your account
-      is active.
+      You will be redirected to your profile page (and prompted
+      for your username/password) after registration. 
+    </p>
+    <p>
+      An administrator will notify you when your account is active.
     </p>
     <p>
       <strong>All fields are mandatory.</strong> 

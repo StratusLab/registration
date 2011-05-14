@@ -19,7 +19,16 @@
  */
 package eu.stratuslab.registration.utils;
 
+import static eu.stratuslab.registration.data.UserAttribute.GIVEN_NAME;
+import static eu.stratuslab.registration.data.UserAttribute.NEW_PASSWORD;
+import static eu.stratuslab.registration.data.UserAttribute.NEW_PASSWORD_CHECK;
+import static eu.stratuslab.registration.data.UserAttribute.PASSWORD;
+import static eu.stratuslab.registration.data.UserAttribute.SURNAME;
+import static eu.stratuslab.registration.data.UserAttribute.X500_DN;
 import static org.restlet.data.MediaType.APPLICATION_WWW_FORM;
+
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
 
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
@@ -70,6 +79,22 @@ public final class FormUtils {
 
     }
 
+    public static void validateEntries(Form form) {
+
+        for (Parameter parameter : form) {
+            String key = parameter.getName();
+            String value = parameter.getValue();
+
+            UserAttribute attr = UserAttribute.valueWithKey(key);
+
+            if (!attr.isValid(value)) {
+                throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
+                        "invalid " + attr.name);
+            }
+        }
+
+    }
+
     // Removes unknown keys from form and parameters with empty values.
     // This method does NOT validate the parameters.
     public static Form sanitizeForm(Form form) {
@@ -92,26 +117,49 @@ public final class FormUtils {
         return sanitizedForm;
     }
 
-    public static void validateEntries(Form form) {
-
-        for (Parameter parameter : form) {
-            String key = parameter.getName();
-            String value = parameter.getValue();
-
-            UserAttribute attr = UserAttribute.valueWithKey(key);
-
-            if (!attr.isValid(value)) {
-                throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
-                        "invalid " + attr.name);
+    public static void allCreateAttributesExist(Form form) {
+        for (UserAttribute attr : UserAttribute.values()) {
+            if (attr.isRequiredForCreate) {
+                if (form.getFirstValue(attr.key) == null) {
+                    throw new ResourceException(
+                            Status.CLIENT_ERROR_BAD_REQUEST, "missing "
+                                    + attr.key);
+                }
             }
         }
+    }
 
+    public static void allUpdateAttributesExist(Form form) {
+        for (UserAttribute attr : UserAttribute.values()) {
+            if (attr.isRequiredForUpdate) {
+                if (form.getFirstValue(attr.key) == null) {
+                    throw new ResourceException(
+                            Status.CLIENT_ERROR_BAD_REQUEST, "missing "
+                                    + attr.key);
+                }
+            }
+        }
+    }
+
+    public static void removeUnmodifiableAttributes(Form form) {
+        for (UserAttribute attr : UserAttribute.values()) {
+            if (!attr.isModifiable) {
+                form.removeAll(attr.key);
+            }
+        }
+    }
+
+    public static void stripNonLdapAttributes(Form form) {
+        form.removeAll(NEW_PASSWORD.key);
+        form.removeAll(NEW_PASSWORD_CHECK.key);
+        form.removeAll(UserAttribute.AGREEMENT.key);
+        form.removeAll(UserAttribute.MESSAGE.key);
     }
 
     public static void addDerivedAttributes(Form form) {
 
-        String surname = form.getFirstValue(UserAttribute.SURNAME.key);
-        String givenName = form.getFirstValue(UserAttribute.GIVEN_NAME.key);
+        String surname = form.getFirstValue(SURNAME.key);
+        String givenName = form.getFirstValue(GIVEN_NAME.key);
 
         String cn = givenName + " " + surname;
 
@@ -119,6 +167,115 @@ public final class FormUtils {
 
         form.add(OBJECT_CLASS_KEY, "inetOrgPerson");
 
+    }
+
+    public static void removeIdenticalAttributes(Form currentForm,
+            Form updatedForm) {
+
+        Form intersection = new Form();
+        intersection.addAll(updatedForm);
+        intersection.retainAll(currentForm);
+
+        currentForm.removeAll(intersection);
+        updatedForm.removeAll(intersection);
+
+    }
+
+    public static Form removeAllNamedParameters(Form base,
+            Form unwantedParameters) {
+
+        Form form = new Form();
+        form.addAll(base);
+        for (String name : unwantedParameters.getNames()) {
+            form.removeAll(name);
+        }
+        return form;
+    }
+
+    public static Form retainAllNamedParameters(Form base,
+            Form retainedParameters) {
+
+        Form form = new Form();
+        form.addAll(base);
+        for (String name : form.getNames()) {
+            if (retainedParameters.getFirstValue(name) == null) {
+                form.removeAll(name);
+            }
+        }
+        return form;
+    }
+
+    public static String checkNewPasswords(Form form) {
+
+        // Get the new password values.
+        String pswd1 = form.getFirstValue(NEW_PASSWORD.key);
+        String pswd2 = form.getFirstValue(NEW_PASSWORD_CHECK.key);
+
+        // Check for consistency, keeping in mind that this is optional.
+        if (pswd1 != null || pswd2 != null) {
+            if (pswd1 == null || !pswd1.equals(pswd2)) {
+                throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
+                        "mismatched passwords");
+            }
+        }
+
+        // Remove the new password fields from the form.
+        form.removeAll(NEW_PASSWORD.key);
+        form.removeAll(NEW_PASSWORD_CHECK.key);
+
+        return pswd1;
+    }
+
+    public static void canonicalizeCertificateDN(Form form) {
+
+        // If certificate DN is just white space, then remove the attribute.
+        String dn = form.getFirstValue(X500_DN.key);
+        form.removeAll(X500_DN.key);
+        if (dn != null && UserAttribute.isNotWhitespace(dn)) {
+            try {
+                LdapName name = new LdapName(dn);
+                String canonicalizedDN = name.toString();
+                form.add(X500_DN.key, canonicalizedDN);
+            } catch (InvalidNameException consumed) {
+                // Should have previously been detected. Just ignore here.
+            }
+        }
+    }
+
+    public static String checkCurrentPassword(Form currentForm, Form updateForm) {
+
+        String currentPassword = currentForm.getFirstValue(PASSWORD.key);
+
+        String updatePassword = updateForm.getFirstValue(PASSWORD.key);
+
+        if (currentPassword == null || !currentPassword.equals(updatePassword)) {
+            throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED,
+                    "incorrect password");
+        }
+
+        return currentPassword;
+    }
+
+    public static void copyNameAttributes(Form currentForm, Form updateForm) {
+
+        String currentSurname = currentForm.getFirstValue(SURNAME.key);
+        if (updateForm.getFirstValue(SURNAME.key) == null) {
+            updateForm.add(SURNAME.key, currentSurname);
+        }
+
+        String currentGivenName = currentForm.getFirstValue(GIVEN_NAME.key);
+        if (updateForm.getFirstValue(GIVEN_NAME.key) == null) {
+            updateForm.add(GIVEN_NAME.key, currentGivenName);
+        }
+
+    }
+
+    public static void setNewPasswordInForm(String currentPassword,
+            String newPassword, Form form) {
+
+        form.removeAll(PASSWORD.key);
+        String newValue = (newPassword != null) ? newPassword : currentPassword;
+        form.set(PASSWORD.key, newValue);
     }
 
 }

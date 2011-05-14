@@ -9,7 +9,8 @@
     <#include "breadcrumbs.ftl">
      
     <p>
-      You can update your profile by submitting this form with new values. 
+      Submit this form with new values (and your current
+      password) to update your account.
     </p>
 
     <form id="form_with_tooltips" 

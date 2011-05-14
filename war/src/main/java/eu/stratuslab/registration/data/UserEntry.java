@@ -19,6 +19,9 @@
  */
 package eu.stratuslab.registration.data;
 
+import static eu.stratuslab.registration.data.UserAttribute.PASSWORD;
+import static eu.stratuslab.registration.data.UserAttribute.UID;
+
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -40,6 +43,7 @@ import org.restlet.data.Parameter;
 import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 
+import eu.stratuslab.registration.utils.FormUtils;
 import eu.stratuslab.registration.utils.LdapConfig;
 
 public final class UserEntry {
@@ -56,8 +60,8 @@ public final class UserEntry {
 
         checkUserCreateFormCorrect(form);
 
-        String uid = form.getFirstValue(UserAttribute.UID.key);
-        String dn = UserAttribute.UID.key + "=" + uid;
+        String uid = form.getFirstValue(UID.key);
+        String dn = UID.key + "=" + uid;
 
         // Get a connection from the pool.
         DirContext ctx = null;
@@ -102,117 +106,38 @@ public final class UserEntry {
             freeContext(ctx);
         }
 
-        // createCertDnEntry(dn, form, ldapEnv);
-
         return uid;
-    }
-
-    public static void createCertDnEntry(String userDN, Form form,
-            LdapConfig ldapEnv) {
-
-        String certDN = form.getFirstValue(UserAttribute.X500_DN.key);
-
-        // Get a connection from the pool.
-        DirContext ctx = null;
-
-        try {
-
-            ctx = new InitialDirContext(ldapEnv);
-
-            // Copy all of the attributes.
-            Attributes attrs = new BasicAttributes(true);
-            attrs.put("objectClass", "alias");
-            attrs.put("objectClass", "extensibleObject");
-            attrs.put("aliasedObjectName", userDN);
-
-            ctx.createSubcontext(certDN, attrs);
-
-        } catch (NameAlreadyBoundException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
-                    "certificate DN (" + certDN + ") already exists");
-
-        } catch (InvalidAttributesException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    "incomplete user entry");
-
-        } catch (AuthenticationException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    DATABASE_CONNECT_ERROR);
-
-        } catch (NamingException e) {
-
-            e.printStackTrace();
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    DATABASE_CONNECT_ERROR);
-
-        } finally {
-            freeContext(ctx);
-        }
-
     }
 
     public static void checkUserCreateFormCorrect(Form form) {
 
-        // All required attributes exist.
-        for (UserAttribute attr : UserAttribute.values()) {
-            if (attr.isRequiredForCreate) {
-                if (form.getFirstValue(attr.key) == null) {
-                    throw new ResourceException(
-                            Status.CLIENT_ERROR_BAD_REQUEST, "missing "
-                                    + attr.key);
-                }
-            }
-        }
+        FormUtils.allCreateAttributesExist(form);
 
-        // If certificate DN is just white space, then remove the attribute.
-        String dn = form.getFirstValue(UserAttribute.X500_DN.key);
-        if (dn != null) {
-            if (UserAttribute.isWhitespace(dn)) {
-                form.removeAll(UserAttribute.X500_DN.key);
-            }
-        }
+        FormUtils.canonicalizeCertificateDN(form);
 
-        // Passwords match.
-        String pswd1 = form.getFirstValue(UserAttribute.NEW_PASSWORD.key);
-        String pswd2 = form.getFirstValue(UserAttribute.NEW_PASSWORD_CHECK.key);
+        String newPassword = FormUtils.checkNewPasswords(form);
+        form.removeAll(PASSWORD.key);
+        form.add(PASSWORD.key, newPassword);
 
-        if (!pswd1.equals(pswd2)) {
-            throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
-                    "mismatched passwords");
-        }
-
-        // Copy password to 'userPassword'.
-        form.removeAll(UserAttribute.PASSWORD.key);
-        form.add(UserAttribute.PASSWORD.key, pswd1);
-
-        stripNonLdapAttributes(form);
-    }
-
-    public static void stripNonLdapAttributes(Form form) {
-        form.removeAll(UserAttribute.NEW_PASSWORD.key);
-        form.removeAll(UserAttribute.NEW_PASSWORD_CHECK.key);
-        form.removeAll(UserAttribute.AGREEMENT.key);
-        form.removeAll(UserAttribute.MESSAGE.key);
+        FormUtils.stripNonLdapAttributes(form);
     }
 
     public static void updateUser(Form form, LdapConfig ldapEnv) {
 
-        checkUserUpdateFormCorrect(form, ldapEnv);
+        String uid = form.getFirstValue(UID.key);
 
-        rawUpdateUser(form, ldapEnv);
+        Form[] forms = validateUserUpdateForm(form, ldapEnv);
+
+        rawUpdateUser(uid, DirContext.ADD_ATTRIBUTE, forms[0], ldapEnv);
+        rawUpdateUser(uid, DirContext.REMOVE_ATTRIBUTE, forms[1], ldapEnv);
+        rawUpdateUser(uid, DirContext.REPLACE_ATTRIBUTE, forms[2], ldapEnv);
 
     }
 
-    public static void rawUpdateUser(Form form, LdapConfig ldapEnv) {
+    public static void rawUpdateUser(String uid, int ldapAction, Form form,
+            LdapConfig ldapEnv) {
 
-        String uid = form.getFirstValue(UserAttribute.UID.key);
-        String dn = UserAttribute.UID.key + "=" + uid;
+        String dn = UID.key + "=" + uid;
 
         // Get a connection from the pool.
         DirContext ctx = null;
@@ -227,7 +152,9 @@ public final class UserEntry {
                 attrs.put(parameter.getName(), parameter.getValue());
             }
 
-            ctx.modifyAttributes(dn, DirContext.REPLACE_ATTRIBUTE, attrs);
+            if (attrs.size() > 0) {
+                ctx.modifyAttributes(dn, ldapAction, attrs);
+            }
 
         } catch (InvalidAttributesException e) {
 
@@ -253,55 +180,47 @@ public final class UserEntry {
 
     }
 
-    public static void checkUserUpdateFormCorrect(Form form, LdapConfig ldapEnv) {
-
-        // All required attributes exist.
-        for (UserAttribute attr : UserAttribute.values()) {
-            if (attr.isRequiredForUpdate) {
-                if (form.getFirstValue(attr.key) == null) {
-                    throw new ResourceException(
-                            Status.CLIENT_ERROR_BAD_REQUEST, "missing "
-                                    + attr.key);
-                }
-            }
-        }
-
-        // Check the current password.
-        String uid = form.getFirstValue(UserAttribute.UID.key);
-        String currentPassword = form.getFirstValue(UserAttribute.PASSWORD.key);
-        checkCurrentPassword(uid, currentPassword, ldapEnv);
-
-        // New passwords match, if given.
-        String pswd1 = form.getFirstValue(UserAttribute.NEW_PASSWORD.key);
-        String pswd2 = form.getFirstValue(UserAttribute.NEW_PASSWORD_CHECK.key);
-
-        if (pswd1 != null || pswd2 != null) {
-            if (pswd1 == null || !pswd1.equals(pswd2)) {
-                throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
-                        "mismatched passwords");
-            }
-        }
-
-        // Copy password to 'userPassword' only if a new value has been set.
-        form.removeAll(UserAttribute.PASSWORD.key);
-        if (pswd1 != null) {
-            form.set(UserAttribute.PASSWORD.key, pswd1);
-        }
-
-        stripNonLdapAttributes(form);
-    }
-
-    public static void checkCurrentPassword(String uid, String currentPassword,
+    public static Form[] validateUserUpdateForm(Form updateForm,
             LdapConfig ldapEnv) {
 
-        Attributes attrs = getUserAttributes(uid, ldapEnv);
-        String ldapPassword = extractPassword(attrs);
+        FormUtils.allUpdateAttributesExist(updateForm);
 
-        if (!currentPassword.equals(ldapPassword)) {
-            throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED,
-                    "incorrect password");
-        }
+        FormUtils.canonicalizeCertificateDN(updateForm);
 
+        String uid = updateForm.getFirstValue(UID.key);
+        Form currentForm = getUserAttributesInForm(uid, ldapEnv);
+
+        // Special processing for current and new passwords.
+        String currentPassword = FormUtils.checkCurrentPassword(currentForm,
+                updateForm);
+        String newPassword = FormUtils.checkNewPasswords(updateForm);
+        FormUtils
+                .setNewPasswordInForm(currentPassword, newPassword, updateForm);
+
+        updateForm = FormUtils.sanitizeForm(updateForm);
+        currentForm = FormUtils.sanitizeForm(currentForm);
+
+        FormUtils.copyNameAttributes(currentForm, updateForm);
+
+        FormUtils.addDerivedAttributes(updateForm);
+        FormUtils.addDerivedAttributes(currentForm);
+
+        FormUtils.removeUnmodifiableAttributes(updateForm);
+        FormUtils.removeUnmodifiableAttributes(currentForm);
+
+        FormUtils.stripNonLdapAttributes(updateForm);
+        FormUtils.stripNonLdapAttributes(currentForm);
+
+        FormUtils.removeIdenticalAttributes(currentForm, updateForm);
+
+        Form addedAttrs = FormUtils.removeAllNamedParameters(updateForm,
+                currentForm);
+        Form deletedAttrs = FormUtils.removeAllNamedParameters(currentForm,
+                updateForm);
+        Form modifiedAttrs = FormUtils.retainAllNamedParameters(updateForm,
+                currentForm);
+
+        return new Form[] { addedAttrs, deletedAttrs, modifiedAttrs };
     }
 
     public static String extractPassword(Attributes attrs) {
@@ -310,7 +229,7 @@ public final class UserEntry {
 
         try {
 
-            Attribute attr = attrs.get(UserAttribute.PASSWORD.key);
+            Attribute attr = attrs.get(PASSWORD.key);
             if (attr != null) {
                 byte[] bytes;
                 bytes = (byte[]) attr.get();
@@ -339,7 +258,7 @@ public final class UserEntry {
                 Object value = attr.get();
 
                 // Ensure that password is not sent back through browser.
-                if (UserAttribute.PASSWORD.key.equals(id)) {
+                if (PASSWORD.key.equals(id)) {
                     value = "";
                 }
                 userProperties.put(id, value);
@@ -356,6 +275,41 @@ public final class UserEntry {
         return userProperties;
     }
 
+    public static Form getUserAttributesInForm(String uid, LdapConfig ldapEnv) {
+
+        Form form = new Form();
+
+        Attributes attrs = getUserAttributes(uid, ldapEnv);
+
+        try {
+
+            NamingEnumeration<? extends Attribute> enumeration = attrs.getAll();
+            while (enumeration.hasMore()) {
+                Attribute attr = enumeration.next();
+                String key = attr.getID();
+                Object value = attr.get();
+                if (value != null) {
+                    if (value instanceof byte[]) {
+                        form.add(key, new String((byte[]) value));
+                    } else {
+                        form.add(key, value.toString());
+                    }
+                }
+            }
+
+            form = FormUtils.sanitizeForm(form);
+
+        } catch (NamingException e) {
+
+            e.printStackTrace();
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        }
+
+        return form;
+    }
+
     public static Attributes getUserAttributes(String uid, LdapConfig ldapEnv) {
 
         Attributes attrs = null;
@@ -368,7 +322,7 @@ public final class UserEntry {
             ctx = new InitialDirContext(ldapEnv);
 
             Attributes matchingAttrs = new BasicAttributes(true);
-            matchingAttrs.put(UserAttribute.UID.key, uid);
+            matchingAttrs.put(UID.key, uid);
 
             NamingEnumeration<SearchResult> results = ctx.search("",
                     matchingAttrs, null);

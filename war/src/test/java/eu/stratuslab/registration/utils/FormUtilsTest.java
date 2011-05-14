@@ -19,14 +19,21 @@
  */
 package eu.stratuslab.registration.utils;
 
+import static eu.stratuslab.registration.data.UserAttribute.PASSWORD;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
+import org.restlet.data.Parameter;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.ResourceException;
+
+import eu.stratuslab.registration.data.UserAttribute;
 
 public class FormUtilsTest {
 
@@ -50,6 +57,270 @@ public class FormUtilsTest {
         Form recoveredForm = FormUtils.validateInputForm(form
                 .getWebRepresentation());
         assertEquals(form, recoveredForm);
+    }
+
+    @Test
+    public void checkKnownAttrsAreNotRemoved() {
+
+        Form form = new Form();
+
+        for (UserAttribute attr : UserAttribute.values()) {
+            form.add(attr.key, "value");
+        }
+
+        form = FormUtils.sanitizeForm(form);
+
+        for (UserAttribute attr : UserAttribute.values()) {
+            "value".equals(form.getFirstValue(attr.key));
+        }
+
+    }
+
+    @Test
+    public void checkEmptyAttrsAreRemoved() {
+
+        Form form = new Form();
+
+        // Values with just whitespace should be removed.
+        for (UserAttribute attr : UserAttribute.values()) {
+            form.add(attr.key, "\t \f");
+        }
+
+        form = FormUtils.sanitizeForm(form);
+
+        for (UserAttribute attr : UserAttribute.values()) {
+            if (form.getFirstValue(attr.key) != null) {
+                fail(attr.key + " exists but should have been removed");
+            }
+        }
+
+    }
+
+    @Test
+    public void checkUnknownAttrsAreRemoved() {
+
+        Form form = new Form();
+
+        // Values with just whitespace should be removed.
+        for (UserAttribute attr : UserAttribute.values()) {
+            form.add(attr.key + "-unknown", "value");
+        }
+
+        form = FormUtils.sanitizeForm(form);
+
+        // Will throw an exception if unknown key is found.
+        for (String key : form.getNames()) {
+            UserAttribute.valueWithKey(key);
+        }
+
+    }
+
+    @Test(expected = ResourceException.class)
+    public void checkInvalidKey() {
+
+        Form form = new Form();
+
+        form.add(UserAttribute.UID.key, "bad username");
+
+        FormUtils.validateEntries(form);
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkUnknownKey() {
+
+        Form form = new Form();
+
+        form.add("badkey", "bad value");
+
+        FormUtils.validateEntries(form);
+
+    }
+
+    @Test
+    public void unmodifiableAttributesRemoved() {
+        Form form = new Form();
+        for (UserAttribute attr : UserAttribute.values()) {
+            form.add(attr.key, "dummy");
+        }
+
+        FormUtils.removeUnmodifiableAttributes(form);
+
+        for (String name : form.getNames()) {
+            UserAttribute attr = UserAttribute.valueWithKey(name);
+            if (!attr.isModifiable) {
+                fail("unmodifiable entry not removed: " + attr.key);
+            }
+        }
+
+    }
+
+    @Test
+    public void knownAttributesNotRemoved() {
+        Form form = new Form();
+        for (UserAttribute attr : UserAttribute.values()) {
+            form.add(attr.key, "dummy");
+        }
+
+        Form cleanedForm = FormUtils.sanitizeForm(form);
+
+        assertEquals(form.size(), cleanedForm.size());
+    }
+
+    @Test
+    public void unknownAttributesRemoved() {
+        Form form = new Form();
+
+        form.add("XXX-UNKNOWN-ATTR-XXX", "dummy");
+
+        Form cleanedForm = FormUtils.sanitizeForm(form);
+
+        assertEquals(0, cleanedForm.size());
+    }
+
+    @Test
+    public void checkFormKeepsParametersWithDifferentValues() {
+        Form currentForm = new Form();
+        Form updateForm = new Form();
+
+        String key = "key";
+
+        currentForm.add(new Parameter(key, "value1"));
+        updateForm.add(new Parameter(key, "value2"));
+
+        updateForm.removeAll(currentForm);
+
+        assertEquals(1, updateForm.size());
+    }
+
+    @Test
+    public void checkFormRemovesIdenticalParameters() {
+        Form currentForm = new Form();
+        Form updateForm = new Form();
+
+        String key = "key";
+
+        currentForm.add(new Parameter(key, "value1"));
+        updateForm.add(new Parameter(key, "value1"));
+
+        updateForm.removeAll(currentForm);
+
+        assertEquals(0, updateForm.size());
+    }
+
+    @Test
+    public void checkNamedValuesAreRemoved() {
+
+        Form baseForm = new Form();
+        baseForm.add(new Parameter("a", "1a"));
+        baseForm.add(new Parameter("a", "1b"));
+        baseForm.add(new Parameter("b", "2a"));
+        baseForm.add(new Parameter("b", "2b"));
+
+        Form unwantedParametersForm = new Form();
+        unwantedParametersForm.add(new Parameter("b", "3a"));
+        unwantedParametersForm.add(new Parameter("b", "3b"));
+
+        Form cleanedForm = FormUtils.removeAllNamedParameters(baseForm,
+                unwantedParametersForm);
+
+        assertNull(cleanedForm.getFirstValue("b"));
+        assertNotNull(cleanedForm.getFirstValue("a"));
+        assertEquals(2, cleanedForm.getValuesArray("a").length);
+    }
+
+    @Test
+    public void checkNamedValuesAreRetained() {
+
+        Form baseForm = new Form();
+        baseForm.add(new Parameter("a", "1a"));
+        baseForm.add(new Parameter("a", "1b"));
+        baseForm.add(new Parameter("b", "2a"));
+        baseForm.add(new Parameter("b", "2b"));
+
+        Form retainedParametersForm = new Form();
+        retainedParametersForm.add(new Parameter("b", "3a"));
+        retainedParametersForm.add(new Parameter("b", "3b"));
+        retainedParametersForm.add(new Parameter("c", "4a"));
+        retainedParametersForm.add(new Parameter("c", "4b"));
+
+        Form cleanedForm = FormUtils.retainAllNamedParameters(baseForm,
+                retainedParametersForm);
+
+        assertNull(cleanedForm.getFirstValue("a"));
+        assertNull(cleanedForm.getFirstValue("c"));
+        assertNotNull(cleanedForm.getFirstValue("b"));
+        assertEquals(2, cleanedForm.getValuesArray("b").length);
+    }
+
+    @Test
+    public void checkIntersectionIsRemoved() {
+
+        Form form1 = new Form();
+        form1.add(new Parameter("a", "1a"));
+        form1.add(new Parameter("a", "1b"));
+        form1.add(new Parameter("b", "2a"));
+        form1.add(new Parameter("b", "2b"));
+        form1.add(new Parameter("b", "2c"));
+
+        Form form2 = new Form();
+        form2.add(new Parameter("b", "2a"));
+        form2.add(new Parameter("b", "2b"));
+        form2.add(new Parameter("c", "3a"));
+        form2.add(new Parameter("c", "3b"));
+
+        FormUtils.removeIdenticalAttributes(form1, form2);
+
+        assertEquals(3, form1.size());
+        assertEquals(2, form2.size());
+    }
+
+    @Test
+    public void matchingPasswordsCheckIsOk() {
+        Form currentForm = new Form();
+        Form updateForm = new Form();
+
+        Parameter p = new Parameter(PASSWORD.key, "dummy");
+        currentForm.add(p);
+        updateForm.add(p);
+
+        FormUtils.checkCurrentPassword(currentForm, updateForm);
+    }
+
+    @Test(expected = ResourceException.class)
+    public void mismatchingPasswordsThrowException() {
+        Form currentForm = new Form();
+        Form updateForm = new Form();
+
+        Parameter p = new Parameter(PASSWORD.key, "dummy");
+        currentForm.add(p);
+
+        p = new Parameter(PASSWORD.key, "dummy2");
+        updateForm.add(p);
+
+        FormUtils.checkCurrentPassword(currentForm, updateForm);
+    }
+
+    @Test(expected = ResourceException.class)
+    public void nullCurrentPassword() {
+        Form currentForm = new Form();
+        Form updateForm = new Form();
+
+        Parameter p = new Parameter(PASSWORD.key, "dummy");
+        updateForm.add(p);
+
+        FormUtils.checkCurrentPassword(currentForm, updateForm);
+    }
+
+    @Test(expected = ResourceException.class)
+    public void nullUpdatePassword() {
+        Form currentForm = new Form();
+        Form updateForm = new Form();
+
+        Parameter p = new Parameter(PASSWORD.key, "dummy");
+        currentForm.add(p);
+
+        FormUtils.checkCurrentPassword(currentForm, updateForm);
     }
 
 }
