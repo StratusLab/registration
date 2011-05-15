@@ -23,6 +23,7 @@ import static eu.stratuslab.registration.data.UserAttribute.PASSWORD;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
@@ -280,9 +281,11 @@ public class FormUtilsTest {
         Form currentForm = new Form();
         Form updateForm = new Form();
 
-        Parameter p = new Parameter(PASSWORD.key, "dummy");
-        currentForm.add(p);
-        updateForm.add(p);
+        String plainTextPassword = "ok";
+        String hashedPassword = HashUtils.sshaHash(plainTextPassword);
+
+        currentForm.add(PASSWORD.key, hashedPassword);
+        updateForm.add(PASSWORD.key, plainTextPassword);
 
         FormUtils.checkCurrentPassword(currentForm, updateForm);
     }
@@ -292,11 +295,11 @@ public class FormUtilsTest {
         Form currentForm = new Form();
         Form updateForm = new Form();
 
-        Parameter p = new Parameter(PASSWORD.key, "dummy");
-        currentForm.add(p);
+        String plainTextPassword = "ok";
+        String hashedPassword = HashUtils.sshaHash("bad");
 
-        p = new Parameter(PASSWORD.key, "dummy2");
-        updateForm.add(p);
+        currentForm.add(PASSWORD.key, hashedPassword);
+        updateForm.add(PASSWORD.key, plainTextPassword);
 
         FormUtils.checkCurrentPassword(currentForm, updateForm);
     }
@@ -306,8 +309,9 @@ public class FormUtilsTest {
         Form currentForm = new Form();
         Form updateForm = new Form();
 
-        Parameter p = new Parameter(PASSWORD.key, "dummy");
-        updateForm.add(p);
+        String plainTextPassword = "ok";
+
+        updateForm.add(PASSWORD.key, plainTextPassword);
 
         FormUtils.checkCurrentPassword(currentForm, updateForm);
     }
@@ -317,10 +321,61 @@ public class FormUtilsTest {
         Form currentForm = new Form();
         Form updateForm = new Form();
 
-        Parameter p = new Parameter(PASSWORD.key, "dummy");
-        currentForm.add(p);
+        String plainTextPassword = "ok";
+        String hashedPassword = HashUtils.sshaHash(plainTextPassword);
+
+        currentForm.add(PASSWORD.key, hashedPassword);
 
         FormUtils.checkCurrentPassword(currentForm, updateForm);
+    }
+
+    @Test
+    public void nullPasswordsRemovesAttribute() {
+        Form form = new Form();
+        form.add(PASSWORD.key, "dummy");
+
+        FormUtils.setNewPasswordInForm(null, null, form);
+
+        assertNull(form.getFirstValue(PASSWORD.key));
+    }
+
+    @Test
+    public void currentPasswordIsSet() {
+        Form form = new Form();
+        form.add(PASSWORD.key, "dummy");
+
+        String correctValue = "ok";
+
+        FormUtils.setNewPasswordInForm(correctValue, null, form);
+
+        assertEquals(correctValue, form.getFirstValue(PASSWORD.key));
+    }
+
+    @Test
+    public void newPasswordIsSet() {
+        Form form = new Form();
+        form.add(PASSWORD.key, "dummy");
+
+        String correctValue = "ok";
+
+        FormUtils.setNewPasswordInForm(null, correctValue, form);
+
+        assertTrue(correctValue, HashUtils.comparePassword(correctValue, form
+                .getFirstValue(PASSWORD.key)));
+    }
+
+    @Test
+    public void preferNewPasswordToCurrent() {
+        Form form = new Form();
+        form.add(PASSWORD.key, "dummy");
+
+        String correctValue = "ok";
+        String badValue = "bad";
+
+        FormUtils.setNewPasswordInForm(badValue, correctValue, form);
+
+        assertTrue(correctValue, HashUtils.comparePassword(correctValue, form
+                .getFirstValue(PASSWORD.key)));
     }
 
 }

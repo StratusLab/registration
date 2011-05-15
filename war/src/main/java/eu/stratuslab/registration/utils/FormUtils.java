@@ -248,7 +248,8 @@ public final class FormUtils {
 
         String updatePassword = updateForm.getFirstValue(PASSWORD.key);
 
-        if (currentPassword == null || !currentPassword.equals(updatePassword)) {
+        if (currentPassword == null
+                || !HashUtils.comparePassword(updatePassword, currentPassword)) {
             throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED,
                     "incorrect password");
         }
@@ -274,8 +275,14 @@ public final class FormUtils {
             String newPassword, Form form) {
 
         form.removeAll(PASSWORD.key);
-        String newValue = (newPassword != null) ? newPassword : currentPassword;
-        form.set(PASSWORD.key, newValue);
+
+        if (newPassword != null) {
+            String hashedNewPassword = HashUtils.sshaHash(newPassword);
+            form.set(PASSWORD.key, hashedNewPassword);
+        } else if (currentPassword != null) {
+            form.set(PASSWORD.key, currentPassword);
+        }
+
     }
 
 }

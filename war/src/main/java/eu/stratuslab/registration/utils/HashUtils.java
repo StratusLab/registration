@@ -3,38 +3,55 @@ package eu.stratuslab.registration.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.logging.Logger;
 
-public class PasswordHasher {
+public final class HashUtils {
 
     public static final String SSHA_PREFIX = "{SSHA}";
 
     public static final int SALT_LENGTH = 8;
 
-    public String hashPasswordWithSSHA(String clearTextPassword)
-            throws NoSuchAlgorithmException {
+    private static final Logger LOGGER = Logger.getLogger("org.restlet");
+
+    private HashUtils() {
+
+    }
+
+    public static String sshaHash(String clearTextPassword) {
 
         byte[] salt = generateSalt();
-        return hashPasswordWithSSHA(clearTextPassword, salt);
+        return sshaHash(clearTextPassword, salt);
     }
 
-    public String hashPasswordWithSSHA(String clearTextPassword, byte[] salt)
-            throws NoSuchAlgorithmException {
+    public static String sshaHash(String clearTextPassword, byte[] salt) {
 
-        byte[] password = convertPasswordToBytes(clearTextPassword);
+        try {
 
-        byte[] passwordAndSalt = fuseByteArrays(password, salt);
+            byte[] password = convertPasswordToBytes(clearTextPassword);
 
-        byte[] digest = sha1Digest(passwordAndSalt);
+            byte[] passwordAndSalt = fuseByteArrays(password, salt);
 
-        byte[] digestAndSalt = fuseByteArrays(digest, salt);
+            byte[] digest = sha1Digest(passwordAndSalt);
 
-        String encodedDigestAndSalt = Base64.encodeBytes(digestAndSalt);
+            byte[] digestAndSalt = fuseByteArrays(digest, salt);
 
-        return SSHA_PREFIX + encodedDigestAndSalt;
+            String encodedDigestAndSalt = new String(Base64
+                    .encode(digestAndSalt));
+
+            return SSHA_PREFIX + encodedDigestAndSalt;
+
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.severe(e.getMessage());
+            return "";
+        }
     }
 
-    public boolean comparePassword(String clearTextPassword,
-            String sshaHashedPassword) throws NoSuchAlgorithmException {
+    public static boolean comparePassword(String clearTextPassword,
+            String sshaHashedPassword) {
+
+        if (clearTextPassword == null || sshaHashedPassword == null) {
+            return false;
+        }
 
         if (!sshaHashedPassword.startsWith(SSHA_PREFIX)) {
             throw new IllegalArgumentException(
@@ -51,19 +68,20 @@ public class PasswordHasher {
         System.arraycopy(digestAndSalt, digestAndSalt.length - SALT_LENGTH,
                 salt, 0, SALT_LENGTH);
 
-        String rehashedPassword = hashPasswordWithSSHA(clearTextPassword, salt);
+        String rehashedPassword = sshaHash(clearTextPassword, salt);
 
         return sshaHashedPassword.equals(rehashedPassword);
     }
 
-    public byte[] sha1Digest(byte[] bytes) throws NoSuchAlgorithmException {
+    public static byte[] sha1Digest(byte[] bytes)
+            throws NoSuchAlgorithmException {
 
         MessageDigest digest = MessageDigest.getInstance("SHA-1");
         digest.update(bytes);
         return digest.digest();
     }
 
-    public byte[] convertPasswordToBytes(String clearTextPassword) {
+    public static byte[] convertPasswordToBytes(String clearTextPassword) {
         return clearTextPassword.getBytes();
     }
 
@@ -74,7 +92,7 @@ public class PasswordHasher {
         return salt;
     }
 
-    public byte[] fuseByteArrays(byte[] first, byte[] second) {
+    public static byte[] fuseByteArrays(byte[] first, byte[] second) {
         byte[] combined = new byte[first.length + second.length];
         System.arraycopy(first, 0, combined, 0, first.length);
         System.arraycopy(second, 0, combined, first.length, second.length);

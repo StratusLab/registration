@@ -116,8 +116,8 @@ public final class UserEntry {
         FormUtils.canonicalizeCertificateDN(form);
 
         String newPassword = FormUtils.checkNewPasswords(form);
-        form.removeAll(PASSWORD.key);
-        form.add(PASSWORD.key, newPassword);
+
+        FormUtils.setNewPasswordInForm(null, newPassword, form);
 
         FormUtils.stripNonLdapAttributes(form);
     }

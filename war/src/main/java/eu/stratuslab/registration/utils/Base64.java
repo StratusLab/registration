@@ -6,29 +6,31 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Logger;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeUtility;
 
 public class Base64 {
 
+    private static final Logger LOGGER = Logger.getLogger("org.restlet");
+
     public static byte[] encode(byte[] b) {
-        byte[] res = null;
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         OutputStream os = null;
         try {
             os = MimeUtility.encode(baos, "base64");
             os.write(b);
-            res = baos.toByteArray();
+            os.flush();
         } catch (MessagingException e) {
-            e.printStackTrace();
+            LOGGER.severe(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe(e.getMessage());
         } finally {
             closeReliably(os);
         }
-        return res;
+        return baos.toByteArray();
     }
 
     public static byte[] decode(String s) {
@@ -36,27 +38,29 @@ public class Base64 {
     }
 
     public static byte[] decode(byte[] b) {
-        byte[] res = null;
+        byte[] buffer = new byte[1024];
 
         ByteArrayInputStream bais = new ByteArrayInputStream(b);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream is = null;
         try {
 
             is = MimeUtility.decode(bais, "base64");
-            byte[] tmp = new byte[b.length];
-            int n = is.read(tmp);
-            res = new byte[n];
-            System.arraycopy(tmp, 0, res, 0, n);
+
+            for (int n = is.read(buffer); n > 0; n = is.read(buffer)) {
+                baos.write(buffer, 0, n);
+            }
 
         } catch (MessagingException e) {
-            e.printStackTrace();
+            LOGGER.severe(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe(e.getMessage());
         } finally {
             closeReliably(is);
+            closeReliably(baos);
         }
 
-        return res;
+        return baos.toByteArray();
     }
 
     private static void closeReliably(Closeable o) {
@@ -64,7 +68,7 @@ public class Base64 {
             try {
                 o.close();
             } catch (IOException e) {
-                // TODO: Log this.
+                LOGGER.warning(e.getMessage());
             }
         }
 

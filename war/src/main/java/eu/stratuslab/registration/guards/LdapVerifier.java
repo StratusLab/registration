@@ -23,12 +23,12 @@ import javax.naming.directory.Attributes;
 
 import org.restlet.Request;
 import org.restlet.Response;
-import org.restlet.security.SecretVerifier;
 import org.restlet.security.User;
 import org.restlet.security.Verifier;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.data.UserEntry;
+import eu.stratuslab.registration.utils.HashUtils;
 import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.RequestUtils;
 
@@ -76,15 +76,18 @@ public class LdapVerifier implements Verifier {
     private static boolean isLdapPasswordCorrect(String identifier,
             char[] secret, Request request) {
 
-        char[] password = getLdapPassword(identifier, request);
-        return SecretVerifier.compare(secret, password);
+        String sshaHashedPassword = extractHashedPassword(identifier, request);
+        String plainTextPassword = new String(secret);
+        return HashUtils.comparePassword(plainTextPassword, sshaHashedPassword);
     }
 
-    private static char[] getLdapPassword(String identifier, Request request) {
+    private static String extractHashedPassword(String identifier,
+            Request request) {
+
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
         LdapConfig ldapEnv = cfg.getLdapConfig();
         Attributes attrs = UserEntry.getUserAttributes(identifier, ldapEnv);
-        return UserEntry.extractPassword(attrs).toCharArray();
+        return UserEntry.extractPassword(attrs);
     }
 
 }

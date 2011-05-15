@@ -91,7 +91,7 @@ public final class Notifier {
 
             msg.setRecipients(Message.RecipientType.TO, recipients);
 
-            msg.setSubject("StratusLab Marketplace Message");
+            msg.setSubject("StratusLab Registration Message");
 
             msg.setText(message);
 
