@@ -1,0 +1,51 @@
+#!/bin/bash
+#
+# registration-ldap This script starts and stops the ApacheDS 
+#       LDAP server for the 'cloud' partition.
+#
+# chkconfig: - 27 73
+# description: LDAP support for StratusLab registration service
+# processname: apacheds
+# config: /var/lib/apacheds/cloud/apacheds.conf, server.xml
+# pidfile: /var/run/apacheds/cloud/apacheds.pid
+
+# Source function library.
+. /etc/init.d/functions
+
+RETVAL=0
+
+function start() {
+    /etc/init.d/apacheds start cloud
+}
+
+function stop() {
+    /etc/init.d/apacheds stop cloud
+}
+
+function status() {
+    /etc/init.d/apacheds status cloud
+}
+
+case "$1" in
+    start)
+	start
+	RETVAL=$?
+	;;
+    stop)
+	stop
+	RETVAL=$?
+	;;
+    status)
+	status ${slapd}
+	RETVAL=$?
+	;;
+    restart)
+	stop
+	start
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|restart|status}"
+	RETVAL=1
+esac
+
+exit $RETVAL
