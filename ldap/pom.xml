@@ -4,7 +4,7 @@
   <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration-ldap</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Registration Application LDAP Support</name>
+  <name>Registration Service LDAP Support</name>
 
   <packaging>pom</packaging>
 

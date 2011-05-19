@@ -5,7 +5,7 @@
   <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration-ldap-rpm</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Registration Application LDAP Support (RPM)</name>
+  <name>Registration Service LDAP Support (RPM)</name>
 
   <packaging>rpm</packaging>
 

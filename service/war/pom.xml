@@ -4,7 +4,7 @@
   <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration-war</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Registration Application (WAR)</name>
+  <name>Registration Service (WAR)</name>
 
   <packaging>war</packaging>
 

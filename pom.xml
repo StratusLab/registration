@@ -4,7 +4,7 @@
   <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Registration Application</name>
+  <name>Registration Service</name>
 
   <url>http://hudson.stratuslab.eu/</url>
 
@@ -16,7 +16,8 @@ with the infrastructure via a web interface.
   <packaging>pom</packaging>
 
   <modules>
-    <module>war</module>
+    <module>service</module>
+    <module>ldap</module>
   </modules>
 
   <properties>
@@ -26,22 +27,6 @@ with the infrastructure via a web interface.
     <nexus.snapshot.repository.name>snapshots</nexus.snapshot.repository.name>
   </properties>
 
-  <profiles>
-    
-    <profile>
-      <id>build-rpm</id>
-      <activation>
-        <file>
-          <exists>/usr/bin/rpmbuild</exists>
-        </file>
-      </activation>
-      <modules>
-        <module>rpm</module>
-      </modules>
-    </profile>
-    
-  </profiles>
-  
   <licenses>
     <license>
       <name>Apache 2</name>
