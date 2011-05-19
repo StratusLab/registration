@@ -4,7 +4,7 @@
   <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Registration Service</name>
+  <name>Registration Service (ROOT POM)</name>
 
   <url>http://hudson.stratuslab.eu/</url>
 

@@ -10,7 +10,7 @@
 
   <parent>
     <groupId>eu.stratuslab.registration</groupId>
-    <artifactId>registration</artifactId>
+    <artifactId>registration-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
