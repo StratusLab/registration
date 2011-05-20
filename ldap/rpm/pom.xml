@@ -82,27 +82,44 @@
           <requires>
             <require>apacheds</require>
           </requires>
+          <defaultUsername>apacheds</defaultUsername>
+          <defaultGroupname>apacheds</defaultGroupname>
+          <defaultDirmode>755</defaultDirmode>
+          <defaultFilemode>644</defaultFilemode>
           <mappings>
 
             <mapping>
-              <directory>/var/lib/apacheds</directory>
-              <filemode>644</filemode>
-              <username>apacheds</username>
-              <groupname>apacheds</groupname>
+              <directory>/var/lib/apacheds/cloud</directory>
               <directoryIncluded>true</directoryIncluded>
-              <sources>
-                <source>
-                  <location>target/ldap-config/var/lib/apacheds</location>
-                </source>
-              </sources>
+            </mapping>
+
+            <mapping>
+              <directory>/var/lib/apacheds/cloud/conf</directory>
+              <directoryIncluded>true</directoryIncluded>
             </mapping>
 
             <mapping>
               <directory>/var/lib/apacheds/cloud/partitions</directory>
-              <filemode>755</filemode>
-              <username>apacheds</username>
-              <groupname>apacheds</groupname>
               <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/run/apacheds/cloud</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/log/apacheds/cloud</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/lib/apacheds/cloud</directory>
+              <sources>
+                <source>
+                  <location>target/ldap-config/var/lib/apacheds/cloud</location>
+                </source>
+              </sources>
             </mapping>
 
             <mapping>
