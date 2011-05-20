@@ -51,7 +51,7 @@ public class LdapConfig extends Hashtable<String, String> {
     public LdapConfig(String ldapUrl, Map<String, String> baseParameters) {
         super(baseParameters);
 
-        baseParameters.put(Context.PROVIDER_URL, ldapUrl);
+        this.put(Context.PROVIDER_URL, ldapUrl);
         LOGGER.info("LDAP URL: '" + ldapUrl + "'");
 
     }
