@@ -80,25 +80,21 @@ public final class UserEntry {
 
         } catch (NameAlreadyBoundException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
                     "username (" + uid + ") already exists");
 
         } catch (InvalidAttributesException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     "incomplete user entry");
 
         } catch (AuthenticationException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     DATABASE_CONNECT_ERROR);
 
         } catch (NamingException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     DATABASE_CONNECT_ERROR);
 
@@ -158,19 +154,16 @@ public final class UserEntry {
 
         } catch (InvalidAttributesException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     "incomplete user entry");
 
         } catch (AuthenticationException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     DATABASE_CONNECT_ERROR);
 
         } catch (NamingException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     DATABASE_CONNECT_ERROR);
 
@@ -266,7 +259,6 @@ public final class UserEntry {
 
         } catch (NamingException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     DATABASE_CONNECT_ERROR);
 
@@ -301,7 +293,6 @@ public final class UserEntry {
 
         } catch (NamingException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     DATABASE_CONNECT_ERROR);
 
@@ -342,19 +333,16 @@ public final class UserEntry {
 
         } catch (InvalidAttributesException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     "incomplete user entry");
 
         } catch (AuthenticationException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     DATABASE_CONNECT_ERROR);
 
         } catch (NamingException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     DATABASE_CONNECT_ERROR);
 
@@ -374,7 +362,6 @@ public final class UserEntry {
             try {
                 userEmail = (String) attr.get();
             } catch (NamingException consumed) {
-                consumed.printStackTrace();
                 throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                         "missing email address in record");
             }

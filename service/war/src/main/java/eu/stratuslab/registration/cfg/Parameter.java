@@ -106,6 +106,9 @@ public enum Parameter {
         }
     };
 
+    private static final int PORT_MIN = 1;
+    private static final int PORT_MAX = 65535;
+
     private final String key;
     private final boolean required;
     private final String description;
@@ -178,7 +181,7 @@ public enum Parameter {
     private static void isValidPort(String s) {
         try {
             int port = Integer.parseInt(s);
-            if (port < 1 || port > 65535) {
+            if (port < PORT_MIN || port > PORT_MAX) {
                 throw new IllegalArgumentException("invalid port number("
                         + port + ")");
             }

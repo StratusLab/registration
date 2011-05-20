@@ -60,13 +60,11 @@ public final class ActionEntry {
 
         } catch (NameAlreadyBoundException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     "entry exists: " + dn);
 
         } catch (NamingException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     DATABASE_CONNECT_ERROR);
 
@@ -102,7 +100,6 @@ public final class ActionEntry {
 
         } catch (NamingException e) {
 
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     DATABASE_CONNECT_ERROR);
 

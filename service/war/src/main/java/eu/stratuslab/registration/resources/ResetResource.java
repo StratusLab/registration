@@ -96,7 +96,6 @@ public class ResetResource extends BaseResource {
         try {
             Notifier.sendNotification(userEmail, msg, cfg);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     "cannot send reset email to user");
         }

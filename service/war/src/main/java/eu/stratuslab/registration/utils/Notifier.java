@@ -45,7 +45,7 @@ import eu.stratuslab.registration.cfg.AppConfiguration;
 
 public final class Notifier {
 
-    private static Logger logger = Logger.getLogger("org.restlet");
+    private static Logger LOGGER = Logger.getLogger("org.restlet");
 
     private Notifier() {
 
@@ -82,7 +82,7 @@ public final class Notifier {
             StringBuilder sb = new StringBuilder();
             sb.append("Sending notification to " + email + "\n");
             sb.append("Message: " + message + "\n");
-            logger.info(sb.toString());
+            LOGGER.info(sb.toString());
 
             Message msg = new MimeMessage(session);
             msg.setFrom(admin);
@@ -105,24 +105,24 @@ public final class Notifier {
                 Transport t = session.getTransport();
                 t.connect(null, password);
                 t.sendMessage(msg, msg.getAllRecipients());
-                logger.info("mail was successfully sent");
+                LOGGER.info("mail was successfully sent");
             } catch (AuthenticationFailedException afe) {
                 StringBuilder m = new StringBuilder();
                 m.append("authentication failure\n");
                 m.append(afe.getMessage() + "\n");
-                logger.severe(m.toString());
+                LOGGER.severe(m.toString());
                 sendOk = false;
             } catch (MessagingException me) {
                 StringBuilder m = new StringBuilder();
                 m.append("error sending message to " + email + "\n");
                 m.append(me.getMessage() + "\n");
-                logger.severe(m.toString());
+                LOGGER.severe(m.toString());
                 sendOk = false;
             }
 
         } catch (MessagingException consumed) {
             // FIXME: Is this logic actually correct?
-            consumed.printStackTrace();
+            LOGGER.severe(consumed.getMessage());
             sendOk = false;
 
         } finally {

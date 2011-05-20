@@ -11,9 +11,15 @@ import java.util.logging.Logger;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeUtility;
 
-public class Base64 {
+public final class Base64 {
+
+    private static final int BUFFER_SIZE = 1024;
 
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
+
+    private Base64() {
+
+    }
 
     public static byte[] encode(byte[] b) {
 
@@ -38,7 +44,7 @@ public class Base64 {
     }
 
     public static byte[] decode(byte[] b) {
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[BUFFER_SIZE];
 
         ByteArrayInputStream bais = new ByteArrayInputStream(b);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -42,6 +42,8 @@ import eu.stratuslab.registration.utils.RequestUtils;
 @SuppressWarnings("serial")
 public class ResetPassword implements Action {
 
+    private static final int PASSWORD_BIT_LENGTH = 60;
+
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
     private static final String EMAIL_MESSAGE_TEMPLATE = //
@@ -106,7 +108,7 @@ public class ResetPassword implements Action {
 
     private static String randomPassword() {
         SecureRandom randomSource = new SecureRandom();
-        BigInteger value = new BigInteger(60, randomSource);
+        BigInteger value = new BigInteger(PASSWORD_BIT_LENGTH, randomSource);
         return value.toString(Character.MAX_RADIX);
     }
 
