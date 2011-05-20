@@ -80,7 +80,7 @@
             LDAP support for StratusLab registration service. 
           </description>
           <requires>
-            <require>java</require>
+            <require>apacheds</require>
           </requires>
           <mappings>
 
