@@ -45,7 +45,7 @@ import eu.stratuslab.registration.cfg.AppConfiguration;
 
 public final class Notifier {
 
-    private static Logger LOGGER = Logger.getLogger("org.restlet");
+    private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
     private Notifier() {
 
@@ -124,8 +124,6 @@ public final class Notifier {
             // FIXME: Is this logic actually correct?
             LOGGER.severe(consumed.getMessage());
             sendOk = false;
-
-        } finally {
 
         }
         return sendOk;
