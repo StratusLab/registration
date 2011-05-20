@@ -49,8 +49,16 @@ public enum Parameter {
         }
     },
 
-    LDAP_BASE_DN(true, "ou=users,ou=system",
-            "LDAP URL for DN holding user entries") {
+    LDAP_USER_BASE_DN(true, "ou=users,o=cloud",
+            "LDAP base DN for finding user entries") {
+    },
+
+    LDAP_GROUP_BASE_DN(true, "ou=groups,o=cloud",
+            "LDAP base DN for finding group entries") {
+    },
+
+    LDAP_ACTION_BASE_DN(true, "ou=actions,o=cloud",
+            "LDAP base DN for finding action entries") {
     },
 
     LDAP_MANAGER_DN(true, "uid=admin,ou=system", "DN for the LDAP manager") {

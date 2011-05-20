@@ -24,6 +24,7 @@ import java.util.Map;
 import org.restlet.Request;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.cfg.Parameter;
 import freemarker.template.Configuration;
 
 public final class RequestUtils {
@@ -47,10 +48,11 @@ public final class RequestUtils {
         return (AppConfiguration) attributes.get(APP_CONFIGURATION);
     }
 
-    public static LdapConfig extractLdapConfig(Request request) {
+    public static LdapConfig extractLdapConfig(Request request,
+            Parameter baseDnParameter) {
 
         AppConfiguration cfg = extractAppConfiguration(request);
-        return cfg.getLdapConfig();
+        return cfg.getLdapConfig(baseDnParameter);
     }
 
     public static Configuration extractFreeMarkerConfig(Request request) {

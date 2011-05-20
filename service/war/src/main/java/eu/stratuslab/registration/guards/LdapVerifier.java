@@ -27,6 +27,7 @@ import org.restlet.security.User;
 import org.restlet.security.Verifier;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.cfg.Parameter;
 import eu.stratuslab.registration.data.UserEntry;
 import eu.stratuslab.registration.utils.HashUtils;
 import eu.stratuslab.registration.utils.LdapConfig;
@@ -85,7 +86,7 @@ public class LdapVerifier implements Verifier {
             Request request) {
 
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
-        LdapConfig ldapEnv = cfg.getLdapConfig();
+        LdapConfig ldapEnv = cfg.getLdapConfig(Parameter.LDAP_USER_BASE_DN);
         Attributes attrs = UserEntry.getUserAttributes(identifier, ldapEnv);
         return UserEntry.extractPassword(attrs);
     }

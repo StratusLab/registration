@@ -36,6 +36,8 @@ import javax.naming.Context;
 @SuppressWarnings("serial")
 public class LdapConfig extends Hashtable<String, String> {
 
+    private static final String LDAP_URL_TEMPLATE = "%s://%s:%s/%s";
+
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
     private static final String LDAP_CONTEXT_FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
@@ -46,22 +48,29 @@ public class LdapConfig extends Hashtable<String, String> {
         super();
     }
 
-    public LdapConfig(Map<String, String> map) {
-        super(map);
+    public LdapConfig(String ldapUrl, Map<String, String> baseParameters) {
+        super(baseParameters);
+
+        baseParameters.put(Context.PROVIDER_URL, ldapUrl);
+        LOGGER.info("LDAP URL: '" + ldapUrl + "'");
+
     }
 
-    public static Map<String, String> create(String ldapScheme,
+    public static String createLdapUrl(String ldapScheme, String ldapHost,
+            String ldapPort, String baseDn) {
+
+        return String.format(LDAP_URL_TEMPLATE, ldapScheme, ldapHost, ldapPort,
+                baseDn);
+    }
+
+    public static Map<String, String> createBaseParameters(String ldapScheme,
             String ldapHost, String ldapPort, String baseDn, String managerDn,
             String managerPassword) {
 
         // Set up environment for creating initial context
         Map<String, String> cfg = new HashMap<String, String>();
 
-        String ldapUrl = String.format("%s://%s:%s/%s", ldapScheme, ldapHost,
-                ldapPort, baseDn);
-
         cfg.put(Context.INITIAL_CONTEXT_FACTORY, LDAP_CONTEXT_FACTORY);
-        cfg.put(Context.PROVIDER_URL, ldapUrl);
 
         // Enable connection pooling
         cfg.put(CONNECTION_POOL_KEY, "true");
@@ -72,7 +81,6 @@ public class LdapConfig extends Hashtable<String, String> {
         cfg.put(Context.SECURITY_CREDENTIALS, managerPassword);
 
         // Log the LDAP configuration parameters.
-        LOGGER.info("LDAP URL: '" + ldapUrl + "'");
         LOGGER.info("LDAP MANAGER DN: '" + managerDn + "'");
 
         return Collections.unmodifiableMap(cfg);

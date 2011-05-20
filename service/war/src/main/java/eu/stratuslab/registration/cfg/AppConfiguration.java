@@ -19,12 +19,12 @@
  */
 package eu.stratuslab.registration.cfg;
 
-import static eu.stratuslab.registration.cfg.Parameter.LDAP_BASE_DN;
 import static eu.stratuslab.registration.cfg.Parameter.LDAP_HOST;
 import static eu.stratuslab.registration.cfg.Parameter.LDAP_MANAGER_DN;
 import static eu.stratuslab.registration.cfg.Parameter.LDAP_MANAGER_PASSWORD;
 import static eu.stratuslab.registration.cfg.Parameter.LDAP_PORT;
 import static eu.stratuslab.registration.cfg.Parameter.LDAP_SCHEME;
+import static eu.stratuslab.registration.cfg.Parameter.LDAP_USER_BASE_DN;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -62,11 +62,11 @@ public final class AppConfiguration {
         properties = getConfigurationProperties(configFileLocations);
         freeMarkerConfig = createFreeMarkerConfig(context);
 
-        ldapCfgMap = LdapConfig.create( //
+        ldapCfgMap = LdapConfig.createBaseParameters( //
                 getValue(LDAP_SCHEME), //
                 getValue(LDAP_HOST), //
                 getValue(LDAP_PORT), //
-                getValue(LDAP_BASE_DN), //
+                getValue(LDAP_USER_BASE_DN), //
                 getValue(LDAP_MANAGER_DN), //
                 getValue(LDAP_MANAGER_PASSWORD));
     }
@@ -153,8 +153,13 @@ public final class AppConfiguration {
         return freeMarkerConfig;
     }
 
-    public LdapConfig getLdapConfig() {
-        return new LdapConfig(ldapCfgMap);
+    public LdapConfig getLdapConfig(Parameter baseDnParameter) {
+        String ldapUrl = LdapConfig.createLdapUrl( //
+                getValue(LDAP_SCHEME), //
+                getValue(LDAP_HOST), //
+                getValue(LDAP_PORT), //
+                getValue(baseDnParameter));
+        return new LdapConfig(ldapUrl, ldapCfgMap);
     }
 
     private static void validateConfiguration(Properties properties) {

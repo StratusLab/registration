@@ -31,6 +31,7 @@ import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.cfg.Parameter;
 import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
 import eu.stratuslab.registration.utils.HashUtils;
@@ -81,7 +82,8 @@ public class ResetPassword implements Action {
         Form form = new Form();
         form.add(UserAttribute.PASSWORD.key, hashedNewPassword);
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request);
+        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request,
+                Parameter.LDAP_USER_BASE_DN);
 
         UserEntry.rawUpdateUser(identifier, DirContext.REPLACE_ATTRIBUTE, form,
                 ldapEnv);
