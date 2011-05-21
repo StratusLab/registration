@@ -81,6 +81,7 @@
           </description>
           <requires>
             <require>apacheds</require>
+            <require>openldap-clients</require>
           </requires>
           <defaultUsername>apacheds</defaultUsername>
           <defaultGroupname>apacheds</defaultGroupname>
