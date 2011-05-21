@@ -6,6 +6,19 @@ administrativeRole: accessControlSpecificArea
 objectClass: organization
 description: context entry for suffix o=cloud
 
+dn: cn=rootACI,o=cloud
+objectClass: subentry
+objectClass: accessControlSubentry
+objectClass: top
+cn: rootACI
+prescriptiveACI: { identificationTag "rootACI", precedence 0, authentication
+ Level simple, itemOrUserFirst userFirst: { userClasses { allUsers }, userPe
+ rmissions { { protectedItems { entry, allUserAttributeTypesAndValues }, gra
+ ntsAndDenials { grantReturnDN, grantCompare, grantFilterMatch, grantBrowse,
+  grantRead } } } } }
+subtreeSpecification: { }
+accessControlSubentries: cn=rootaci,o=cloud
+
 dn: ou=users,o=cloud
 ou: users
 objectClass: organizationalUnit
@@ -27,15 +40,3 @@ objectClass: groupOfUniqueNames
 description: group giving access to cloud services
 uniqueMember: cn=dummy,ou=users,o=cloud
 
-dn: cn=rootACI,o=cloud
-objectClass: subentry
-objectClass: accessControlSubentry
-objectClass: top
-cn: rootACI
-prescriptiveACI: { identificationTag "rootACI", precedence 0, authentication
- Level simple, itemOrUserFirst userFirst: { userClasses { allUsers }, userPe
- rmissions { { protectedItems { entry, allUserAttributeTypesAndValues }, gra
- ntsAndDenials { grantReturnDN, grantCompare, grantFilterMatch, grantBrowse,
-  grantRead } } } } }
-subtreeSpecification: { }
-accessControlSubentries: 2.5.4.3=rootaci,2.5.4.10=cloud
