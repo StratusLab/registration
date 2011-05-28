@@ -24,7 +24,7 @@ function extract_ldap_password() {
 
 function reset_aci() {
     extract_ldap_password
-    sleep 5
+    sleep 10
     ldapdelete -H ldap://localhost:10389  -x -D uid=admin,ou=system -w ${ldap_password} cn=rootACI,o=cloud
     ldapadd -H ldap://localhost:10389  -x -D uid=admin,ou=system -w ${ldap_password} -f ${rootaci_ldif}
 }
