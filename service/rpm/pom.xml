@@ -120,7 +120,7 @@
             StratusLab registration application in a standalone installation.
           </description>
           <requires>
-            <require>java</require>
+            <require>java-1.6.0-openjdk</require>
           </requires>
           <mappings>
 

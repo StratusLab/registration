@@ -79,7 +79,7 @@
             LDAP support for StratusLab registration service. 
           </description>
           <requires>
-            <require>java</require>
+            <require>java-1.6.0-openjdk</require>
           </requires>
           <mappings>
 
