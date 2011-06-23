@@ -15,6 +15,12 @@
       <directory>target/apacheds-config</directory>
     </fileSet>
 
+    <fileSet>
+      <outputDirectory>etc/init.d</outputDirectory>
+      <fileMode>755</fileMode>
+      <directory>src/main/scripts</directory>
+    </fileSet>
+
   </fileSets>
   
 </assembly>

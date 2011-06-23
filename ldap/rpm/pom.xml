@@ -30,6 +30,7 @@
     <maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format> 
     <RELEASE>0.${maven.build.timestamp}</RELEASE>
   </properties>
+
   <build>
     
     <plugins>
@@ -43,10 +44,10 @@
           <execution>
             <id>copy-tar</id>
             <goals>
-              <goal>copy</goal>
+              <goal>unpack</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/dependency/webapps</outputDirectory>
+              <outputDirectory>${project.build.directory}/ldap-config</outputDirectory>
               <artifactItems>
                 <artifactItem>
                   <groupId>eu.stratuslab.registration</groupId>
@@ -80,113 +81,58 @@
           </description>
           <requires>
             <require>java-1.6.0-openjdk</require>
+            <require>apacheds</require>
+            <require>openldap-clients</require>
           </requires>
+          <defaultUsername>apacheds</defaultUsername>
+          <defaultGroupname>apacheds</defaultGroupname>
+          <defaultDirmode>755</defaultDirmode>
+          <defaultFilemode>644</defaultFilemode>
           <mappings>
 
             <mapping>
-              <directory>${installation.dir}/webapps</directory>
-              <filemode>644</filemode>
-              <username>root</username>
-              <groupname>root</groupname>
-              <directoryIncluded>false</directoryIncluded>
-              <sources>
-                <source>
-                  <location>target/dependency/webapps/</location>
-                  <includes>
-                    <include>*.war</include>
-                  </includes>
-                </source>
-              </sources>
+              <directory>/var/lib/apacheds/cloud</directory>
+              <directoryIncluded>true</directoryIncluded>
             </mapping>
 
-	    <mapping>
-	      <directory>${installation.dir}/etc</directory>
-	      <filemode>755</filemode>
-	      <username>root</username>
-	      <groupname>root</groupname>
-	      <directoryIncluded>false</directoryIncluded>
-	      <sources>
-		<source>
-		  <location>src/main/scripts</location>
-		  <includes>
-		    <include>generate-jetty-certificate.sh</include>
-		  </includes>
-		</source>
-	      </sources>
-	    </mapping>
-
-	    <mapping>
-	      <directory>${installation.dir}/</directory>
-	      <filemode>644</filemode>
-	      <username>root</username>
-	      <groupname>root</groupname>
-	      <directoryIncluded>false</directoryIncluded>
-	      <sources>
-		<source>
-		  <location>target/jetty-config</location>
-		  <includes>
-		    <include>**/*</include>
-		  </includes>
-		  <excludes>
-                    <exclude>*.cfg</exclude>
-		    <exclude>etc/login/*</exclude>
-		    <exclude>etc/overrides/*</exclude>
-		  </excludes>
-		</source>
-	      </sources>
-	    </mapping>
+            <mapping>
+              <directory>/var/lib/apacheds/cloud/conf</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
 
             <mapping>
-              <directory>${installation.dir}/</directory>
-              <filemode>644</filemode>
-              <username>root</username>
-              <groupname>root</groupname>
-              <directoryIncluded>false</directoryIncluded>
+              <directory>/var/lib/apacheds/cloud/partitions</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/run/apacheds/cloud</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/log/apacheds/cloud</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/lib/apacheds/cloud</directory>
               <sources>
                 <source>
-                  <location>target/dependency/jetty-distribution-${jetty.version}/</location>
-                  <includes>
-                    <include>*.txt</include>
-                    <include>*.html</include>
-                    <include>start.jar</include>
-                    <include>etc/**/*</include>
-                    <include>lib/**/*</include>
-                    <include>logs/**/*</include>
-                    <include>contexts/README.txt</include>
-                  </includes>
+                  <location>target/ldap-config/var/lib/apacheds/cloud</location>
                 </source>
               </sources>
             </mapping>
 
             <mapping>
-              <directory>/etc/rc.d/init.d/</directory>
+              <directory>/etc/init.d</directory>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <directoryIncluded>false</directoryIncluded>
               <sources>
                 <source>
-                  <location>src/main/scripts</location>
-                  <includes>
-                    <include>registration</include>
-                  </includes>
-                </source>
-              </sources>
-            </mapping>
-
-            <mapping>
-              <directory>/etc/stratuslab/</directory>
-              <filemode>0600</filemode>
-              <username>root</username>
-              <groupname>root</groupname>
-              <directoryIncluded>false</directoryIncluded>
-              <configuration>noreplace</configuration>
-              <sources>
-                <source>
-                  <location>src/main/jetty-config</location>
-                  <includes>
-                    <include>registration.cfg</include>
-                  </includes>
+                  <location>target/ldap-config/etc/init.d</location>
                 </source>
               </sources>
             </mapping>

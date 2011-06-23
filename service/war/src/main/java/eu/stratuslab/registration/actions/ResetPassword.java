@@ -31,6 +31,7 @@ import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.cfg.Parameter;
 import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
 import eu.stratuslab.registration.utils.HashUtils;
@@ -40,6 +41,8 @@ import eu.stratuslab.registration.utils.RequestUtils;
 
 @SuppressWarnings("serial")
 public class ResetPassword implements Action {
+
+    private static final int PASSWORD_BIT_LENGTH = 60;
 
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
@@ -81,7 +84,8 @@ public class ResetPassword implements Action {
         Form form = new Form();
         form.add(UserAttribute.PASSWORD.key, hashedNewPassword);
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request);
+        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request,
+                Parameter.LDAP_USER_BASE_DN);
 
         UserEntry.rawUpdateUser(identifier, DirContext.REPLACE_ATTRIBUTE, form,
                 ldapEnv);
@@ -104,7 +108,7 @@ public class ResetPassword implements Action {
 
     private static String randomPassword() {
         SecureRandom randomSource = new SecureRandom();
-        BigInteger value = new BigInteger(60, randomSource);
+        BigInteger value = new BigInteger(PASSWORD_BIT_LENGTH, randomSource);
         return value.toString(Character.MAX_RADIX);
     }
 

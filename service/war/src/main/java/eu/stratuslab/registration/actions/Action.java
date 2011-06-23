@@ -32,7 +32,7 @@ public interface Action extends Serializable {
      * 
      * @return message about the action that was performed
      */
-    public String execute(Request request);
+    String execute(Request request);
 
     /**
      * Abort the defined action. A message should be returned indicating what
@@ -40,6 +40,6 @@ public interface Action extends Serializable {
      * 
      * @return message about what action was aborted
      */
-    public String abort(Request request);
+    String abort(Request request);
 
 }

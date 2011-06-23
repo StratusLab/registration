@@ -29,6 +29,7 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
 
 import eu.stratuslab.registration.actions.Action;
+import eu.stratuslab.registration.cfg.Parameter;
 import eu.stratuslab.registration.data.ActionEntry;
 import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.RequestUtils;
@@ -42,7 +43,8 @@ public class ActionResource extends BaseResource {
 
         String uuid = (String) request.getAttributes().get("uuid");
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request);
+        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request,
+                Parameter.LDAP_ACTION_BASE_DN);
 
         Action action = ActionEntry.retrieveAction(uuid, ldapEnv);
 

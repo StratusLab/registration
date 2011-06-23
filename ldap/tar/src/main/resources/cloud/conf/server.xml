@@ -185,7 +185,7 @@
 
   <apacheDS id="apacheDS">
     <ldapServer>#ldapServer</ldapServer>
-    <ldifDirectory>cloud.ldif</ldifDirectory>
+    <ldifDirectory>/var/lib/apacheds/cloud/cloud.ldif</ldifDirectory>
   </apacheDS>
   
 </spring:beans>

@@ -49,8 +49,16 @@ public enum Parameter {
         }
     },
 
-    LDAP_BASE_DN(true, "ou=users,ou=system",
-            "LDAP URL for DN holding user entries") {
+    LDAP_USER_BASE_DN(true, "ou=users,o=cloud",
+            "LDAP base DN for finding user entries") {
+    },
+
+    LDAP_GROUP_BASE_DN(true, "ou=groups,o=cloud",
+            "LDAP base DN for finding group entries") {
+    },
+
+    LDAP_ACTION_BASE_DN(true, "ou=actions,o=cloud",
+            "LDAP base DN for finding action entries") {
     },
 
     LDAP_MANAGER_DN(true, "uid=admin,ou=system", "DN for the LDAP manager") {
@@ -97,6 +105,9 @@ public enum Parameter {
             isBoolean(value);
         }
     };
+
+    private static final int PORT_MIN = 1;
+    private static final int PORT_MAX = 65535;
 
     private final String key;
     private final boolean required;
@@ -170,7 +181,7 @@ public enum Parameter {
     private static void isValidPort(String s) {
         try {
             int port = Integer.parseInt(s);
-            if (port < 1 || port > 65535) {
+            if (port < PORT_MIN || port > PORT_MAX) {
                 throw new IllegalArgumentException("invalid port number("
                         + port + ")");
             }

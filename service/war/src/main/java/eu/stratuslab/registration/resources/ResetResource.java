@@ -39,6 +39,7 @@ import org.restlet.resource.ResourceException;
 import eu.stratuslab.registration.actions.Action;
 import eu.stratuslab.registration.actions.ResetPassword;
 import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.cfg.Parameter;
 import eu.stratuslab.registration.data.ActionEntry;
 import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
@@ -74,15 +75,19 @@ public class ResetResource extends BaseResource {
 
         Form form = FormUtils.processWebForm(entity);
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request);
+        LdapConfig ldapEnvUser = RequestUtils.extractLdapConfig(request,
+                Parameter.LDAP_USER_BASE_DN);
 
         String formUserid = form.getFirstValue(UserAttribute.UID.key);
 
-        String userEmail = UserEntry.getEmailAddress(formUserid, ldapEnv);
+        String userEmail = UserEntry.getEmailAddress(formUserid, ldapEnvUser);
 
         Action action = new ResetPassword(formUserid, userEmail);
 
-        String actionId = ActionEntry.storeAction(action, ldapEnv);
+        LdapConfig ldapEnvAction = RequestUtils.extractLdapConfig(request,
+                Parameter.LDAP_ACTION_BASE_DN);
+
+        String actionId = ActionEntry.storeAction(action, ldapEnvAction);
 
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
 
@@ -91,7 +96,6 @@ public class ResetResource extends BaseResource {
         try {
             Notifier.sendNotification(userEmail, msg, cfg);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                     "cannot send reset email to user");
         }

@@ -30,6 +30,7 @@ import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Post;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.cfg.Parameter;
 import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
 import eu.stratuslab.registration.utils.FormUtils;
@@ -57,7 +58,7 @@ public class UsersResource extends BaseResource {
         String userMsg = form.getFirstValue(UserAttribute.MESSAGE.key);
 
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
-        LdapConfig ldapConfig = cfg.getLdapConfig();
+        LdapConfig ldapConfig = cfg.getLdapConfig(Parameter.LDAP_USER_BASE_DN);
 
         String userId = UserEntry.createUser(form, ldapConfig);
 

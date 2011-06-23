@@ -14,8 +14,28 @@
 
 RETVAL=0
 
+conf_file=/etc/stratuslab/registration.cfg
+rootaci_ldif=/var/lib/apacheds/cloud/rootACI.ldif
+
+function extract_ldap_password() {
+    ldap_password=`grep ldap.manager.password /etc/stratuslab/registration.cfg | cut -d = -f 2`
+}
+
+
+function reset_aci() {
+    extract_ldap_password
+    sleep 10
+    ldapdelete -H ldap://localhost:10389  -x -D uid=admin,ou=system -w ${ldap_password} cn=rootACI,o=cloud
+    ldapadd -H ldap://localhost:10389  -x -D uid=admin,ou=system -w ${ldap_password} -f ${rootaci_ldif}
+}
+
 function start() {
     /etc/init.d/apacheds start cloud
+
+    # This is a workaround for a bug in ApacheDS where the 
+    # server does not maintain the ACIs after a service
+    # restart. 
+    reset_aci
 }
 
 function stop() {
