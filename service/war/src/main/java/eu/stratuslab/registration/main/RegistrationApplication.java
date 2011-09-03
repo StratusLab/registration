@@ -67,6 +67,9 @@ public class RegistrationApplication extends Application {
         // yet have been initialized.
         appConfiguration = new AppConfiguration(getContext());
 
+        setStatusService(new CommonStatusService(
+                appConfiguration.getFreeMarkerConfig()));
+
         Router router = new RootRouter(getContext());
 
         TemplateRoute route = null;
