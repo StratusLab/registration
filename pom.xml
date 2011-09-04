@@ -21,11 +21,13 @@ with the infrastructure via a web interface.
     </license>
   </licenses>
 
+  <!--
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>7</version>
   </parent>
+  -->
 
   <modules>
     <module>service</module>
@@ -59,7 +61,6 @@ with the infrastructure via a web interface.
     <nexus.snapshot.repository.name>fedora-14-snapshots</nexus.snapshot.repository.name>
   </properties>
 
-  <!--
   <repositories>
     <repository>
       <releases>
@@ -77,17 +78,8 @@ with the infrastructure via a web interface.
       <url>http://repo.stratuslab.eu:8081/content/repositories/${nexus.release.repository.name}</url>
       <layout>default</layout>
     </repository>
-
-    <repository>  
-      <id>maven-restlet</id>  
-      <name>Public online Restlet repository</name>  
-      <url>http://maven.restlet.org</url>  
-    </repository>
-    
   </repositories>
-  -->
 
-  <!--
   <distributionManagement>
     <repository>
       <id>stratuslab.releases</id>
@@ -104,7 +96,6 @@ with the infrastructure via a web interface.
       <url>scp://hudson.stratuslab.eu/var/www/one</url>
     </site>
   </distributionManagement>
-  -->
 
   <developers>
     <developer>
