@@ -4,40 +4,43 @@
   <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
   <name>Registration Service (ROOT POM)</name>
-
-  <url>http://hudson.stratuslab.eu/</url>
-
   <description>
 This repository contains a service that allows people to register
 with the infrastructure via a web interface. 
 </description>
+  <url>http://stratuslab.eu/</url>
 
-  <packaging>pom</packaging>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
 
   <modules>
     <module>service</module>
     <module>ldap</module>
   </modules>
 
-  <properties>
-    <jetty.version>7.4.0.v20110414</jetty.version>
-
-    <nexus.release.repository.name>fedora-14-releases</nexus.release.repository.name>
-    <nexus.snapshot.repository.name>fedora-14-snapshots</nexus.snapshot.repository.name>
-  </properties>
-
-  <licenses>
-    <license>
-      <name>Apache 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
-
   <organization>
     <name>StratusLab</name>
     <url>http://stratuslab.eu/</url>
   </organization>
+
+  <scm>
+    <connection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/stratuslab-registration.git</connection>
+    <developerConnection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/stratuslab-registration.git</developerConnection>
+  </scm>
 
   <issueManagement>
     <system>JIRA</system>
@@ -49,11 +52,14 @@ with the infrastructure via a web interface.
     <url>http://hudson.stratuslab.eu:8080/</url>
   </ciManagement>
 
-  <scm>
-    <connection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/stratuslab-registration.git</connection>
-    <developerConnection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/stratuslab-registration.git</developerConnection>
-  </scm>
+  <properties>
+    <jetty.version>7.4.0.v20110414</jetty.version>
 
+    <nexus.release.repository.name>fedora-14-releases</nexus.release.repository.name>
+    <nexus.snapshot.repository.name>fedora-14-snapshots</nexus.snapshot.repository.name>
+  </properties>
+
+  <!--
   <repositories>
     <repository>
       <releases>
@@ -79,7 +85,9 @@ with the infrastructure via a web interface.
     </repository>
     
   </repositories>
+  -->
 
+  <!--
   <distributionManagement>
     <repository>
       <id>stratuslab.releases</id>
@@ -96,6 +104,53 @@ with the infrastructure via a web interface.
       <url>scp://hudson.stratuslab.eu/var/www/one</url>
     </site>
   </distributionManagement>
+  -->
+
+  <developers>
+    <developer>
+      <id>loomisc</id>
+      <name>Charles LOOMIS</name>
+      <email>loomis@lal.in2p3.fr</email>
+    </developer>
+  </developers>
+
+  <profiles>
+    <profile>
+      <id>release-signed-artifacts</id>
+      <activation>
+
+	<!--
+        <file>
+          <exists>/tmp</exists>
+        </file>
+	-->
+
+	<property>
+	  <name>performRelease</name>
+	  <value>true</value>
+	</property>
+
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.1</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <dependencyManagement>
     <dependencies>

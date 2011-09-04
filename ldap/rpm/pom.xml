@@ -2,12 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration-ldap-rpm</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Registration Service LDAP Support (RPM)</name>
-
   <packaging>rpm</packaging>
+
+  <name>Registration Service LDAP Support (RPM)</name>
 
   <parent>
     <groupId>eu.stratuslab.registration</groupId>
