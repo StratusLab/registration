@@ -4,7 +4,7 @@
   <artifactId>registration-ldap</artifactId>
   <packaging>pom</packaging>
 
-  <name>Registration Service LDAP Support</name>
+  <name>Registration Service LDAP Support (POM)</name>
 
   <parent>
     <groupId>eu.stratuslab.registration</groupId>

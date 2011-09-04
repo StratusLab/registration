@@ -4,7 +4,7 @@
   <artifactId>registration-service</artifactId>
   <packaging>pom</packaging>
 
-  <name>Registration Service</name>
+  <name>Registration Service (POM)</name>
 
   <parent>
     <groupId>eu.stratuslab.registration</groupId>
