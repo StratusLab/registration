@@ -53,7 +53,7 @@ with the infrastructure via a web interface.
   </ciManagement>
 
   <properties>
-    <jetty.version>7.4.0.v20110414</jetty.version>
+    <jetty.version>7.4.5.v20110725</jetty.version>
 
     <nexus.release.repository.name>fedora-14-releases</nexus.release.repository.name>
     <nexus.snapshot.repository.name>fedora-14-snapshots</nexus.snapshot.repository.name>
@@ -162,7 +162,7 @@ with the infrastructure via a web interface.
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
-        <version>1.5.8</version>
+        <version>1.6.2</version>
       </dependency>
       <dependency>
 	<groupId>org.eclipse.jetty</groupId>
@@ -177,7 +177,7 @@ with the infrastructure via a web interface.
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.8.2</version>
+        <version>4.9</version>
       </dependency>
       <dependency>  
         <groupId>org.restlet.jee</groupId>  
@@ -212,7 +212,7 @@ with the infrastructure via a web interface.
       <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>mail</artifactId>
-        <version>1.4.1</version>
+        <version>1.4.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
