@@ -106,15 +106,10 @@ with the infrastructure via a web interface.
   </developers>
 
   <profiles>
+<!--
     <profile>
       <id>release-signed-artifacts</id>
       <activation>
-
-	<!--
-        <file>
-          <exists>/tmp</exists>
-        </file>
-	-->
 
 	<property>
 	  <name>performRelease</name>
@@ -140,6 +135,7 @@ with the infrastructure via a web interface.
         </plugins>
       </build>
     </profile>
+-->
   </profiles>
 
   <dependencyManagement>
