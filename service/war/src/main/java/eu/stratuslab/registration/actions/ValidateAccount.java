@@ -21,15 +21,11 @@ package eu.stratuslab.registration.actions;
 
 import java.util.logging.Logger;
 
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-
 import org.restlet.Request;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.cfg.Parameter;
 import eu.stratuslab.registration.data.GroupEntry;
-import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
 import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.Notifier;
@@ -96,10 +92,7 @@ public class ValidateAccount implements Action {
         LdapConfig ldapEnvUser = RequestUtils.extractLdapConfig(request,
                 Parameter.LDAP_USER_BASE_DN);
 
-        Attributes userAttrs = UserEntry.getUserAttributes(identifier,
-                ldapEnvUser);
-
-        Attribute userDn = userAttrs.get(UserAttribute.DN.key);
+        String userDn = UserEntry.getUserDn(identifier, ldapEnvUser);
 
         LdapConfig ldapEnvGroup = RequestUtils.extractLdapConfig(request,
                 Parameter.LDAP_GROUP_BASE_DN);

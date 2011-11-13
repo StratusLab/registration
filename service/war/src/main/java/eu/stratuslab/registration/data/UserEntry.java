@@ -353,6 +353,57 @@ public final class UserEntry {
         return attrs;
     }
 
+    public static String getUserDn(String uid, LdapConfig ldapEnv) {
+
+        String userDn = null;
+
+        DirContext ctx = null;
+
+        try {
+
+            ctx = new InitialDirContext(ldapEnv);
+
+            Attributes matchingAttrs = new BasicAttributes(true);
+            matchingAttrs.put(UID.key, uid);
+
+            NamingEnumeration<SearchResult> results = ctx.search("",
+                    matchingAttrs, null);
+
+            if (results.hasMore()) {
+                SearchResult result = results.next();
+                userDn = result.getNameInNamespace();
+            } else {
+                throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                        "user record not found for " + uid);
+            }
+
+            if (results.hasMore()) {
+                throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                        "multiple records found for " + uid);
+            }
+
+        } catch (InvalidAttributesException e) {
+
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    "incomplete user entry");
+
+        } catch (AuthenticationException e) {
+
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        } catch (NamingException e) {
+
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        } finally {
+            freeContext(ctx);
+        }
+
+        return userDn;
+    }
+
     public static String getEmailAddress(String uid, LdapConfig ldapEnv) {
 
         String userEmail = null;

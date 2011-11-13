@@ -56,47 +56,29 @@ public final class GroupEntry {
 
     }
 
-    public static void addUserToGroup(String group, Attribute userDn,
+    public static void addUserToGroup(String group, String userDn,
             LdapConfig ldapEnv) {
 
-        String user = getUserFromAttribute(userDn);
-
-        if (user != null) {
-            if (!groupContainsUser(group, user, ldapEnv)) {
-                Form form = createMemberForm(user);
+        if (userDn != null) {
+            if (!groupContainsUser(group, userDn, ldapEnv)) {
+                Form form = createMemberForm(userDn);
                 rawUpdateGroup(group, DirContext.ADD_ATTRIBUTE, form, ldapEnv);
             }
         }
 
     }
 
-    public static void remoteUserFromGroup(String group, Attribute userDn,
+    public static void remoteUserFromGroup(String group, String userDn,
             LdapConfig ldapEnv) {
 
-        String user = getUserFromAttribute(userDn);
-
-        if (user != null) {
-            if (groupContainsUser(group, user, ldapEnv)) {
-                Form form = createMemberForm(user);
+        if (userDn != null) {
+            if (groupContainsUser(group, userDn, ldapEnv)) {
+                Form form = createMemberForm(userDn);
                 rawUpdateGroup(group, DirContext.REMOVE_ATTRIBUTE, form,
                         ldapEnv);
             }
         }
 
-    }
-
-    public static String getUserFromAttribute(Attribute userDn) {
-        if (userDn != null) {
-            try {
-                return userDn.get().toString();
-            } catch (NamingException e) {
-                LOGGER.severe(e.getMessage());
-                throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                        "error obtaining attribute value");
-            }
-        } else {
-            return null;
-        }
     }
 
     public static Form createMemberForm(String user) {
