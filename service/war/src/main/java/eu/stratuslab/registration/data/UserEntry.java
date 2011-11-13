@@ -322,8 +322,8 @@ public final class UserEntry {
                 SearchResult result = results.next();
                 attrs = result.getAttributes();
             } else {
-                throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                        "user record not found for " + uid);
+                throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
+                        "User record not found for " + uid + ".");
             }
 
             if (results.hasMore()) {
