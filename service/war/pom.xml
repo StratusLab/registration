@@ -60,7 +60,7 @@
                <groupId>org.mortbay.jetty</groupId>
                <artifactId>jetty-maven-plugin</artifactId>
                <configuration>
-                  <webApp>${basedir}/target/${project.artifactId}-0.0.1-SNAPSHOT.war</webApp>
+                  <webApp>${basedir}/target/${project.artifactId}-${project.version}.war</webApp>
                </configuration>
                <executions>
                <execution>
