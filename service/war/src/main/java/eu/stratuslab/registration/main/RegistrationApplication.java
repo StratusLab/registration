@@ -90,8 +90,7 @@ public class RegistrationApplication extends Application {
         route = router.attach("/profile", ForceTrailingSlashResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/profile_updated/",
-                setupGuard(ProfileUpdatedResource.class));
+        router.attach("/profile_updated/", ProfileUpdatedResource.class);
         route = router.attach("/profile_updated",
                 ForceTrailingSlashResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
