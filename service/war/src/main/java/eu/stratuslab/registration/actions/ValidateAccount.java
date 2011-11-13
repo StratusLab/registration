@@ -23,12 +23,8 @@ import java.util.logging.Logger;
 
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
 
 import org.restlet.Request;
-import org.restlet.data.Form;
-import org.restlet.data.Status;
-import org.restlet.resource.ResourceException;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.cfg.Parameter;
@@ -44,13 +40,6 @@ public class ValidateAccount implements Action {
 
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
-    private static final String EMAIL_MESSAGE_TEMPLATE = //
-    "Your password has been reset to '%s'.\n\n" + //
-            "Change this password as soon as possible by updating your profile.\n";
-
-    private static final String EMAIL_SENT_MESSAGE = //
-    "An email with your new password has been sent.";
-
     private static final String ACCOUNT_DENIED_MESSAGE_ADMIN = //
     "The user account %s has NOT been approved.\n" + //
             "An email to this effect has been sent to the user.\n\n";
@@ -59,11 +48,16 @@ public class ValidateAccount implements Action {
     "The administrator has NOT approved your account.\n" + //
             "Contact the administrator at %s for more information.\n\n";
 
+    private static final String ACCOUNT_APPROVED_MESSAGE_ADMIN = //
+    "The user account %s has been approved.\n" + //
+            "An email to this effect has been sent to the user.\n\n";
+
+    private static final String ACCOUNT_APPROVED_MESSAGE_USER = //
+    "The administrator has approved your account.\n" + //
+            "You may now start using the cloud infrastructure.\n\n";
+
     private static final String EMAIL_SEND_ERROR = //
     "An error occurred when trying to send email: %s.\n";
-
-    private static final String EMAIL_SEND_ERROR_FOR_USER = //
-    "An error occurred when trying to send email; contact the administrator.\n";
 
     private final String identifier;
 
@@ -99,8 +93,6 @@ public class ValidateAccount implements Action {
 
     public String execute(Request request) {
 
-        Form form = new Form();
-
         LdapConfig ldapEnvUser = RequestUtils.extractLdapConfig(request,
                 Parameter.LDAP_USER_BASE_DN);
 
@@ -116,18 +108,20 @@ public class ValidateAccount implements Action {
 
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
 
-        String message = String.format(EMAIL_MESSAGE_TEMPLATE, newPassword);
+        StringBuilder adminMessage = new StringBuilder(String.format(
+                ACCOUNT_APPROVED_MESSAGE_ADMIN, identifier));
+
+        String message = String.format(ACCOUNT_APPROVED_MESSAGE_USER);
 
         try {
             Notifier.sendNotification(userEmail, message, cfg);
         } catch (Exception e) {
             String msg = String.format(EMAIL_SEND_ERROR, e.getMessage());
             LOGGER.severe(msg);
-            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
-                    EMAIL_SEND_ERROR_FOR_USER);
+            adminMessage.append(msg);
         }
 
-        return EMAIL_SENT_MESSAGE;
+        return adminMessage.toString();
     }
 
 }
