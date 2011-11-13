@@ -26,14 +26,14 @@ import java.util.Map;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
 
-public class HomeResource extends BaseResource {
+public class SuccessResource extends BaseResource {
 
     @Get("html")
     public Representation toHtml() {
 
         Map<String, Object> info = createInfoStructure(NO_TITLE);
 
-        return templateRepresentation("html/home.ftl", info, TEXT_HTML);
+        return templateRepresentation("html/success.ftl", info, TEXT_HTML);
     }
 
 }

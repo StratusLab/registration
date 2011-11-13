@@ -48,7 +48,7 @@ public class ProfileResource extends BaseResource {
 
     @Get("html")
     public Representation toHtml() {
-        return toRepresentation("profile.ftl", TEXT_HTML);
+        return toRepresentation("html/profile.ftl", TEXT_HTML);
     }
 
     private Representation toRepresentation(String templateName,

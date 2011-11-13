@@ -58,7 +58,7 @@ public class ResetResource extends BaseResource {
 
     @Get("html")
     public Representation toHtml() {
-        return toRepresentation("reset.ftl", TEXT_HTML);
+        return toRepresentation("html/reset.ftl", TEXT_HTML);
     }
 
     private Representation toRepresentation(String templateName,

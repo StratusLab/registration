@@ -1,3 +1,22 @@
+/*
+ Created as part of the StratusLab project (http://stratuslab.eu),
+ co-funded by the European Commission under the Grant Agreement
+ INFSO-RI-261552.
+
+ Copyright (c) 2011, Centre National de la Recherche Scientifique (CNRS)
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package eu.stratuslab.registration.main;
 
 import static org.restlet.data.MediaType.APPLICATION_JSON;
@@ -19,19 +38,19 @@ import org.restlet.representation.Representation;
 import org.restlet.service.StatusService;
 
 import eu.stratuslab.registration.resources.BaseResource;
+import eu.stratuslab.registration.utils.RequestUtils;
 import freemarker.template.Configuration;
 
 public class CommonStatusService extends StatusService {
 
-    private Configuration freeMarkerConfiguration = null;
-
-    public CommonStatusService(Configuration freeMarkerConfiguration) {
-        this.freeMarkerConfiguration = freeMarkerConfiguration;
+    public CommonStatusService() {
     }
 
     @Override
     public Representation getRepresentation(Status status, Request request,
             Response response) {
+
+        Configuration cfg = RequestUtils.extractFreeMarkerConfig(request);
 
         ClientInfo clientInfo = request.getClientInfo();
         List<Preference<MediaType>> mediaTypes = clientInfo
@@ -45,39 +64,39 @@ public class CommonStatusService extends StatusService {
 
             if (TEXT_HTML.isCompatible(desiredMediaType)) {
 
-                return toHtml(info);
+                return toHtml(cfg, info);
 
             } else if (APPLICATION_XHTML.isCompatible(desiredMediaType)) {
 
-                return toHtml(info);
+                return toHtml(cfg, info);
 
             } else if (TEXT_PLAIN.isCompatible(desiredMediaType)) {
 
-                return toText(info);
+                return toText(cfg, info);
 
             } else if (APPLICATION_JSON.isCompatible(desiredMediaType)) {
 
-                return toJson(info);
+                return toJson(cfg, info);
 
             }
         }
 
-        return toText(info);
+        return toText(cfg, info);
     }
 
-    private Representation toText(Map<String, Object> info) {
-        return new TemplateRepresentation("text/error.ftl",
-                freeMarkerConfiguration, info, TEXT_PLAIN);
+    private Representation toText(Configuration cfg, Map<String, Object> info) {
+        return new TemplateRepresentation("text/error.ftl", cfg, info,
+                TEXT_PLAIN);
     }
 
-    private Representation toJson(Map<String, Object> info) {
-        return new TemplateRepresentation("json/error.ftl",
-                freeMarkerConfiguration, info, APPLICATION_JSON);
+    private Representation toJson(Configuration cfg, Map<String, Object> info) {
+        return new TemplateRepresentation("json/error.ftl", cfg, info,
+                APPLICATION_JSON);
     }
 
-    private Representation toHtml(Map<String, Object> info) {
-        return new TemplateRepresentation("html/error.ftl",
-                freeMarkerConfiguration, info, TEXT_HTML);
+    private Representation toHtml(Configuration cfg, Map<String, Object> info) {
+        return new TemplateRepresentation("html/error.ftl", cfg, info,
+                TEXT_HTML);
     }
 
     private static Map<String, Object> getErrorInfo(Status status,

@@ -31,49 +31,55 @@ import javax.naming.ldap.LdapName;
 
 public enum UserAttribute {
 
-    UID("uid", "username", false, true, true) {
+    UID("uid", "username", false, true, true, //
+            "Your username must be provided.") {
         @Override
         public boolean isValid(Object o) {
             return isValidUsername(o);
         }
     }, //
 
-    EMAIL("mail", "email address", true, true, false) {
+    EMAIL("mail", "email address", true, true, false, //
+            "Your email address must be provided.") {
         @Override
         public boolean isValid(Object o) {
             return isValidEmailAddress(o);
         }
     }, //
 
-    GIVEN_NAME("givenName", "given name", true, true, false) {
+    GIVEN_NAME("givenName", "given name", true, true, false, //
+            "Your given name(s) must be provided.") {
         @Override
         public boolean isValid(Object o) {
             return isNotWhitespace(o);
         }
     }, //
 
-    SURNAME("sn", "family name", true, true, false) {
+    SURNAME("sn", "family name", true, true, false, //
+            "Your family name must be provided.") {
         @Override
         public boolean isValid(Object o) {
             return isNotWhitespace(o);
         }
     }, //
 
-    X500_DN("seeAlso", "X500 DN", true, false, false) {
+    X500_DN("seeAlso", "X500 DN", true, false, false, "") {
         @Override
         public boolean isValid(Object o) {
             return isWhitespace(o) || isValidCertificateDN(o);
         }
     }, //
 
-    PASSWORD("userPassword", "password", true, false, true) {
+    PASSWORD("userPassword", "password", true, false, true, //
+            "Your password must be provided.") {
         @Override
         public boolean isValid(Object o) {
             return isValidPassword(o);
         }
     }, //
 
-    NEW_PASSWORD("newUserPassword", "new password", true, true, false) {
+    NEW_PASSWORD("newUserPassword", "new password", true, true, false, //
+            "You must provide a password.") {
         @Override
         public boolean isValid(Object o) {
             return isValidPassword(o);
@@ -81,21 +87,23 @@ public enum UserAttribute {
     }, //
 
     NEW_PASSWORD_CHECK("newUserPasswordCheck", "new password", true, true,
-            false) {
+            false, //
+            "You must type your password twice.") {
         @Override
         public boolean isValid(Object o) {
             return isValidPassword(o);
         }
     }, //
 
-    MESSAGE("message", "message", true, true, false) {
+    MESSAGE("message", "message", true, false, false, "") {
         @Override
         public boolean isValid(Object o) {
             return isNotWhitespace(o);
         }
     }, //
 
-    AGREEMENT("agreement", "agreement", true, true, false) {
+    AGREEMENT("agreement", "agreement", true, true, false, //
+            "You must agree to the terms, conditions, and policies to register.") {
         @Override
         public boolean isValid(Object o) {
             // Only sent if the checkbox is ticked.
@@ -130,13 +138,17 @@ public enum UserAttribute {
 
     public final boolean isRequiredForUpdate;
 
+    public final String missingErrorMessage;
+
     UserAttribute(String key, String name, boolean isModifiable,
-            boolean isRequiredForCreate, boolean isRequiredForUpdate) {
+            boolean isRequiredForCreate, boolean isRequiredForUpdate,
+            String missingErrorMessage) {
         this.key = key;
         this.name = name;
         this.isModifiable = isModifiable;
         this.isRequiredForCreate = isRequiredForCreate;
         this.isRequiredForUpdate = isRequiredForUpdate;
+        this.missingErrorMessage = missingErrorMessage;
     }
 
     public abstract boolean isValid(Object o);

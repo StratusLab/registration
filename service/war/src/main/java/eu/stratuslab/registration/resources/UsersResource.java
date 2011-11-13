@@ -63,8 +63,7 @@ public class UsersResource extends BaseResource {
         String userId = UserEntry.createUser(form, ldapConfig);
 
         Reference redirectRef = getRequest().getRootRef();
-        redirectRef.addSegment("profile");
-        redirectRef.addQueryParameter("message", MESSAGE);
+        redirectRef.addSegment("success");
 
         Response response = getResponse();
         response.redirectSeeOther(redirectRef);

@@ -9,7 +9,7 @@
     <#include "breadcrumbs.ftl">
 
     <p>
-      ${errorMsg} (${errorCode})
+      <strong>${errorMsg}</strong>
     </p>
 
   </body>

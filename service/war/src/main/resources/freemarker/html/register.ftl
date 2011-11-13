@@ -13,14 +13,7 @@
       on the StratusLab reference cloud infrastructures.
     </p>
     <p>
-      You will be redirected to your profile page (and prompted
-      for your username/password) after registration. 
-    </p>
-    <p>
-      An administrator will notify you when your account is active.
-    </p>
-    <p>
-      <strong>All fields are mandatory.</strong> 
+      <strong>Fields marked with an asterisk (*) are mandatory.</strong> 
     </p>
 
     <form id="form_with_tooltips" 
@@ -31,7 +24,7 @@
       <table>
         <tbody>
           <tr>
-            <td>Username</td>
+            <td>Username (*)</td>
             <td>
               <input type="text" 
                      name="uid" 
@@ -41,7 +34,7 @@
             </td>
           </tr>
           <tr>
-            <td>Email Address</td>
+            <td>Email Address (*)</td>
             <td>
               <input type="text" 
                      name="mail" 
@@ -50,7 +43,7 @@
             </td>
           </tr>
           <tr>
-            <td>Given Name(s)</td>
+            <td>Given Name(s) (*)</td>
             <td>
               <input type="text" 
                      name="givenName" 
@@ -59,7 +52,7 @@
             </td>
           </tr>
           <tr>
-            <td>Family Name</td>
+            <td>Family Name (*)</td>
             <td>
               <input type="text" 
                      name="sn" 
@@ -77,7 +70,7 @@
             </td>
           </tr>
           <tr>
-            <td>Password</td>
+            <td>Password (*)</td>
             <td>
               <input type="password" 
                      name="newUserPassword" 
@@ -87,7 +80,7 @@
             </td>
           </tr>
           <tr>
-            <td>Password (again)</td>
+            <td>Password check (*)</td>
             <td>
               <input type="password" 
                      name="newUserPasswordCheck" 
@@ -109,7 +102,7 @@
           <tr>
             <td colspan="2">
               <label>I agree to the defined 
-                     <a href="policies/">terms, conditions, and policies</a>
+                     <a href="policies/">terms, conditions, and policies</a> (*)
                 <input type="checkbox" 
                        name="agreement" 
                        title="you must agree to create an account">

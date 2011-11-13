@@ -40,12 +40,11 @@ import eu.stratuslab.registration.resources.PoliciesResource;
 import eu.stratuslab.registration.resources.ProfileResource;
 import eu.stratuslab.registration.resources.RegisterResource;
 import eu.stratuslab.registration.resources.ResetResource;
+import eu.stratuslab.registration.resources.SuccessResource;
 import eu.stratuslab.registration.resources.UsersResource;
 import eu.stratuslab.registration.utils.RequestUtils;
 
 public class RegistrationApplication extends Application {
-
-    private AppConfiguration appConfiguration;
 
     public RegistrationApplication() {
 
@@ -58,6 +57,8 @@ public class RegistrationApplication extends Application {
 
         getTunnelService().setUserAgentTunnel(true);
 
+        setStatusService(new CommonStatusService());
+
     }
 
     @Override
@@ -65,12 +66,9 @@ public class RegistrationApplication extends Application {
 
         // Do not do this during the constructor because the context will not
         // yet have been initialized.
-        appConfiguration = new AppConfiguration(getContext());
+        AppConfiguration appConfiguration = new AppConfiguration(getContext());
 
-        setStatusService(new CommonStatusService(
-                appConfiguration.getFreeMarkerConfig()));
-
-        Router router = new RootRouter(getContext());
+        Router router = new RootRouter(getContext(), appConfiguration);
 
         TemplateRoute route = null;
 
@@ -80,6 +78,10 @@ public class RegistrationApplication extends Application {
 
         router.attach("/register/", RegisterResource.class);
         route = router.attach("/register", ForceTrailingSlashResource.class);
+        route.setMatchingMode(Template.MODE_EQUALS);
+
+        router.attach("/success/", SuccessResource.class);
+        route = router.attach("/success", ForceTrailingSlashResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
         router.attach("/profile/", setupGuard(ProfileResource.class));
@@ -123,10 +125,13 @@ public class RegistrationApplication extends Application {
         return guard;
     }
 
-    public class RootRouter extends Router {
+    public static class RootRouter extends Router {
 
-        public RootRouter(Context context) {
+        private final AppConfiguration appConfiguration;
+
+        public RootRouter(Context context, AppConfiguration appConfiguration) {
             super(context);
+            this.appConfiguration = appConfiguration;
         }
 
         @Override
