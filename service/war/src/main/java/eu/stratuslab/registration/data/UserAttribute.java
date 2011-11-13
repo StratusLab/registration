@@ -31,8 +31,16 @@ import javax.naming.ldap.LdapName;
 
 public enum UserAttribute {
 
+    DN("dn", "distinguished name", false, false, false, //
+            "A distinguished name must be provided.") {
+        @Override
+        public boolean isValid(Object o) {
+            return true;
+        }
+    }, //
+
     UID("uid", "username", false, true, true, //
-            "Your username must be provided.") {
+            "A username must be provided.") {
         @Override
         public boolean isValid(Object o) {
             return isValidUsername(o);
@@ -63,7 +71,8 @@ public enum UserAttribute {
         }
     }, //
 
-    X500_DN("seeAlso", "X500 DN", true, false, false, "") {
+    X500_DN("seeAlso", "X500 DN", true, false, false, //
+            "Your certificate DN must be provided.") {
         @Override
         public boolean isValid(Object o) {
             return isWhitespace(o) || isValidCertificateDN(o);
@@ -71,7 +80,7 @@ public enum UserAttribute {
     }, //
 
     PASSWORD("userPassword", "password", true, false, true, //
-            "Your password must be provided.") {
+            "Your current password must be provided.") {
         @Override
         public boolean isValid(Object o) {
             return isValidPassword(o);
@@ -79,7 +88,7 @@ public enum UserAttribute {
     }, //
 
     NEW_PASSWORD("newUserPassword", "new password", true, true, false, //
-            "You must provide a password.") {
+            "A new password must be provided for your account.") {
         @Override
         public boolean isValid(Object o) {
             return isValidPassword(o);
@@ -88,14 +97,15 @@ public enum UserAttribute {
 
     NEW_PASSWORD_CHECK("newUserPasswordCheck", "new password", true, true,
             false, //
-            "You must type your password twice.") {
+            "Your new password must be provided twice.") {
         @Override
         public boolean isValid(Object o) {
             return isValidPassword(o);
         }
     }, //
 
-    MESSAGE("message", "message", true, false, false, "") {
+    MESSAGE("message", "message", true, false, false, //
+            "Provide a message for the administrator.") {
         @Override
         public boolean isValid(Object o) {
             return isNotWhitespace(o);

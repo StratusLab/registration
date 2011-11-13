@@ -100,8 +100,8 @@ public class ResetResource extends BaseResource {
                     "cannot send reset email to user");
         }
 
-        Reference redirectRef = getRequest().getResourceRef();
-        redirectRef.addQueryParameter("message", MESSAGE);
+        Reference redirectRef = getRequest().getRootRef();
+        redirectRef.addSegment("reset_started");
 
         Response response = getResponse();
         response.redirectSeeOther(redirectRef);

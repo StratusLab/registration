@@ -19,10 +19,10 @@
  */
 package eu.stratuslab.registration.actions;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.logging.Logger;
 
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 
 import org.restlet.Request;
@@ -32,17 +32,15 @@ import org.restlet.resource.ResourceException;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.cfg.Parameter;
+import eu.stratuslab.registration.data.GroupEntry;
 import eu.stratuslab.registration.data.UserAttribute;
 import eu.stratuslab.registration.data.UserEntry;
-import eu.stratuslab.registration.utils.HashUtils;
 import eu.stratuslab.registration.utils.LdapConfig;
 import eu.stratuslab.registration.utils.Notifier;
 import eu.stratuslab.registration.utils.RequestUtils;
 
 @SuppressWarnings("serial")
-public class ResetPassword implements Action {
-
-    private static final int PASSWORD_BIT_LENGTH = 60;
+public class ValidateAccount implements Action {
 
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
@@ -53,9 +51,13 @@ public class ResetPassword implements Action {
     private static final String EMAIL_SENT_MESSAGE = //
     "An email with your new password has been sent.";
 
-    private static final String EMAIL_ABORT_MESSAGE = //
-    "The request to update your password has been cancelled.\n"
-            + "Your password has NOT been changed.\n";
+    private static final String ACCOUNT_DENIED_MESSAGE_ADMIN = //
+    "The user account %s has NOT been approved.\n" + //
+            "An email to this effect has been sent to the user.\n\n";
+
+    private static final String ACCOUNT_DENIED_MESSAGE_USER = //
+    "The administrator has NOT approved your account.\n" + //
+            "Contact the administrator at %s for more information.\n\n";
 
     private static final String EMAIL_SEND_ERROR = //
     "An error occurred when trying to send email: %s.\n";
@@ -65,37 +67,59 @@ public class ResetPassword implements Action {
 
     private final String identifier;
 
-    private final String email;
+    private final String userEmail;
 
-    public ResetPassword(String identifier, String email) {
+    private final String adminEmail;
+
+    public ValidateAccount(String identifier, String userEmail,
+            String adminEmail) {
         this.identifier = identifier;
-        this.email = email;
+        this.userEmail = userEmail;
+        this.adminEmail = adminEmail;
     }
 
     public String abort(Request request) {
-        return EMAIL_ABORT_MESSAGE;
+
+        AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
+
+        StringBuilder adminMessage = new StringBuilder(String.format(
+                ACCOUNT_DENIED_MESSAGE_ADMIN, identifier));
+
+        String message = String.format(ACCOUNT_DENIED_MESSAGE_USER, adminEmail);
+        try {
+            Notifier.sendNotification(userEmail, message, cfg);
+        } catch (Exception e) {
+            String msg = String.format(EMAIL_SEND_ERROR, e.getMessage());
+            LOGGER.severe(msg);
+            adminMessage.append(msg);
+        }
+
+        return adminMessage.toString();
     }
 
     public String execute(Request request) {
 
-        String newPassword = randomPassword();
-        String hashedNewPassword = HashUtils.sshaHash(newPassword);
-
         Form form = new Form();
-        form.add(UserAttribute.PASSWORD.key, hashedNewPassword);
 
-        LdapConfig ldapEnv = RequestUtils.extractLdapConfig(request,
+        LdapConfig ldapEnvUser = RequestUtils.extractLdapConfig(request,
                 Parameter.LDAP_USER_BASE_DN);
 
-        UserEntry.rawUpdateUser(identifier, DirContext.REPLACE_ATTRIBUTE, form,
-                ldapEnv);
+        Attributes userAttrs = UserEntry.getUserAttributes(identifier,
+                ldapEnvUser);
+
+        Attribute userDn = userAttrs.get(UserAttribute.DN.key);
+
+        LdapConfig ldapEnvGroup = RequestUtils.extractLdapConfig(request,
+                Parameter.LDAP_GROUP_BASE_DN);
+
+        GroupEntry.addUserToGroup("cloud-access", userDn, ldapEnvGroup);
 
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
 
         String message = String.format(EMAIL_MESSAGE_TEMPLATE, newPassword);
 
         try {
-            Notifier.sendNotification(email, message, cfg);
+            Notifier.sendNotification(userEmail, message, cfg);
         } catch (Exception e) {
             String msg = String.format(EMAIL_SEND_ERROR, e.getMessage());
             LOGGER.severe(msg);
@@ -104,12 +128,6 @@ public class ResetPassword implements Action {
         }
 
         return EMAIL_SENT_MESSAGE;
-    }
-
-    private static String randomPassword() {
-        SecureRandom randomSource = new SecureRandom();
-        BigInteger value = new BigInteger(PASSWORD_BIT_LENGTH, randomSource);
-        return value.toString(Character.MAX_RADIX);
     }
 
 }

@@ -9,8 +9,10 @@
     <#include "breadcrumbs.ftl">
      
     <p>
-      Submit this form with new values (and your current
-      password) to update your account.
+      Submit this form with new values to update your account.
+    </p>
+    <p>
+      <strong>Fields marked with an asterisk (*) are mandatory.</strong> 
     </p>
 
     <form id="form_with_tooltips" 
@@ -72,7 +74,7 @@
             </td>
           </tr>
           <tr>
-            <td>Current Password</td>
+            <td>Current Password (*)</td>
             <td>
               <input type="password" 
                      name="userPassword" 

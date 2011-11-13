@@ -47,6 +47,9 @@ public class UsersResource extends BaseResource {
             "Please review the users' information.\n" + //
             "Send an email to the user when the account has been activated.\n";
 
+    private static final String NO_USER_MESSAGE = //
+    "User did not provide a message.";
+
     @Post
     public Representation createUser(Representation entity) {
 
@@ -56,6 +59,9 @@ public class UsersResource extends BaseResource {
 
         String userEmail = form.getFirstValue(UserAttribute.EMAIL.key);
         String userMsg = form.getFirstValue(UserAttribute.MESSAGE.key);
+        if (userMsg == null) {
+            userMsg = NO_USER_MESSAGE;
+        }
 
         AppConfiguration cfg = RequestUtils.extractAppConfiguration(request);
         LdapConfig ldapConfig = cfg.getLdapConfig(Parameter.LDAP_USER_BASE_DN);

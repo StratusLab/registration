@@ -194,13 +194,12 @@ public enum Parameter {
         try {
             new InternetAddress(s);
             if (!Pattern.matches(".+@.+", s)) {
-                throw new IllegalArgumentException("invalid email address: "
-                        + s);
-
+                throw new IllegalArgumentException(
+                        "Invalid email address provided.");
             }
         } catch (AddressException e) {
-            throw new IllegalArgumentException("invalid email address: "
-                    + e.getMessage());
+            throw new IllegalArgumentException(
+                    "Invalid email address provided: " + e.getMessage() + ".");
         }
     }
 

@@ -48,8 +48,8 @@
         <td>In depth tutorial showing all StratusLab features.</td>
       </tr>
       <tr>
-        <td><a href="mailto:support_NOSPAM_@stratuslab.eu">Email</a></td>
-        <td>Contact the support team (remove _NOSPAM_).</td>
+        <td><a href="mailto:support@stratuslab.eu">Email</a></td>
+        <td>Contact the support team.</td>
       </tr>
       <tr>
         <td><a href="http://stratuslab.eu/">Web</a></td>

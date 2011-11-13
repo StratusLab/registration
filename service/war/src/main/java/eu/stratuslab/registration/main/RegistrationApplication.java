@@ -38,8 +38,10 @@ import eu.stratuslab.registration.resources.ForceTrailingSlashResource;
 import eu.stratuslab.registration.resources.HomeResource;
 import eu.stratuslab.registration.resources.PoliciesResource;
 import eu.stratuslab.registration.resources.ProfileResource;
+import eu.stratuslab.registration.resources.ProfileUpdatedResource;
 import eu.stratuslab.registration.resources.RegisterResource;
 import eu.stratuslab.registration.resources.ResetResource;
+import eu.stratuslab.registration.resources.ResetStartedResource;
 import eu.stratuslab.registration.resources.SuccessResource;
 import eu.stratuslab.registration.resources.UsersResource;
 import eu.stratuslab.registration.utils.RequestUtils;
@@ -88,12 +90,23 @@ public class RegistrationApplication extends Application {
         route = router.attach("/profile", ForceTrailingSlashResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
+        router.attach("/profile_updated/",
+                setupGuard(ProfileUpdatedResource.class));
+        route = router.attach("/profile_updated",
+                ForceTrailingSlashResource.class);
+        route.setMatchingMode(Template.MODE_EQUALS);
+
         router.attach("/policies/", PoliciesResource.class);
         route = router.attach("/policies", ForceTrailingSlashResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
         router.attach("/reset/", ResetResource.class);
         route = router.attach("/reset", ForceTrailingSlashResource.class);
+        route.setMatchingMode(Template.MODE_EQUALS);
+
+        router.attach("/reset_started/", ResetStartedResource.class);
+        route = router.attach("/reset_started",
+                ForceTrailingSlashResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
         router.attach("/action/", ActionResource.class);
@@ -116,7 +129,7 @@ public class RegistrationApplication extends Application {
     public ChallengeAuthenticator setupGuard(Class<?> targetClass) {
 
         ChallengeAuthenticator guard = new ChallengeAuthenticator(null,
-                ChallengeScheme.HTTP_BASIC, "testRealm");
+                ChallengeScheme.HTTP_BASIC, "StratusLab");
 
         guard.setVerifier(new LdapVerifier());
 

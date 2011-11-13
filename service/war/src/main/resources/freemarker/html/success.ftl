@@ -17,8 +17,8 @@
       when your account is active.</strong>
     </p>
     <p>
-      You can visit the profile page to update your account 
-      information at any time.
+      You can visit the <a href="profile/">profile page</a> to update
+      your account information at any time.
     </p>
 
   </body>

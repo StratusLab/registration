@@ -78,13 +78,13 @@ public class ProfileResource extends BaseResource {
 
         if (!userid.equals(formUserid)) {
             throw new ResourceException(Status.CLIENT_ERROR_UNAUTHORIZED,
-                    "cannot update another user's profile");
+                    "You cannot update another user's profile.");
         }
 
         UserEntry.updateUser(form, ldapEnv);
 
-        Reference redirectRef = getRequest().getResourceRef();
-        redirectRef.addQueryParameter("message", MESSAGE);
+        Reference redirectRef = getRequest().getRootRef();
+        redirectRef.addSegment("profile_updated");
 
         Response response = getResponse();
         response.redirectSeeOther(redirectRef);

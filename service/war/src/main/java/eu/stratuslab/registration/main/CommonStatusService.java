@@ -37,11 +37,16 @@ import org.restlet.ext.freemarker.TemplateRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.service.StatusService;
 
+import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.cfg.Parameter;
 import eu.stratuslab.registration.resources.BaseResource;
 import eu.stratuslab.registration.utils.RequestUtils;
 import freemarker.template.Configuration;
 
 public class CommonStatusService extends StatusService {
+
+    private static final String INTERNAL_SERVICE_ERROR_MSG = //
+    "An internal service error has occurred; please inform the administrator (%s).  Our apologies for any inconvenience.";
 
     public CommonStatusService() {
     }
@@ -105,10 +110,19 @@ public class CommonStatusService extends StatusService {
         Map<String, Object> info = BaseResource.createInfoStructure("Error",
                 request);
 
-        info.put("errorMsg", status.getDescription());
-        info.put("errorCode", status.getCode());
+        if (status.isServerError()) {
+            AppConfiguration appCfg = RequestUtils
+                    .extractAppConfiguration(request);
+            String adminEmail = appCfg.getValue(Parameter.ADMIN_EMAIL);
+
+            info.put("errorMsg",
+                    String.format(INTERNAL_SERVICE_ERROR_MSG, adminEmail));
+            info.put("errorCode", status.getCode());
+        } else {
+            info.put("errorMsg", status.getDescription());
+            info.put("errorCode", status.getCode());
+        }
 
         return info;
     }
-
 }
