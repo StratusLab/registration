@@ -25,7 +25,7 @@
     <installation.dir>/opt/stratuslab/registration</installation.dir>
     <registration-war>registration-war.war</registration-war>
     <maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format> 
-    <RELEASE>0.${maven.build.timestamp}</RELEASE>
+    <RELEASE>${package.os}0.${maven.build.timestamp}</RELEASE>
   </properties>
   <build>
     
