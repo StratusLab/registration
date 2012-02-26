@@ -19,6 +19,7 @@
  */
 package eu.stratuslab.registration.utils;
 
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -29,6 +30,8 @@ public final class HashUtils {
     public static final String SSHA_PREFIX = "{SSHA}";
 
     public static final int SALT_LENGTH = 8;
+
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
@@ -55,7 +58,7 @@ public final class HashUtils {
             byte[] digestAndSalt = fuseByteArrays(digest, salt);
 
             String encodedDigestAndSalt = new String(
-                    Base64.encode(digestAndSalt));
+                    Base64.encode(digestAndSalt), UTF8);
 
             return SSHA_PREFIX + encodedDigestAndSalt;
 
@@ -101,7 +104,7 @@ public final class HashUtils {
     }
 
     public static byte[] convertPasswordToBytes(String clearTextPassword) {
-        return clearTextPassword.getBytes();
+        return clearTextPassword.getBytes(UTF8);
     }
 
     public static byte[] generateSalt() {

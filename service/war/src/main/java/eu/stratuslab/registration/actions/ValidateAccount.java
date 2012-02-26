@@ -37,23 +37,23 @@ public class ValidateAccount implements Action {
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
     private static final String ACCOUNT_DENIED_MESSAGE_ADMIN = //
-    "The user account %s has NOT been approved.\n" + //
-            "An email to this effect has been sent to the user.\n\n";
+    "The user account %s has NOT been approved.%n" + //
+            "An email to this effect has been sent to the user.%n%n";
 
     private static final String ACCOUNT_DENIED_MESSAGE_USER = //
-    "The administrator has NOT approved your account.\n" + //
-            "Contact the administrator at %s for more information.\n\n";
+    "The administrator has NOT approved your account.%n" + //
+            "Contact the administrator at %s for more information.%n%n";
 
     private static final String ACCOUNT_APPROVED_MESSAGE_ADMIN = //
-    "The user account %s has been approved.\n" + //
-            "An email to this effect has been sent to the user.\n\n";
+    "The user account %s has been approved.%n" + //
+            "An email to this effect has been sent to the user.%n%n";
 
     private static final String ACCOUNT_APPROVED_MESSAGE_USER = //
-    "The administrator has approved your account.\n" + //
-            "You may now start using the cloud infrastructure.\n\n";
+    "The administrator has approved your account.%n" + //
+            "You may now start using the cloud infrastructure.%n%n";
 
     private static final String EMAIL_SEND_ERROR = //
-    "An error occurred when trying to send email: %s.\n";
+    "An error occurred when trying to send email: %s.%n";
 
     private final String identifier;
 

@@ -53,8 +53,8 @@ public class ResetResource extends BaseResource {
     private static final String MESSAGE = "password reset message sent";
 
     private static final String EMAIL_MESSAGE_TEMPLATE = //
-    "Visit this URL to reset your password: \n\n%1$s\n\n" + //
-            "To cancel the request, follow this link: \n\n%1$s?abort=true\n\n";
+    "Visit this URL to reset your password: %n%n%1$s%n%n" + //
+            "To cancel the request, follow this link: %n%n%1$s?abort=true%n%n";
 
     @Get("html")
     public Representation toHtml() {

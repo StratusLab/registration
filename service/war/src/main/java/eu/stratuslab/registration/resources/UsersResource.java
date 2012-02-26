@@ -46,9 +46,9 @@ public class UsersResource extends BaseResource {
     private static final String MESSAGE = "account created";
 
     private static final String ADMIN_NOTIFICATION_MESSAGE = //
-    "A new user has registered (%s, %s).\n\n%s\n\n" + //
-            "To APPROVE this user, follow this link: \n\n%s\n\n" + //
-            "To REJECT this user, follow this link: \n\n%s?abort=true\n\n";
+    "A new user has registered (%s, %s).%n%n%s%n%n" + //
+            "To APPROVE this user, follow this link: %n%n%s%n%n" + //
+            "To REJECT this user, follow this link: %n%n%s?abort=true%n%n";
 
     private static final String NO_USER_MESSAGE = //
     "User did not provide a message.";

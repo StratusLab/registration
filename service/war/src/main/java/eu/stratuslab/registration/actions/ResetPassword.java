@@ -47,21 +47,21 @@ public class ResetPassword implements Action {
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
     private static final String EMAIL_MESSAGE_TEMPLATE = //
-    "Your password has been reset to '%s'.\n\n" + //
-            "Change this password as soon as possible by updating your profile.\n";
+    "Your password has been reset to '%s'.%n%n" + //
+            "Change this password as soon as possible by updating your profile.%n";
 
     private static final String EMAIL_SENT_MESSAGE = //
     "An email with your new password has been sent.";
 
     private static final String EMAIL_ABORT_MESSAGE = //
-    "The request to update your password has been cancelled.\n"
-            + "Your password has NOT been changed.\n";
+    "The request to update your password has been cancelled.%n"
+            + "Your password has NOT been changed.%n";
 
     private static final String EMAIL_SEND_ERROR = //
-    "An error occurred when trying to send email: %s.\n";
+    "An error occurred when trying to send email: %s.%n";
 
     private static final String EMAIL_SEND_ERROR_FOR_USER = //
-    "An error occurred when trying to send email; contact the administrator.\n";
+    "An error occurred when trying to send email; contact the administrator.%n";
 
     private final String identifier;
 

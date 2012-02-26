@@ -22,6 +22,7 @@ package eu.stratuslab.registration.data;
 import static eu.stratuslab.registration.data.UserAttribute.PASSWORD;
 import static eu.stratuslab.registration.data.UserAttribute.UID;
 
+import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -51,6 +52,8 @@ public final class UserEntry {
     private static final String DATABASE_CONNECT_ERROR = "error contacting database";
 
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
+
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private UserEntry() {
 
@@ -226,7 +229,7 @@ public final class UserEntry {
             if (attr != null) {
                 byte[] bytes;
                 bytes = (byte[]) attr.get();
-                ldapPassword = new String(bytes);
+                ldapPassword = new String(bytes, UTF8);
             }
 
         } catch (NamingException consumed) {
@@ -282,7 +285,7 @@ public final class UserEntry {
                 Object value = attr.get();
                 if (value != null) {
                     if (value instanceof byte[]) {
-                        form.add(key, new String((byte[]) value));
+                        form.add(key, new String((byte[]) value, UTF8));
                     } else {
                         form.add(key, value.toString());
                     }

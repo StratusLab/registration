@@ -25,6 +25,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
 import javax.mail.MessagingException;
@@ -33,6 +34,8 @@ import javax.mail.internet.MimeUtility;
 public final class Base64 {
 
     private static final int BUFFER_SIZE = 1024;
+
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
@@ -59,7 +62,7 @@ public final class Base64 {
     }
 
     public static byte[] decode(String s) {
-        return decode(s.getBytes());
+        return decode(s.getBytes(UTF8));
     }
 
     public static byte[] decode(byte[] b) {

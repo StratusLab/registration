@@ -27,10 +27,12 @@ import static eu.stratuslab.registration.cfg.Parameter.LDAP_SCHEME;
 import static eu.stratuslab.registration.cfg.Parameter.LDAP_USER_BASE_DN;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -108,7 +110,8 @@ public final class AppConfiguration {
         Properties properties = new Properties();
 
         try {
-            Reader reader = new FileReader(configFile);
+            Reader reader = new InputStreamReader(new FileInputStream(
+                    configFile), Charset.defaultCharset());
             try {
                 properties.load(reader);
             } catch (IOException e) {
