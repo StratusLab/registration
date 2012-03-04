@@ -64,7 +64,7 @@
         <configuration>
           <war>${basedir}/target/${project.artifactId}-${project.version}.war</war>
           <webApp>
-            <extraClasspath>${basedir}/target/eu/egi/style</extraClasspath>
+            <extraClasspath>${basedir}/target/altstyle</extraClasspath>
           </webApp>
         </configuration>
 

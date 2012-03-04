@@ -104,6 +104,10 @@ public enum Parameter {
             super.validate(value);
             isBoolean(value);
         }
+    },
+
+    STYLE_PATH(true, "/eu/stratuslab/style/",
+            "Path for CSS and other style information.") {
     };
 
     private static final int PORT_MIN = 1;

@@ -34,6 +34,7 @@ import org.restlet.routing.TemplateRoute;
 import org.restlet.security.ChallengeAuthenticator;
 
 import eu.stratuslab.registration.cfg.AppConfiguration;
+import eu.stratuslab.registration.cfg.Parameter;
 import eu.stratuslab.registration.guards.LdapVerifier;
 import eu.stratuslab.registration.resources.ActionResource;
 import eu.stratuslab.registration.resources.ForceTrailingSlashResource;
@@ -117,7 +118,9 @@ public class RegistrationApplication extends Application {
         router.attach("/action/{uuid}", ActionResource.class);
 
         Reference styleRef = LocalReference.createClapReference(
-                LocalReference.CLAP_THREAD, "/eu/stratuslab/style/");
+                LocalReference.CLAP_THREAD,
+                appConfiguration.getValue(Parameter.STYLE_PATH));
+
         Directory cssDir = new Directory(getContext(), styleRef);
         cssDir.setNegotiatingContent(false);
         cssDir.setIndexName("index.html");
