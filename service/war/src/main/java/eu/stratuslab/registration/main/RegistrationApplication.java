@@ -25,6 +25,8 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.ChallengeScheme;
+import org.restlet.data.LocalReference;
+import org.restlet.data.Reference;
 import org.restlet.resource.Directory;
 import org.restlet.routing.Router;
 import org.restlet.routing.Template;
@@ -114,7 +116,9 @@ public class RegistrationApplication extends Application {
 
         router.attach("/action/{uuid}", ActionResource.class);
 
-        Directory cssDir = new Directory(getContext(), "war:///css");
+        Reference styleRef = LocalReference.createClapReference(
+                LocalReference.CLAP_THREAD, "/eu/stratuslab/style/");
+        Directory cssDir = new Directory(getContext(), styleRef);
         cssDir.setNegotiatingContent(false);
         cssDir.setIndexName("index.html");
         router.attach("/css/", cssDir);
