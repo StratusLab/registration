@@ -2,7 +2,6 @@ version: 1
 
 dn: o=cloud
 o: cloud
-administrativeRole: accessControlSpecificArea
 objectClass: organization
 description: context entry for suffix o=cloud
 
@@ -26,4 +25,3 @@ cn: cloud-access
 objectClass: groupOfUniqueNames
 description: group giving access to cloud services
 uniqueMember: cn=dummy,ou=users,o=cloud
-

@@ -65,8 +65,8 @@
         <extensions>true</extensions>
         <configuration>
           <release>${RELEASE}</release>
-          <summary>StratusLab Registration Application LDAP support </summary>
-          <name>stratuslab-ldap-support</name>
+          <summary>StratusLab Registration Application OpenLDAP support </summary>
+          <name>stratuslab-openldap-support</name>
           <group>System</group>
           <vendor>StratusLab</vendor>
           <packager>StratusLab</packager>
@@ -74,49 +74,22 @@
           <url>http://www.stratuslab.eu/</url>
           <needarch>noarch</needarch>
           <description>
-            LDAP support for StratusLab registration service. 
+            OpenLDAP support for StratusLab registration service. 
           </description>
           <requires>
-            <require>java-1.6.0-openjdk</require>
-            <require>apacheds</require>
             <require>openldap-clients</require>
+            <require>openldap-servers</require>
+            <require>cyrus-sasl-ldap</require>
           </requires>
-          <defaultUsername>apacheds</defaultUsername>
-          <defaultGroupname>apacheds</defaultGroupname>
           <defaultDirmode>755</defaultDirmode>
           <defaultFilemode>644</defaultFilemode>
           <mappings>
 
             <mapping>
-              <directory>/var/lib/apacheds/cloud</directory>
-              <directoryIncluded>true</directoryIncluded>
-            </mapping>
-
-            <mapping>
-              <directory>/var/lib/apacheds/cloud/conf</directory>
-              <directoryIncluded>true</directoryIncluded>
-            </mapping>
-
-            <mapping>
-              <directory>/var/lib/apacheds/cloud/partitions</directory>
-              <directoryIncluded>true</directoryIncluded>
-            </mapping>
-
-            <mapping>
-              <directory>/var/run/apacheds/cloud</directory>
-              <directoryIncluded>true</directoryIncluded>
-            </mapping>
-
-            <mapping>
-              <directory>/var/log/apacheds/cloud</directory>
-              <directoryIncluded>true</directoryIncluded>
-            </mapping>
-
-            <mapping>
-              <directory>/var/lib/apacheds/cloud</directory>
+              <directory>/etc/sysconfig</directory>
               <sources>
                 <source>
-                  <location>target/ldap-config/var/lib/apacheds/cloud</location>
+                  <location>target/ldap-config/etc/sysconfig</location>
                 </source>
               </sources>
             </mapping>
