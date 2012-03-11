@@ -10,16 +10,18 @@
   <fileSets>
 
     <fileSet>
-      <outputDirectory>var/lib/apacheds</outputDirectory>
+      <outputDirectory>share</outputDirectory>
       <fileMode>644</fileMode>
-      <directory>target/apacheds-config</directory>
+      <directory>src/main/resources/share</directory>
     </fileSet>
 
+<!--
     <fileSet>
-      <outputDirectory>etc/init.d</outputDirectory>
+      <outputDirectory>sbin</outputDirectory>
       <fileMode>755</fileMode>
-      <directory>src/main/scripts</directory>
+      <directory>src/main/resources/scripts</directory>
     </fileSet>
+-->
 
   </fileSets>
   

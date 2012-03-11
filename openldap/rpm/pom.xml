@@ -86,14 +86,15 @@
           <mappings>
 
             <mapping>
-              <directory>/etc/sysconfig</directory>
+              <directory>/usr/share/stratuslab/registration-openldap</directory>
               <sources>
                 <source>
-                  <location>target/ldap-config/etc/sysconfig</location>
+                  <location>target/ldap-config/share/</location>
                 </source>
               </sources>
             </mapping>
 
+<!--
             <mapping>
               <directory>/etc/init.d</directory>
               <filemode>755</filemode>
@@ -106,6 +107,7 @@
                 </source>
               </sources>
             </mapping>
+-->
 
           </mappings>
         </configuration>

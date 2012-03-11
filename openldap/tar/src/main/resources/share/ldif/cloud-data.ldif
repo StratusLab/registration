@@ -5,6 +5,13 @@ o: cloud
 objectClass: organization
 description: context entry for suffix o=cloud
 
+dn: cn=admin,o=cloud
+cn: admin
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+description: LDAP administrator
+userPassword: ${LDAP_CLOUD_ADMIN_PASSWORD}
+
 dn: ou=users,o=cloud
 ou: users
 objectClass: organizationalUnit
