@@ -1,10 +1,12 @@
-#!/bin/bash -xe
+#!/bin/bash -x
 
 HOST_CN=`hostname -f`
 CERT_PSWD='XYZXYZ'
 
 cat > /tmp/openldap-openssl-ca.cfg <<EOF
 [ req ]
+default_bits           = 2048
+default_md             = sha1
 distinguished_name     = req_dn
 x509_extensions        = v3_ca
 prompt                 = no
@@ -14,19 +16,21 @@ output_password        = ${CERT_PSWD}
 dirstring_type = nobmp
 
 [ req_dn ]
-O = cloud
-OU = openldap
-CN = test certificate authority
+O = CLOUD
+OU = OpenLDAP
+CN = CA
 
 [ v3_ca ]
 subjectKeyIdentifier=hash
-authorityKeyIdentifier=keyid:always,issuer
+authorityKeyIdentifier=keyid,issuer
 basicConstraints = CA:true
 
 EOF
 
 cat > /tmp/openldap-openssl-user.cfg <<EOF
 [ req ]
+default_bits           = 2048
+default_md             = sha1
 distinguished_name     = req_dn_user
 x509_extensions        = v3_user
 prompt                 = no
@@ -36,26 +40,23 @@ output_password        = ${CERT_PSWD}
 dirstring_type = nobmp
 
 [ req_dn_user ]
-O = cloud
-OU = openldap
+O = CLOUD
+OU = OpenLDAP
 CN = ${HOST_CN}
 
 [ v3_user ]
-basicConstraints = CA:false
-nsCertType=client, email, objsign
-keyUsage=critical, digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment, keyAgreement
 subjectKeyIdentifier=hash
-authorityKeyIdentifier=keyid:always,issuer
+authorityKeyIdentifier=keyid,issuer
+basicConstraints = CA:false
 
 EOF
 
-# Generate initial private key.
-openssl genrsa -passout pass:${CERT_PSWD} -des3 -out cakey.pem 2048
-chmod 0600 cakey.pem
-
 # Create a certificate signing request.
-openssl req -new -key cakey.pem -out ca.csr \
+openssl req -new \
+        -keyout cakey.pem -out ca.csr \
+        -passout pass:${CERT_PSWD} \
         -config /tmp/openldap-openssl-ca.cfg
+chmod 0600 cakey.pem
 
 # Create root CA certificate. 
 openssl x509 -req -days 365 \
@@ -64,23 +65,24 @@ openssl x509 -req -days 365 \
              -extfile /tmp/openldap-openssl-ca.cfg -extensions v3_ca \
              -passin pass:${CERT_PSWD}
 
-# Generate a private key for the server.
-openssl genrsa -passout pass:${CERT_PSWD} -des3 -out serverkey.pem 2048
-chmod 0600 serverkey.pem 
-
-# Create a certificate signing request.
-openssl req -new -nodes -key serverkey.pem -out server.csr \
+# Create a certificate signing request for service certificate.
+# The private key must NOT be encrypted. 
+openssl req -new \
+            -keyout serverkey.pem -out server.csr \
+            -nodes \
             -config /tmp/openldap-openssl-user.cfg
+chmod 0600 serverkey.pem
+chown ldap:ldap serverkey.pem
 
 # Create server certificate.
 openssl x509 -req -days 364 \
              -in server.csr -out servercrt.pem \
              -CA cacrt.pem -CAkey cakey.pem -set_serial 01 \
-             -extfile /tmp/openldap-openssl-user.cfg \
+             -extfile /tmp/openldap-openssl-user.cfg -extensions v3_user \
              -passin pass:${CERT_PSWD}
 
 # Clean up intermediate files.
-rm -f *.csr
+rm -f *.csr *.srl 
 
 # Verify that the chain actually works.
 openssl verify -CAfile cacrt.pem servercrt.pem 
