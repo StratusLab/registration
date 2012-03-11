@@ -6,7 +6,7 @@ olcModulepath: /usr/lib/ldap
 olcModuleload: back_hdb.la
 
 # Database settings
-dn: olcDatabase=hdb,cn=config   
+dn: olcDatabase=hdb,cn=config
 objectClass: olcDatabaseConfig
 objectClass: olcHdbConfig
 olcDatabase: {1}hdb

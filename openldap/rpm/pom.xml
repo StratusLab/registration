@@ -90,24 +90,25 @@
               <sources>
                 <source>
                   <location>target/ldap-config/share/</location>
+		  <excludes>
+		    <exclude>scripts/**/*</exclude>
+		  </excludes>
                 </source>
               </sources>
             </mapping>
 
-<!--
             <mapping>
-              <directory>/etc/init.d</directory>
+              <directory>/usr/share/stratuslab/registration-openldap/scripts</directory>
               <filemode>755</filemode>
               <username>root</username>
               <groupname>root</groupname>
               <directoryIncluded>false</directoryIncluded>
               <sources>
                 <source>
-                  <location>target/ldap-config/etc/init.d</location>
+                  <location>target/ldap-config/share/scripts/</location>
                 </source>
               </sources>
             </mapping>
--->
 
           </mappings>
         </configuration>

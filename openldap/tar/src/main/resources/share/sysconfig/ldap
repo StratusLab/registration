@@ -3,13 +3,14 @@
 # Standard non-secured access.  Suitable for testing but
 # production use should be via the SSL-secured protocol.
 #
-SLAPD_LDAP=yes
+SLAPD_LDAP=no
 
 #
 # Secured access.  Turn-off for testing, but should be
-# used for production.
+# used for production.  Make sure you acquire a real
+# certificate for the server. 
 #
-SLAPD_LDAPS=no
+SLAPD_LDAPS=yes
 
 #
 # Access via unix file socket.  Required for modifying

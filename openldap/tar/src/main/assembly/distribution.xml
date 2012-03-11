@@ -15,13 +15,11 @@
       <directory>src/main/resources/share</directory>
     </fileSet>
 
-<!--
     <fileSet>
-      <outputDirectory>sbin</outputDirectory>
+      <outputDirectory>share/scripts</outputDirectory>
       <fileMode>755</fileMode>
-      <directory>src/main/resources/scripts</directory>
+      <directory>src/main/scripts</directory>
     </fileSet>
--->
 
   </fileSets>
   
