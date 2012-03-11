@@ -76,23 +76,22 @@ test certificate for initial tests. *NOTE: the key for the server's
 certificate must not be encrpyted.*
 
 The package contains a support script for generating a test certificate. This
-will be a self-signed certificate that will serve as both the server's
-certificate and the "certificate authority". A proper certificate signed by an
-external certificate authority should be used for production. Run the
-following command to generate the test certificates.
+will generate both a "CA" certificate and a certificate/key for the server. A
+proper certificate signed by an external certificate authority should be used
+for production. Run the following command to generate the test certificates.
 
     /usr/share/stratuslab/registration-openldap/scripts/generate-self-signed-certificate.sh
 
 This will generate three files: cacrt.pem, servercrt.pem, and serverkey.pem.
-Verify that the serverkey.pem file is readable only by the user running the
-slapd daemon (ldap:ldap usually).
-
 Move these files (or the files from your real certificate) into the correct
 places:
 
     $ cp cacrt.pem /etc/openldap/cacerts/
     $ cp serverkey.pem /etc/openldap/
     $ cp servercrt.pem /etc/openldap/
+
+Verify that the serverkey.pem file is readable by the user running the slapd
+daemon (ldap:ldap usually).
 
 Modify the server's configuration to use these files with the following
 command:
@@ -147,8 +146,7 @@ Add this configuration to the server:
 
 You should now be ready to add the skeleton of your database. Make a copy of
 the file /usr/share/stratuslab/registration-openldap/ldif/cloud-data.ldif.
-Modify the copy to suit your installation, in particular giving a value for
-the administrator password.
+Modify the copy to suit your installation, if necessary.
 
 Now add this skeleton to your database:
 
