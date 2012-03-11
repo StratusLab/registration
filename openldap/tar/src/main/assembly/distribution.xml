@@ -1,0 +1,26 @@
+<assembly>
+  <id>distribution</id>
+  
+  <includeBaseDirectory>false</includeBaseDirectory>
+  
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+  
+  <fileSets>
+
+    <fileSet>
+      <outputDirectory>var/lib/apacheds</outputDirectory>
+      <fileMode>644</fileMode>
+      <directory>target/apacheds-config</directory>
+    </fileSet>
+
+    <fileSet>
+      <outputDirectory>etc/init.d</outputDirectory>
+      <fileMode>755</fileMode>
+      <directory>src/main/scripts</directory>
+    </fileSet>
+
+  </fileSets>
+  
+</assembly>

@@ -1,0 +1,145 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>registration-openldap-rpm</artifactId>
+  <packaging>rpm</packaging>
+
+  <name>Registration Service OpenLDAP Support (RPM)</name>
+
+  <parent>
+    <groupId>eu.stratuslab.registration</groupId>
+    <artifactId>registration-openldap</artifactId>
+    <version>1.10-SNAPSHOT</version>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>eu.stratuslab.registration</groupId>
+      <artifactId>registration-openldap-tar</artifactId>
+      <type>tar.gz</type>
+      <version>1.10-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+  
+  <properties> 
+    <installation.dir>/opt/stratuslab/registration</installation.dir>
+    <registration-war>registration-war-${project.version}.war</registration-war>
+    <maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format> 
+    <RELEASE>0.${maven.build.timestamp}.${package.os}</RELEASE>
+  </properties>
+
+  <build>
+    
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+
+        <executions>
+
+          <execution>
+            <id>copy-tar</id>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/ldap-config</outputDirectory>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>eu.stratuslab.registration</groupId>
+                  <artifactId>registration-openldap-tar</artifactId>
+                  <type>tar.gz</type>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+
+        </executions>
+
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rpm-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <release>${RELEASE}</release>
+          <summary>StratusLab Registration Application LDAP support </summary>
+          <name>stratuslab-ldap-support</name>
+          <group>System</group>
+          <vendor>StratusLab</vendor>
+          <packager>StratusLab</packager>
+          <copyright>Apache</copyright>
+          <url>http://www.stratuslab.eu/</url>
+          <needarch>noarch</needarch>
+          <description>
+            LDAP support for StratusLab registration service. 
+          </description>
+          <requires>
+            <require>java-1.6.0-openjdk</require>
+            <require>apacheds</require>
+            <require>openldap-clients</require>
+          </requires>
+          <defaultUsername>apacheds</defaultUsername>
+          <defaultGroupname>apacheds</defaultGroupname>
+          <defaultDirmode>755</defaultDirmode>
+          <defaultFilemode>644</defaultFilemode>
+          <mappings>
+
+            <mapping>
+              <directory>/var/lib/apacheds/cloud</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/lib/apacheds/cloud/conf</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/lib/apacheds/cloud/partitions</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/run/apacheds/cloud</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/log/apacheds/cloud</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/lib/apacheds/cloud</directory>
+              <sources>
+                <source>
+                  <location>target/ldap-config/var/lib/apacheds/cloud</location>
+                </source>
+              </sources>
+            </mapping>
+
+            <mapping>
+              <directory>/etc/init.d</directory>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
+              <directoryIncluded>false</directoryIncluded>
+              <sources>
+                <source>
+                  <location>target/ldap-config/etc/init.d</location>
+                </source>
+              </sources>
+            </mapping>
+
+          </mappings>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>
