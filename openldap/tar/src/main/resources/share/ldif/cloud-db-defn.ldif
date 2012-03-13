@@ -13,7 +13,7 @@ olcDatabase: {1}hdb
 olcSuffix: o=cloud
 olcDbDirectory: /var/lib/ldap
 olcRootDN: cn=admin,o=cloud
-olcRootPW: ${LDAP_CLOUD_ADMIN_PASSWORD}
+olcRootPW: %(openldapPasswordHash)s
 olcDbConfig: set_cachesize 0 2097152 0
 olcDbConfig: set_lk_max_objects 1500
 olcDbConfig: set_lk_max_locks 1500
