@@ -81,6 +81,11 @@ openssl x509 -req -days 364 \
              -extfile /tmp/openldap-openssl-user.cfg -extensions v3_user \
              -passin pass:${CERT_PSWD}
 
+# Put the CA certificate into a truststore for Java.
+rm -f cacrt.jks
+keytool -importcert -noprompt -trustcacerts -alias CA_${HOST_CN} \
+        -file cacrt.pem -keystore cacrt.jks -storepass ${CERT_PSWD}
+
 # Clean up intermediate files.
 rm -f *.csr *.srl 
 
