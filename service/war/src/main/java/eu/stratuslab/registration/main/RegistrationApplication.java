@@ -51,114 +51,125 @@ import eu.stratuslab.registration.utils.RequestUtils;
 
 public class RegistrationApplication extends Application {
 
-    public RegistrationApplication() {
+	public RegistrationApplication() {
 
-        super();
+		super();
 
-        setName("StratusLab Registration Application");
-        setDescription("StratusLab server to allow web-based registration.");
-        setOwner("StratusLab");
-        setAuthor("Charles Loomis");
+		setName("StratusLab Registration Application");
+		setDescription("StratusLab server to allow web-based registration.");
+		setOwner("StratusLab");
+		setAuthor("Charles Loomis");
 
-        getTunnelService().setUserAgentTunnel(true);
+		getTunnelService().setUserAgentTunnel(true);
 
-        setStatusService(new CommonStatusService());
+		setStatusService(new CommonStatusService());
 
-    }
+	}
 
-    @Override
-    public Restlet createInboundRoot() {
+	@Override
+	public Restlet createInboundRoot() {
 
-        // Do not do this during the constructor because the context will not
-        // yet have been initialized.
-        AppConfiguration appConfiguration = new AppConfiguration(getContext());
+		// Do not do this during the constructor because the context will not
+		// yet have been initialized.
+		AppConfiguration appConfiguration = new AppConfiguration(getContext());
 
-        Router router = new RootRouter(getContext(), appConfiguration);
+		Router router = new RootRouter(getContext(), appConfiguration);
 
-        TemplateRoute route = null;
+		TemplateRoute route = null;
 
-        router.attach("/users/", UsersResource.class);
-        route = router.attach("/users", ForceTrailingSlashResource.class);
-        route.setMatchingMode(Template.MODE_EQUALS);
+		router.attach("/users/", UsersResource.class);
+		route = router.attach("/users", ForceTrailingSlashResource.class);
+		route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/register/", RegisterResource.class);
-        route = router.attach("/register", ForceTrailingSlashResource.class);
-        route.setMatchingMode(Template.MODE_EQUALS);
+		router.attach("/register/", RegisterResource.class);
+		route = router.attach("/register", ForceTrailingSlashResource.class);
+		route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/success/", SuccessResource.class);
-        route = router.attach("/success", ForceTrailingSlashResource.class);
-        route.setMatchingMode(Template.MODE_EQUALS);
+		router.attach("/success/", SuccessResource.class);
+		route = router.attach("/success", ForceTrailingSlashResource.class);
+		route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/profile/", setupGuard(ProfileResource.class));
-        route = router.attach("/profile", ForceTrailingSlashResource.class);
-        route.setMatchingMode(Template.MODE_EQUALS);
+		router.attach("/profile/", setupGuard(ProfileResource.class));
+		route = router.attach("/profile", ForceTrailingSlashResource.class);
+		route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/profile_updated/", ProfileUpdatedResource.class);
-        route = router.attach("/profile_updated",
-                ForceTrailingSlashResource.class);
-        route.setMatchingMode(Template.MODE_EQUALS);
+		router.attach("/profile_updated/", ProfileUpdatedResource.class);
+		route = router.attach("/profile_updated",
+				ForceTrailingSlashResource.class);
+		route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/policies/", PoliciesResource.class);
-        route = router.attach("/policies", ForceTrailingSlashResource.class);
-        route.setMatchingMode(Template.MODE_EQUALS);
+		router.attach("/policies/", PoliciesResource.class);
+		route = router.attach("/policies", ForceTrailingSlashResource.class);
+		route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/reset/", ResetResource.class);
-        route = router.attach("/reset", ForceTrailingSlashResource.class);
-        route.setMatchingMode(Template.MODE_EQUALS);
+		router.attach("/reset/", ResetResource.class);
+		route = router.attach("/reset", ForceTrailingSlashResource.class);
+		route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/reset_started/", ResetStartedResource.class);
-        route = router.attach("/reset_started",
-                ForceTrailingSlashResource.class);
-        route.setMatchingMode(Template.MODE_EQUALS);
+		router.attach("/reset_started/", ResetStartedResource.class);
+		route = router.attach("/reset_started",
+				ForceTrailingSlashResource.class);
+		route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/action/", ActionResource.class);
-        route = router.attach("/action", ForceTrailingSlashResource.class);
-        route.setMatchingMode(Template.MODE_EQUALS);
+		router.attach("/action/", ActionResource.class);
+		route = router.attach("/action", ForceTrailingSlashResource.class);
+		route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/action/{uuid}", ActionResource.class);
+		router.attach("/action/{uuid}", ActionResource.class);
 
-        Reference styleRef = LocalReference.createClapReference(
-                LocalReference.CLAP_THREAD,
-                appConfiguration.getValue(Parameter.STYLE_PATH));
+		Reference styleRef = LocalReference.createClapReference(
+				LocalReference.CLAP_THREAD,
+				appConfiguration.getValue(Parameter.STYLE_PATH));
 
-        Directory cssDir = new Directory(getContext(), styleRef);
-        cssDir.setNegotiatingContent(false);
-        cssDir.setIndexName("index.html");
-        router.attach("/css/", cssDir);
-        router.attach("/css", ForceTrailingSlashResource.class);
+		Directory cssDir = new Directory(getContext(), styleRef);
+		cssDir.setNegotiatingContent(false);
+		cssDir.setIndexName("index.html");
+		router.attach("/css/", cssDir);
+		router.attach("/css", ForceTrailingSlashResource.class);
 
-        router.attachDefault(HomeResource.class);
+		router.attach("/media/", createMediaDirectory(getContext()));
 
-        return router;
-    }
+		router.attachDefault(HomeResource.class);
 
-    public ChallengeAuthenticator setupGuard(Class<?> targetClass) {
+		return router;
+	}
 
-        ChallengeAuthenticator guard = new ChallengeAuthenticator(null,
-                ChallengeScheme.HTTP_BASIC, "StratusLab");
+	private static Directory createMediaDirectory(Context context) {
 
-        guard.setVerifier(new LdapVerifier());
+		Directory mediaDir = new Directory(context, "war:///media");
+		mediaDir.setNegotiatingContent(false);
+		mediaDir.setIndexName("index.html");
 
-        guard.setNext(targetClass);
+		return mediaDir;
+	}
 
-        return guard;
-    }
+	public ChallengeAuthenticator setupGuard(Class<?> targetClass) {
 
-    public static class RootRouter extends Router {
+		ChallengeAuthenticator guard = new ChallengeAuthenticator(null,
+				ChallengeScheme.HTTP_BASIC, "StratusLab");
 
-        private final AppConfiguration appConfiguration;
+		guard.setVerifier(new LdapVerifier());
 
-        public RootRouter(Context context, AppConfiguration appConfiguration) {
-            super(context);
-            this.appConfiguration = appConfiguration;
-        }
+		guard.setNext(targetClass);
 
-        @Override
-        public void doHandle(Restlet next, Request request, Response response) {
-            RequestUtils.insertAppConfiguration(request, appConfiguration);
-            super.doHandle(next, request, response);
-        }
+		return guard;
+	}
 
-    }
+	public static class RootRouter extends Router {
+
+		private final AppConfiguration appConfiguration;
+
+		public RootRouter(Context context, AppConfiguration appConfiguration) {
+			super(context);
+			this.appConfiguration = appConfiguration;
+		}
+
+		@Override
+		public void doHandle(Restlet next, Request request, Response response) {
+			RequestUtils.insertAppConfiguration(request, appConfiguration);
+			super.doHandle(next, request, response);
+		}
+
+	}
 
 }
