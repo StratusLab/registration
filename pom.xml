@@ -41,8 +41,8 @@ with the infrastructure via a web interface.
   </organization>
 
   <scm>
-    <connection>scm:git@github.com:StratusLab/registration.git</connection>
-    <developerConnection>scm:git@github.com:StratusLab/registration.git</developerConnection>
+    <connection>scm:git:git@github.com:StratusLab/registration.git</connection>
+    <developerConnection>scm:git:git@github.com:StratusLab/registration.git</developerConnection>
   </scm>
 
   <issueManagement>
