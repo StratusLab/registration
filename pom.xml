@@ -50,8 +50,8 @@ with the infrastructure via a web interface.
   </ciManagement>
 
   <scm>
-    <connection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/stratuslab-registration.git</connection>
-    <developerConnection>scm:git:ssh://apache@code.stratuslab.eu/ext/git/stratuslab-registration.git</developerConnection>
+    <connection>scm:git:ssh://git@github.com/StratusLab/registration.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/StratusLab/registration.git</developerConnection>
   </scm>
 
   <repositories>
