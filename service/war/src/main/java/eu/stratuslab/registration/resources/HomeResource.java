@@ -19,9 +19,10 @@
  */
 package eu.stratuslab.registration.resources;
 
+import static org.restlet.data.MediaType.TEXT_HTML;
+
 import java.util.Map;
 
-import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
 
@@ -32,7 +33,7 @@ public class HomeResource extends BaseResource {
 
         Map<String, Object> info = createInfoStructure(NO_TITLE);
 
-        return templateRepresentation("home.ftl", info, MediaType.TEXT_HTML);
+        return templateRepresentation("html/home.ftl", info, TEXT_HTML);
     }
 
 }

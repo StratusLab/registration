@@ -3,28 +3,20 @@
   <#include "header.ftl">
 
   <body>
-    
-    <h1>Registration Form</h1>
+ 
+    <h1>User Profile</h1>
     
     <#include "breadcrumbs.ftl">
-
+     
     <p>
-      Please complete the following form to create a new account 
-      on the StratusLab reference cloud infrastructures.
+      Submit this form with new values to update your account.
     </p>
     <p>
-      You will be redirected to your profile page (and prompted
-      for your username/password) after registration. 
-    </p>
-    <p>
-      An administrator will notify you when your account is active.
-    </p>
-    <p>
-      <strong>All fields are mandatory.</strong> 
+      <strong>Fields marked with an asterisk (*) are mandatory.</strong> 
     </p>
 
     <form id="form_with_tooltips" 
-          action="../users/" 
+          action="profile/?method=put" 
           enctype="application/x-www-form-urlencoded" 
           method="POST">
 
@@ -36,8 +28,9 @@
               <input type="text" 
                      name="uid" 
                      size="40"
-                     maxlength="20" 
-                     title="sequence of 3 to 20 letters, digits, or underscores">
+                     maxlength="20"
+                     value="${properties['uid']}" 
+                     readonly="true">
             </td>
           </tr>
           <tr>
@@ -46,6 +39,7 @@
               <input type="text" 
                      name="mail" 
                      size="40" 
+                     value="${properties['mail']}" 
                      title="valid email address with domain">
             </td>
           </tr>
@@ -55,6 +49,7 @@
               <input type="text" 
                      name="givenName" 
                      size="40" 
+                     value="${properties['givenName']}" 
                      title="your given name(s), cannot be empty">
             </td>
           </tr>
@@ -64,6 +59,7 @@
               <input type="text" 
                      name="sn" 
                      size="40" 
+                     value="${properties['sn']}"
                      title="your surname, cannot be empty">
             </td>
           </tr>
@@ -73,21 +69,32 @@
               <input type="text" 
                      name="seeAlso" 
                      size="40" 
+                     value="${properties['seeAlso']!}"
                      title="certificate DN in RFC2253 format">
             </td>
           </tr>
           <tr>
-            <td>Password</td>
+            <td>Current Password (*)</td>
             <td>
               <input type="password" 
-                     name="newUserPassword" 
+                     name="userPassword" 
                      size="40"
                      maxlength="20"
                      title="sequence of 8 to 20 printable characters">
             </td>
           </tr>
           <tr>
-            <td>Password (again)</td>
+            <td>New Password</td>
+            <td>
+              <input type="password" 
+                     name="newUserPassword" 
+                     size="40"
+                     maxlength="20"
+                     title="new password (sequence of 8 to 20 printable characters)">
+            </td>
+          </tr>
+          <tr>
+            <td>New Password (again)</td>
             <td>
               <input type="password" 
                      name="newUserPasswordCheck" 
@@ -97,35 +104,13 @@
             </td>
           </tr>
           <tr>
-            <td>Message</td>
-            <td>
-              <textarea name="message" 
-                        cols="40"
-                        rows="5"
-                        title="tell us why you'd like to use the cloud and how you heard about StratusLab">
-              </textarea>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <label>I agree to the defined 
-                     <a href="policies/">terms, conditions, and policies</a>
-                <input type="checkbox" 
-                       name="agreement" 
-                       title="you must agree to create an account">
-              </label>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <input type="submit" value="create">
-            </td>
+            <td colspan="2"><input type="submit" value="update"></td>
           </tr>
         </tbody>
       </table>
     </form>
-
-    <#include "tooltip-js.ftl">    
-
+    
+    <#include "tooltip-js.ftl">
+    
   </body>
 </html>

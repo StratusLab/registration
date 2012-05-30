@@ -19,11 +19,12 @@
  */
 package eu.stratuslab.registration.resources;
 
+import static org.restlet.data.MediaType.TEXT_HTML;
+
 import java.util.Map;
 
 import org.restlet.Request;
 import org.restlet.data.Form;
-import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
@@ -53,7 +54,7 @@ public class ActionResource extends BaseResource {
 
         Map<String, Object> info = createInfoStructure(NO_TITLE);
         info.put("message", msg);
-        return templateRepresentation("action.ftl", info, MediaType.TEXT_HTML);
+        return templateRepresentation("html/action.ftl", info, TEXT_HTML);
     }
 
     private static boolean abortAction(Reference ref) {

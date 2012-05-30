@@ -9,9 +9,7 @@
     <#include "breadcrumbs.ftl">
      
     <p>
-      You can request that your password be reset via this form.  You
-      must click on the link in the confirmation email 
-      <strong>before</strong> your password will be reset.  
+      Provide your username to reset your password.  
     </p>
 
     <form id="form_with_tooltips" 
@@ -29,9 +27,7 @@
                      size="40"
                      maxlength="20">
             </td>
-          </tr>
-          <tr>
-            <td colspan="2"><input type="submit" value="reset password"></td>
+            <td><input type="submit" value="reset password"></td>
           </tr>
         </tbody>
       </table>

@@ -22,6 +22,7 @@ package eu.stratuslab.registration.data;
 import static eu.stratuslab.registration.data.UserAttribute.PASSWORD;
 import static eu.stratuslab.registration.data.UserAttribute.UID;
 
+import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -51,6 +52,8 @@ public final class UserEntry {
     private static final String DATABASE_CONNECT_ERROR = "error contacting database";
 
     private static final Logger LOGGER = Logger.getLogger("org.restlet");
+
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private UserEntry() {
 
@@ -226,7 +229,7 @@ public final class UserEntry {
             if (attr != null) {
                 byte[] bytes;
                 bytes = (byte[]) attr.get();
-                ldapPassword = new String(bytes);
+                ldapPassword = new String(bytes, UTF8);
             }
 
         } catch (NamingException consumed) {
@@ -282,7 +285,7 @@ public final class UserEntry {
                 Object value = attr.get();
                 if (value != null) {
                     if (value instanceof byte[]) {
-                        form.add(key, new String((byte[]) value));
+                        form.add(key, new String((byte[]) value, UTF8));
                     } else {
                         form.add(key, value.toString());
                     }
@@ -322,6 +325,57 @@ public final class UserEntry {
                 SearchResult result = results.next();
                 attrs = result.getAttributes();
             } else {
+                throw new ResourceException(Status.CLIENT_ERROR_BAD_REQUEST,
+                        "User record not found for " + uid + ".");
+            }
+
+            if (results.hasMore()) {
+                throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                        "multiple records found for " + uid);
+            }
+
+        } catch (InvalidAttributesException e) {
+
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    "incomplete user entry");
+
+        } catch (AuthenticationException e) {
+
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        } catch (NamingException e) {
+
+            throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
+                    DATABASE_CONNECT_ERROR);
+
+        } finally {
+            freeContext(ctx);
+        }
+
+        return attrs;
+    }
+
+    public static String getUserDn(String uid, LdapConfig ldapEnv) {
+
+        String userDn = null;
+
+        DirContext ctx = null;
+
+        try {
+
+            ctx = new InitialDirContext(ldapEnv);
+
+            Attributes matchingAttrs = new BasicAttributes(true);
+            matchingAttrs.put(UID.key, uid);
+
+            NamingEnumeration<SearchResult> results = ctx.search("",
+                    matchingAttrs, null);
+
+            if (results.hasMore()) {
+                SearchResult result = results.next();
+                userDn = result.getNameInNamespace();
+            } else {
                 throw new ResourceException(Status.SERVER_ERROR_INTERNAL,
                         "user record not found for " + uid);
             }
@@ -350,7 +404,7 @@ public final class UserEntry {
             freeContext(ctx);
         }
 
-        return attrs;
+        return userDn;
     }
 
     public static String getEmailAddress(String uid, LdapConfig ldapEnv) {

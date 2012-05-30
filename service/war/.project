@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>registration-war</name>
   <comment>This repository contains a service that allows people to register
@@ -10,8 +11,12 @@ with the infrastructure via a web interface. NO_M2ECLIPSE_SUPPORT: Project files
     <buildCommand>
       <name>org.maven.ide.eclipse.maven2Builder</name>
     </buildCommand>
+    <buildCommand>
+      <name>org.eclipse.m2e.core.maven2Builder</name>
+    </buildCommand>
   </buildSpec>
   <natures>
+    <nature>org.eclipse.m2e.core.maven2Nature</nature>
     <nature>org.maven.ide.eclipse.maven2Nature</nature>
     <nature>org.eclipse.jdt.core.javanature</nature>
   </natures>

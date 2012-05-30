@@ -25,12 +25,15 @@ import static eu.stratuslab.registration.cfg.Parameter.LDAP_MANAGER_PASSWORD;
 import static eu.stratuslab.registration.cfg.Parameter.LDAP_PORT;
 import static eu.stratuslab.registration.cfg.Parameter.LDAP_SCHEME;
 import static eu.stratuslab.registration.cfg.Parameter.LDAP_USER_BASE_DN;
+import static eu.stratuslab.registration.cfg.Parameter.SSL_TRUSTSTORE;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,151 +50,158 @@ import freemarker.template.Configuration;
 
 public final class AppConfiguration {
 
-    private static final Logger LOGGER = Logger.getLogger("org.restlet");
+	private static final Logger LOGGER = Logger.getLogger("org.restlet");
 
-    private static final String CONFIG_FILENAME = "registration.cfg";
+	private static final String CONFIG_FILENAME = "registration.cfg";
 
-    private final Properties properties;
+	private final Properties properties;
 
-    private final Configuration freeMarkerConfig;
+	private final Configuration freeMarkerConfig;
 
-    private final Map<String, String> ldapCfgMap;
+	private final Map<String, String> ldapCfgMap;
 
-    public AppConfiguration(Context context) {
-        List<File> configFileLocations = getConfigurationFileLocations();
-        properties = getConfigurationProperties(configFileLocations);
-        freeMarkerConfig = createFreeMarkerConfig(context);
+	public AppConfiguration(Context context) {
+		List<File> configFileLocations = getConfigurationFileLocations();
+		properties = getConfigurationProperties(configFileLocations);
+		freeMarkerConfig = createFreeMarkerConfig(context);
 
-        ldapCfgMap = LdapConfig.createBaseParameters( //
-                getValue(LDAP_SCHEME), //
-                getValue(LDAP_HOST), //
-                getValue(LDAP_PORT), //
-                getValue(LDAP_USER_BASE_DN), //
-                getValue(LDAP_MANAGER_DN), //
-                getValue(LDAP_MANAGER_PASSWORD));
-    }
+		ldapCfgMap = LdapConfig.createBaseParameters( //
+				getValue(LDAP_SCHEME), //
+				getValue(LDAP_HOST), //
+				getValue(LDAP_PORT), //
+				getValue(LDAP_USER_BASE_DN), //
+				getValue(LDAP_MANAGER_DN), //
+				getValue(LDAP_MANAGER_PASSWORD));
 
-    private static List<File> getConfigurationFileLocations() {
+		String truststore = getValue(SSL_TRUSTSTORE);
+		if (truststore != null && !"".equals(truststore.trim())) {
+			System.setProperty("javax.net.ssl.trustStore", truststore);
+		}
 
-        ArrayList<File> locations = new ArrayList<File>();
+	}
 
-        // Possible locations for the configuration file are the current working
-        // directory, the user's home directory, or the standard system
-        // location, in that order.
-        File[] dirs = { new File(System.getProperty("user.dir")),
-                new File(System.getProperty("user.home")),
-                new File("/etc/stratuslab/") };
+	private static List<File> getConfigurationFileLocations() {
 
-        for (File dir : dirs) {
-            locations.add(new File(dir, CONFIG_FILENAME));
-        }
+		ArrayList<File> locations = new ArrayList<File>();
 
-        return Collections.unmodifiableList(locations);
-    }
+		// Possible locations for the configuration file are the current working
+		// directory, the user's home directory, or the standard system
+		// location, in that order.
+		File[] dirs = { new File(System.getProperty("user.dir")),
+				new File(System.getProperty("user.home")),
+				new File("/etc/stratuslab/") };
 
-    private static Properties getConfigurationProperties(
-            List<File> configFileLocations) {
+		for (File dir : dirs) {
+			locations.add(new File(dir, CONFIG_FILENAME));
+		}
 
-        for (File f : configFileLocations) {
-            if (f.canRead()) {
-                Properties properties = loadProperties(f);
-                validateConfiguration(properties);
-                LOGGER.info("configuration file: " + f);
-                return properties;
-            }
-        }
-        throw new RuntimeException("cannot locate configuration file");
-    }
+		return Collections.unmodifiableList(locations);
+	}
 
-    private static Properties loadProperties(File configFile) {
+	private static Properties getConfigurationProperties(
+			List<File> configFileLocations) {
 
-        Properties properties = new Properties();
+		for (File f : configFileLocations) {
+			if (f.canRead()) {
+				Properties properties = loadProperties(f);
+				validateConfiguration(properties);
+				LOGGER.info("configuration file: " + f);
+				return properties;
+			}
+		}
+		throw new RuntimeException("cannot locate configuration file");
+	}
 
-        try {
-            Reader reader = new FileReader(configFile);
-            try {
-                properties.load(reader);
-            } catch (IOException e) {
-                LOGGER.warning("error loading properties file (" + configFile
-                        + "): " + e.getMessage());
-            } finally {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    LOGGER.warning("error closing properties file ("
-                            + configFile + "): " + e.getMessage());
-                }
-            }
-        } catch (FileNotFoundException consumed) {
-            // Return empty properties file.
-        }
+	private static Properties loadProperties(File configFile) {
 
-        return properties;
-    }
+		Properties properties = new Properties();
 
-    public String getValue(Parameter parameter) {
-        return parameter.getProperty(properties);
-    }
+		try {
+			Reader reader = new InputStreamReader(new FileInputStream(
+					configFile), Charset.defaultCharset());
+			try {
+				properties.load(reader);
+			} catch (IOException e) {
+				LOGGER.warning("error loading properties file (" + configFile
+						+ "): " + e.getMessage());
+			} finally {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					LOGGER.warning("error closing properties file ("
+							+ configFile + "): " + e.getMessage());
+				}
+			}
+		} catch (FileNotFoundException consumed) {
+			// Return empty properties file.
+		}
 
-    public boolean getValueAsBoolean(Parameter parameter) {
-        return Boolean.parseBoolean(parameter.getProperty(properties));
-    }
+		return properties;
+	}
 
-    public int getValueAsInt(Parameter parameter) {
-        return Integer.parseInt(parameter.getProperty(properties));
-    }
+	public String getValue(Parameter parameter) {
+		return parameter.getProperty(properties);
+	}
 
-    public long getValueAsLong(Parameter parameter) {
-        return Long.parseLong(parameter.getProperty(properties));
-    }
+	public boolean getValueAsBoolean(Parameter parameter) {
+		return Boolean.parseBoolean(parameter.getProperty(properties));
+	}
 
-    public File getValueAsFile(Parameter parameter) {
-        return new File(parameter.getProperty(properties));
-    }
+	public int getValueAsInt(Parameter parameter) {
+		return Integer.parseInt(parameter.getProperty(properties));
+	}
 
-    public Configuration getFreeMarkerConfig() {
-        return freeMarkerConfig;
-    }
+	public long getValueAsLong(Parameter parameter) {
+		return Long.parseLong(parameter.getProperty(properties));
+	}
 
-    public LdapConfig getLdapConfig(Parameter baseDnParameter) {
-        String ldapUrl = LdapConfig.createLdapUrl( //
-                getValue(LDAP_SCHEME), //
-                getValue(LDAP_HOST), //
-                getValue(LDAP_PORT), //
-                getValue(baseDnParameter));
-        return new LdapConfig(ldapUrl, ldapCfgMap);
-    }
+	public File getValueAsFile(Parameter parameter) {
+		return new File(parameter.getProperty(properties));
+	}
 
-    private static void validateConfiguration(Properties properties) {
-        checkAllParametersAreValid(properties);
-        checkAllParametersAreKnown(properties);
-    }
+	public Configuration getFreeMarkerConfig() {
+		return freeMarkerConfig;
+	}
 
-    private static void checkAllParametersAreValid(Properties properties) {
-        for (Parameter p : Parameter.values()) {
-            String value = p.getProperty(properties);
-            if (value != null) {
-                p.validate(value);
-            }
-        }
-    }
+	public LdapConfig getLdapConfig(Parameter baseDnParameter) {
+		String ldapUrl = LdapConfig.createLdapUrl( //
+				getValue(LDAP_SCHEME), //
+				getValue(LDAP_HOST), //
+				getValue(LDAP_PORT), //
+				getValue(baseDnParameter));
+		return new LdapConfig(ldapUrl, ldapCfgMap);
+	}
 
-    private static void checkAllParametersAreKnown(Properties properties) {
-        for (Object key : properties.keySet()) {
-            Parameter.parameterFromKey(key);
-        }
-    }
+	private static void validateConfiguration(Properties properties) {
+		checkAllParametersAreValid(properties);
+		checkAllParametersAreKnown(properties);
+	}
 
-    private static Configuration createFreeMarkerConfig(Context context) {
+	private static void checkAllParametersAreValid(Properties properties) {
+		for (Parameter p : Parameter.values()) {
+			String value = p.getProperty(properties);
+			if (value != null) {
+				p.validate(value);
+			}
+		}
+	}
 
-        Configuration cfg = new Configuration();
-        cfg.setLocalizedLookup(false);
+	private static void checkAllParametersAreKnown(Properties properties) {
+		for (Object key : properties.keySet()) {
+			Parameter.parameterFromKey(key);
+		}
+	}
 
-        LocalReference fmBaseRef = LocalReference
-                .createClapReference("/freemarker/");
-        cfg.setTemplateLoader(new ContextTemplateLoader(context, fmBaseRef));
+	private static Configuration createFreeMarkerConfig(Context context) {
 
-        return cfg;
-    }
+		Configuration cfg = new Configuration();
+		cfg.setLocalizedLookup(false);
+
+		LocalReference fmBaseRef = LocalReference
+				.createClapReference("/freemarker/");
+		cfg.setTemplateLoader(new ContextTemplateLoader(context, fmBaseRef));
+
+		return cfg;
+	}
 
 }

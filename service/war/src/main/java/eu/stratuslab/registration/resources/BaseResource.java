@@ -46,12 +46,21 @@ public class BaseResource extends ServerResource {
                 mediaType);
     }
 
+    public static String getBaseUrl(Request request) {
+        return request.getRootRef().toString();
+    }
+
     protected Map<String, Object> createInfoStructure(String title) {
+        return createInfoStructure(title, getRequest());
+    }
+
+    public static Map<String, Object> createInfoStructure(String title,
+            Request request) {
 
         Map<String, Object> info = new HashMap<String, Object>();
 
         // Add the standard base URL declaration.
-        info.put("baseurl", getRequest().getRootRef().toString());
+        info.put("baseurl", getBaseUrl(request));
 
         // Add the title if appropriate.
         if (title != null && !"".equals(title)) {
@@ -60,5 +69,4 @@ public class BaseResource extends ServerResource {
 
         return info;
     }
-
 }

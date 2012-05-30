@@ -37,7 +37,7 @@ public class LdapVerifier implements Verifier {
 
     public int verify(Request request, Response response) {
 
-        // Make sure the necesssary information is available. If not, this will
+        // Make sure the necessary information is available. If not, this will
         // cause it to be requested.
         if (request.getChallengeResponse() == null) {
             return RESULT_MISSING;

@@ -1,0 +1,27 @@
+version: 1
+
+dn: o=cloud
+o: cloud
+objectClass: organization
+description: context entry for suffix o=cloud
+
+dn: ou=users,o=cloud
+ou: users
+objectClass: organizationalUnit
+description: cloud users
+
+dn: ou=groups,o=cloud
+ou: groups
+objectClass: organizationalUnit
+description: groups of cloud users
+
+dn: ou=actions,o=cloud
+ou: actions
+objectClass: organizationalUnit
+description: asynchronous actions for user registration
+
+dn: cn=cloud-access,ou=groups,o=cloud
+cn: cloud-access
+objectClass: groupOfUniqueNames
+description: group giving access to cloud services
+uniqueMember: cn=dummy,ou=users,o=cloud

@@ -53,12 +53,12 @@ public class ResetResource extends BaseResource {
     private static final String MESSAGE = "password reset message sent";
 
     private static final String EMAIL_MESSAGE_TEMPLATE = //
-    "Visit this URL to reset your password: \n\n%1$s\n\n" + //
-            "To cancel the request, follow this link: \n\n%1$s?abort=true\n\n";
+    "Visit this URL to reset your password: %n%n%1$s%n%n" + //
+            "To cancel the request, follow this link: %n%n%1$s?abort=true%n%n";
 
     @Get("html")
     public Representation toHtml() {
-        return toRepresentation("reset.ftl", TEXT_HTML);
+        return toRepresentation("html/reset.ftl", TEXT_HTML);
     }
 
     private Representation toRepresentation(String templateName,
@@ -100,8 +100,8 @@ public class ResetResource extends BaseResource {
                     "cannot send reset email to user");
         }
 
-        Reference redirectRef = getRequest().getResourceRef();
-        redirectRef.addQueryParameter("message", MESSAGE);
+        Reference redirectRef = getRequest().getRootRef();
+        redirectRef.addSegment("reset_started");
 
         Response response = getResponse();
         response.redirectSeeOther(redirectRef);

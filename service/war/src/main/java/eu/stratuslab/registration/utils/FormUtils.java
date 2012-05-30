@@ -71,8 +71,8 @@ public final class FormUtils {
         MediaType mediaType = entity.getMediaType();
         if (!APPLICATION_WWW_FORM.equals(mediaType, true)) {
             throw new ResourceException(
-                    Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE, mediaType
-                            .getName());
+                    Status.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE,
+                    mediaType.getName());
         }
 
         return new Form(entity);
@@ -122,8 +122,8 @@ public final class FormUtils {
             if (attr.isRequiredForCreate) {
                 if (form.getFirstValue(attr.key) == null) {
                     throw new ResourceException(
-                            Status.CLIENT_ERROR_BAD_REQUEST, "missing "
-                                    + attr.key);
+                            Status.CLIENT_ERROR_BAD_REQUEST,
+                            attr.missingErrorMessage);
                 }
             }
         }
@@ -134,8 +134,8 @@ public final class FormUtils {
             if (attr.isRequiredForUpdate) {
                 if (form.getFirstValue(attr.key) == null) {
                     throw new ResourceException(
-                            Status.CLIENT_ERROR_BAD_REQUEST, "missing "
-                                    + attr.key);
+                            Status.CLIENT_ERROR_BAD_REQUEST,
+                            attr.missingErrorMessage);
                 }
             }
         }

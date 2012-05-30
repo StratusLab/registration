@@ -1,18 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration-rpm</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Registration Service (RPM)</name>
-
   <packaging>rpm</packaging>
+
+  <name>Registration Service (RPM)</name>
 
   <parent>
     <groupId>eu.stratuslab.registration</groupId>
-    <artifactId>registration</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>registration-service</artifactId>
+    <version>1.13-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -20,15 +17,15 @@
       <groupId>eu.stratuslab.registration</groupId>
       <artifactId>registration-war</artifactId>
       <type>war</type>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.13-SNAPSHOT</version>
     </dependency>
   </dependencies>
   
   <properties> 
     <installation.dir>/opt/stratuslab/registration</installation.dir>
-    <registration-war>registration-war-${project.version}.war</registration-war>
+    <registration-war>registration-war.war</registration-war>
     <maven.build.timestamp.format>yyyyMMdd.HHmmss</maven.build.timestamp.format> 
-    <RELEASE>0.${maven.build.timestamp}</RELEASE>
+    <RELEASE>0.${maven.build.timestamp}.${package.os}</RELEASE>
   </properties>
   <build>
     
@@ -88,6 +85,7 @@
             </goals>
             <configuration>
               <outputDirectory>${project.build.directory}/dependency/webapps</outputDirectory>
+              <stripVersion>true</stripVersion>
               <artifactItems>
                 <artifactItem>
                   <groupId>eu.stratuslab.registration</groupId>
