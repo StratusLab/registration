@@ -9,7 +9,7 @@
   <parent>
     <groupId>eu.stratuslab.registration</groupId>
     <artifactId>registration-openldap</artifactId>
-    <version>2.1</version>
+    <version>2.2-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -17,7 +17,7 @@
       <groupId>eu.stratuslab.registration</groupId>
       <artifactId>registration-openldap-tar</artifactId>
       <type>tar.gz</type>
-      <version>2.1</version>
+      <version>2.2-SNAPSHOT</version>
     </dependency>
   </dependencies>
   
