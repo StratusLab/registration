@@ -1,6 +1,8 @@
 Registration Service
 ====================
 
+[![Build Status](https://secure.travis-ci.org/StratusLab/registration.png)](https://secure.travis-ci.org/StratusLab/registration.png)
+
 The Registration Service is a simple application that allows users to
 register with a cloud infrastructure and manage the information
 associated with their accounts.  The information is stored in a
@@ -25,5 +27,7 @@ permissions and limitations under the License.
 Acknowledgements
 ----------------
 
-StratusLab is co-funded by the European Community’s Seventh Framework
-Programme (Capacities) Grant Agreement INFSO-RI-261552.
+This software originated in the StratusLab project that was co-funded
+by the European Community’s Seventh Framework Programme (Capacities)
+Grant Agreement INFSO-RI-261552 and that ran from June 2010 to May
+2012.
