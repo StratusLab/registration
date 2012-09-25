@@ -10,4 +10,5 @@ olcTLSCertificateKeyFile: /etc/openldap/serverkey.pem
 -
 replace: olcTLSCACertificateFile
 olcTLSCACertificateFile: /etc/openldap/cacerts/cacrt.pem
-
+-
+delete: olcTLSCACertificatePath
