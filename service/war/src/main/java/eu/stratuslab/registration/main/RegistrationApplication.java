@@ -28,6 +28,7 @@ import org.restlet.data.ChallengeScheme;
 import org.restlet.data.LocalReference;
 import org.restlet.data.Reference;
 import org.restlet.resource.Directory;
+import org.restlet.resource.ServerResource;
 import org.restlet.routing.Router;
 import org.restlet.routing.Template;
 import org.restlet.routing.TemplateRoute;
@@ -143,7 +144,7 @@ public class RegistrationApplication extends Application {
 		return mediaDir;
 	}
 
-	public ChallengeAuthenticator setupGuard(Class<?> targetClass) {
+	public ChallengeAuthenticator setupGuard(Class<? extends ServerResource> targetClass) {
 
 		ChallengeAuthenticator guard = new ChallengeAuthenticator(null,
 				ChallengeScheme.HTTP_BASIC, "StratusLab");
