@@ -43,9 +43,9 @@
       </tr>
       <tr>
         <td>
-          <a href="http://www.stratuslab.org/doku.php?id=tutorial:usertutorial">Tutorial</a>
+          <a href="http://stratuslab.github.com/documentation">Documentation</a>
         </td>
-        <td>In depth tutorial showing all StratusLab features.</td>
+        <td>In depth documentation showing all StratusLab features.</td>
       </tr>
       <tr>
         <td><a href="mailto:support@stratuslab.eu">Email</a></td>
