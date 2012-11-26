@@ -146,7 +146,7 @@ done
 ##################################################
 # Set tmp if not already set.
 ##################################################
-TMPDIR=${TMPDIR:-/var/tmp/stratuslab/registration}
+TMPDIR=${TMPDIR:-/var/tmp/stratuslab}
 mkdir -p $TMPDIR
 
 ##################################################
