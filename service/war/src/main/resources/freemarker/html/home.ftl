@@ -27,8 +27,11 @@
       </tr>
       <tr>
         <td><a href="profile/">Profile</a></td>
-        <td><strong>Existing user?</strong> Update profile 
-          or <a href="reset/">reset password</a>.</td>
+        <td><strong>Existing user?</strong> Update your profile.</td>
+      </tr>
+      <tr>
+        <td><a href="reset/">Reset Password</a></td>
+        <td>Reset a forgotten password.</td>
       </tr>
     </table>
 
