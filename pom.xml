@@ -3,7 +3,7 @@
  
   <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration</artifactId>
-  <version>2.6-SNAPSHOT</version>
+  <version>2.6</version>
   <packaging>pom</packaging>
 
   <name>Registration Service (ROOT POM)</name>
