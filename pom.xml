@@ -23,7 +23,6 @@ with the infrastructure via a web interface.
 
   <modules>
     <module>service</module>
-    <module>ldap</module>
     <module>openldap</module>
   </modules>
 
