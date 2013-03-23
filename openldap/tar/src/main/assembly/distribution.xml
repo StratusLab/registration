@@ -10,15 +10,23 @@
   <fileSets>
 
     <fileSet>
-      <outputDirectory>share</outputDirectory>
+      <outputDirectory></outputDirectory>
+      <directoryMode>755</directoryMode>
       <fileMode>644</fileMode>
-      <directory>src/main/resources/share</directory>
+      <directory>src/main/resources</directory>
+      <includes>
+	<include>share/**/*</include>
+      </includes>
     </fileSet>
 
     <fileSet>
-      <outputDirectory>share/scripts</outputDirectory>
+      <outputDirectory>share</outputDirectory>
+      <directoryMode>755</directoryMode>
       <fileMode>755</fileMode>
-      <directory>src/main/scripts</directory>
+      <directory>src/main</directory>
+      <includes>
+	<include>scripts/**/*</include>
+      </includes>
     </fileSet>
 
   </fileSets>
