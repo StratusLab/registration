@@ -209,7 +209,7 @@
 	    </mapping>
 
             <mapping>
-              <directory>${installation.dir}/</directory>
+              <directory>${installation.dir}</directory>
               <filemode>644</filemode>
               <username>root</username>
               <groupname>root</groupname>
@@ -226,6 +226,12 @@
                     <include>logs/**/*</include>
                     <include>contexts/README.txt</include>
                   </includes>
+                  <!-- remove references to binary files -->
+                  <excludes>
+                    <exclude>lib/setuid/**/*</exclude>
+                    <exclude>etc/jetty-setuid.xml</exclude>
+                    <exclude>etc/jetty.conf</exclude>
+                  </excludes>
                 </source>
               </sources>
             </mapping>
