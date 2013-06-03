@@ -17,7 +17,7 @@
       <groupId>eu.stratuslab.registration</groupId>
       <artifactId>registration-war</artifactId>
       <type>war</type>
-      <version>2.7-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
   

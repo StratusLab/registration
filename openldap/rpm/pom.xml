@@ -17,7 +17,7 @@
       <groupId>eu.stratuslab.registration</groupId>
       <artifactId>registration-openldap-tar</artifactId>
       <type>tar.gz</type>
-      <version>2.7-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
   
