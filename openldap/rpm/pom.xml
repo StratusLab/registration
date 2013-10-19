@@ -80,6 +80,7 @@
             <require>openldap-clients</require>
             <require>openldap-servers</require>
             <require>cyrus-sasl-ldap</require>
+            <require>java-1.7.0-openjdk</require>
           </requires>
           <defaultDirmode>755</defaultDirmode>
           <defaultFilemode>644</defaultFilemode>
