@@ -3,7 +3,7 @@
  
   <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration</artifactId>
-  <version>13.12.0-SNAPSHOT</version>
+  <version>13.12.0</version>
   <packaging>pom</packaging>
 
   <name>Registration Service (ROOT POM)</name>
@@ -34,7 +34,7 @@ with the infrastructure via a web interface.
   <scm>
     <connection>scm:git:git@github.com:StratusLab/registration.git</connection>
     <developerConnection>scm:git:git@github.com:StratusLab/registration.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>registration-13.12.0</tag>
   </scm>
 
   <repositories>
