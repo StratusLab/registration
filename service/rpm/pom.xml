@@ -146,6 +146,7 @@
           </requires>
 
           <preinstallScriptlet>
+            <script>
 groupadd --force --system stratuslab
 
 /bin/egrep  -i "^slreg:" /etc/passwd
@@ -153,6 +154,7 @@ if [ $? -ne 0 ]; then
   adduser --system --no-user-group --g stratuslab \
           --comment 'StratusLab Registration Service'
 fi
+</script>
           </preinstallScriptlet>
 
           <defaultDirmode>755</defaultDirmode>
