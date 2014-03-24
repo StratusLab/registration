@@ -152,7 +152,8 @@ groupadd --force --system stratuslab
 /bin/egrep  -i "^slreg:" /etc/passwd
 if [ $? -ne 0 ]; then
   adduser --system --no-user-group --g stratuslab \
-          --comment 'StratusLab Registration Service'
+          --comment 'StratusLab Registration Service' \
+          slreg
 fi
 </script>
           </preinstallScriptlet>
