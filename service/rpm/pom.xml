@@ -167,6 +167,21 @@ fi
           <mappings>
 
             <mapping>
+              <directory>${installation.dir}</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>${installation.dir}/logs</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
+              <directory>/var/lib/stratuslab/registration</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
+
+            <mapping>
               <directory>${installation.dir}/stratuslab-webapps</directory>
               <directoryIncluded>false</directoryIncluded>
               <sources>

@@ -179,7 +179,7 @@ done
 ##################################################
 # Set tmp if not already set.
 ##################################################
-TMPDIR=${TMPDIR:-/var/lib/stratuslab}
+TMPDIR=${TMPDIR:-/var/lib/stratuslab/registration}
 mkdir -p $TMPDIR
 
 ##################################################
