@@ -143,6 +143,7 @@
           </description>
           <requires>
             <require>java-1.7.0-openjdk</require>
+            <require>stratuslab-nginx-cfg</require>
           </requires>
 
           <preinstallScriptlet>
@@ -165,6 +166,11 @@ fi
           <defaultUsername>slreg</defaultUsername>
 
           <mappings>
+
+            <mapping>
+              <directory>/var/log/stratuslab/register</directory>
+              <directoryIncluded>true</directoryIncluded>
+            </mapping>
 
             <mapping>
               <directory>${installation.dir}</directory>
@@ -322,6 +328,29 @@ fi
                   <includes>
                     <include>registration.cfg</include>
                   </includes>
+                </source>
+              </sources>
+            </mapping>
+
+            <mapping>
+              <directory>/etc/nginx/conf.d/stratuslab-locations</directory>
+              <directoryIncluded>false</directoryIncluded>
+              <configuration>noreplace</configuration>
+              <sources>
+                <source>
+                  <location>src/main/resources/conf.d</location>
+                </source>
+              </sources>
+            </mapping>
+
+            <mapping>
+              <directory>/usr/share/nginx/stratuslab</directory>
+              <directoryIncluded>false</directoryIncluded>
+	      <username>root</username>
+	      <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>src/main/html</location>
                 </source>
               </sources>
             </mapping>
