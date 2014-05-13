@@ -215,22 +215,6 @@ fi
             </mapping>
 
 	    <mapping>
-	      <directory>${installation.dir}/etc</directory>
-	      <filemode>755</filemode>
-	      <username>slreg</username>
-	      <groupname>stratuslab</groupname>
-	      <directoryIncluded>false</directoryIncluded>
-	      <sources>
-		<source>
-		  <location>src/main/scripts</location>
-		  <includes>
-		    <include>generate-jetty-certificate.sh</include>
-		  </includes>
-		</source>
-	      </sources>
-	    </mapping>
-
-	    <mapping>
 	      <directory>${installation.dir}/</directory>
 	      <directoryIncluded>false</directoryIncluded>
 	      <sources>
