@@ -3,7 +3,7 @@
 
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
 
-  <Set name="contextPath">/</Set>
+  <Set name="contextPath">/register</Set>
   <Set name="war"><SystemProperty name="jetty.home" default="."/>/stratuslab-webapps/${registration-war}</Set>
 
   <Set name="extractWAR">true</Set>

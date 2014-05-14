@@ -47,7 +47,12 @@ public class BaseResource extends ServerResource {
     }
 
     public static String getBaseUrl(Request request) {
-        return request.getRootRef().toString();
+        String url = request.getRootRef().toString();
+        if (url.endsWith("/")) {
+            return url;
+        } else {
+            return url + "/";
+        }
     }
 
     protected Map<String, Object> createInfoStructure(String title) {

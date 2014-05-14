@@ -9,7 +9,7 @@
   
   <context-param>
     <param-name>org.restlet.clients</param-name>
-    <param-value>HTTP HTTPS CLAP FILE</param-value>
+    <param-value>HTTP CLAP FILE</param-value>
   </context-param>
   
   <servlet>
@@ -23,6 +23,6 @@
   
   <servlet-mapping>
     <servlet-name>RestletServlet</servlet-name>
-    <url-pattern>/register</url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
 </web-app>
