@@ -22,11 +22,11 @@ package eu.stratuslab.registration.resources;
 import eu.stratuslab.registration.utils.RequestUtils;
 import freemarker.template.Configuration;
 import org.restlet.Request;
-import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
 import org.restlet.ext.freemarker.TemplateRepresentation;
 import org.restlet.resource.ServerResource;
+import org.restlet.util.Series;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class BaseResource extends ServerResource {
 
     public static String getBaseUrl(Request request) {
 
-        Form headers = (Form) request.getAttributes().get("org.restlet.http.headers");
+        Series headers = (Series) request.getAttributes().get("org.restlet.http.headers");
         String scheme = headers.getFirstValue("X-Forwarded-Scheme");
         Integer port = null;
         try {
