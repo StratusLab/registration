@@ -46,8 +46,11 @@ public class BaseResource extends ServerResource {
                 mediaType);
     }
 
+    // FIXME: The switch from http to https needs to be signaled 
+    // via a header indicating the proxy value.
     public static String getBaseUrl(Request request) {
         String url = request.getRootRef().toString();
+        url = url.replaceFirst("http:", "https:")
         if (url.endsWith("/")) {
             return url;
         } else {
