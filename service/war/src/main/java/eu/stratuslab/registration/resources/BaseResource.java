@@ -19,38 +19,54 @@
  */
 package eu.stratuslab.registration.resources;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import eu.stratuslab.registration.utils.RequestUtils;
+import freemarker.template.Configuration;
 import org.restlet.Request;
+import org.restlet.data.Form;
 import org.restlet.data.MediaType;
+import org.restlet.data.Reference;
 import org.restlet.ext.freemarker.TemplateRepresentation;
 import org.restlet.resource.ServerResource;
 
-import eu.stratuslab.registration.utils.RequestUtils;
-import freemarker.template.Configuration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BaseResource extends ServerResource {
 
     protected static final String NO_TITLE = null;
 
-    protected TemplateRepresentation templateRepresentation(String tpl,
-            Map<String, Object> info, MediaType mediaType) {
+    protected TemplateRepresentation templateRepresentation(String tpl, Map<String, Object> info, MediaType mediaType) {
 
         Request request = getRequest();
 
-        Configuration freeMarkerConfig = RequestUtils
-                .extractFreeMarkerConfig(request);
+        Configuration freeMarkerConfig = RequestUtils.extractFreeMarkerConfig(request);
 
-        return new TemplateRepresentation(tpl, freeMarkerConfig, info,
-                mediaType);
+        return new TemplateRepresentation(tpl, freeMarkerConfig, info, mediaType);
     }
 
-    // FIXME: The switch from http to https needs to be signaled 
-    // via a header indicating the proxy value.
     public static String getBaseUrl(Request request) {
-        String url = request.getRootRef().toString();
-        url = url.replaceFirst("http:", "https:");
+
+        Form headers = (Form) request.getAttributes().get("org.restlet.http.headers");
+        String scheme = headers.getFirstValue("X-Forwarded-Scheme");
+        Integer port = null;
+        try {
+            String sport = headers.getFirstValue("X-Forwarded-Port");
+            if (sport != null) {
+                port = Integer.parseInt(sport);
+            }
+        } catch (NumberFormatException consumed) {
+            port = null;
+        }
+
+        Reference ref = request.getRootRef();
+        if (port != null) {
+            ref.setHostPort(port);
+        }
+        if (scheme != null) {
+            ref.setScheme(scheme);
+        }
+
+        String url = ref.toString();
         if (url.endsWith("/")) {
             return url;
         } else {
@@ -62,8 +78,7 @@ public class BaseResource extends ServerResource {
         return createInfoStructure(title, getRequest());
     }
 
-    public static Map<String, Object> createInfoStructure(String title,
-            Request request) {
+    public static Map<String, Object> createInfoStructure(String title, Request request) {
 
         Map<String, Object> info = new HashMap<String, Object>();
 
