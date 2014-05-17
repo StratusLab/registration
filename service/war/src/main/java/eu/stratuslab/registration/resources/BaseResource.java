@@ -48,19 +48,11 @@ public class BaseResource extends ServerResource {
 
         Series headers = (Series) request.getAttributes().get("org.restlet.http.headers");
         String scheme = headers.getFirstValue("X-Forwarded-Scheme");
-        Integer port = null;
-        try {
-            String sport = headers.getFirstValue("X-Forwarded-Port");
-            if (sport != null) {
-                port = Integer.parseInt(sport);
-            }
-        } catch (NumberFormatException consumed) {
-            port = null;
-        }
+        String authority = headers.getFirstValue("Host");
 
         Reference ref = request.getRootRef();
-        if (port != null) {
-            ref.setHostPort(port);
+        if (authority != null) {
+            ref.setAuthority(authority);
         }
         if (scheme != null) {
             ref.setScheme(scheme);
