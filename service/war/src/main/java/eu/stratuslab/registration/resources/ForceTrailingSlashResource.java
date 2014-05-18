@@ -19,8 +19,6 @@
  */
 package eu.stratuslab.registration.resources;
 
-import static org.restlet.data.MediaType.TEXT_PLAIN;
-
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Reference;
@@ -31,10 +29,12 @@ import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.Put;
 
+import static eu.stratuslab.registration.utils.RequestUtils.getBaseUrl;
+import static org.restlet.data.MediaType.TEXT_PLAIN;
+
 public class ForceTrailingSlashResource extends BaseResource {
 
-    private static final Representation EMPTY_REP = new StringRepresentation(
-            "", TEXT_PLAIN);
+    private static final Representation EMPTY_REP = new StringRepresentation("", TEXT_PLAIN);
 
     @Get
     public Representation redirectGet() {
@@ -65,16 +65,27 @@ public class ForceTrailingSlashResource extends BaseResource {
         response.redirectPermanent(redirect);
     }
 
+    private String getPathWithoutLeadingSlash(Reference ref) {
+        String path = ref.getPath();
+        if (path.startsWith("/")) {
+            return path.substring(1);
+        } else {
+            return path;
+        }
+    }
+
     private Reference createRedirectRef() {
 
         Request request = getRequest();
         Reference ref = request.getResourceRef();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(ref.getScheme());
-        sb.append(":");
-        sb.append(ref.getHierarchicalPart());
+        StringBuilder sb = new StringBuilder(getBaseUrl(request));
+        sb.append(getPathWithoutLeadingSlash(ref));
         sb.append("/");
+        if (ref.hasFragment()) {
+            sb.append("#");
+            sb.append(ref.getFragment());
+        }
         if (ref.hasQuery()) {
             sb.append("?");
             sb.append(ref.getQuery());

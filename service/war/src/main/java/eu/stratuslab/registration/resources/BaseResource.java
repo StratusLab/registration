@@ -23,13 +23,13 @@ import eu.stratuslab.registration.utils.RequestUtils;
 import freemarker.template.Configuration;
 import org.restlet.Request;
 import org.restlet.data.MediaType;
-import org.restlet.data.Reference;
 import org.restlet.ext.freemarker.TemplateRepresentation;
 import org.restlet.resource.ServerResource;
-import org.restlet.util.Series;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static eu.stratuslab.registration.utils.RequestUtils.getBaseUrl;
 
 public class BaseResource extends ServerResource {
 
@@ -42,28 +42,6 @@ public class BaseResource extends ServerResource {
         Configuration freeMarkerConfig = RequestUtils.extractFreeMarkerConfig(request);
 
         return new TemplateRepresentation(tpl, freeMarkerConfig, info, mediaType);
-    }
-
-    public static String getBaseUrl(Request request) {
-
-        Series headers = (Series) request.getAttributes().get("org.restlet.http.headers");
-        String scheme = headers.getFirstValue("X-Forwarded-Scheme");
-        String authority = headers.getFirstValue("Host");
-
-        Reference ref = request.getRootRef();
-        if (authority != null) {
-            ref.setAuthority(authority);
-        }
-        if (scheme != null) {
-            ref.setScheme(scheme);
-        }
-
-        String url = ref.toString();
-        if (url.endsWith("/")) {
-            return url;
-        } else {
-            return url + "/";
-        }
     }
 
     protected Map<String, Object> createInfoStructure(String title) {

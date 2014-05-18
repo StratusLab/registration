@@ -19,13 +19,14 @@
  */
 package eu.stratuslab.registration.utils;
 
-import java.util.Map;
-
-import org.restlet.Request;
-
 import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.cfg.Parameter;
 import freemarker.template.Configuration;
+import org.restlet.Request;
+import org.restlet.data.Reference;
+import org.restlet.util.Series;
+
+import java.util.Map;
 
 public final class RequestUtils {
 
@@ -35,8 +36,7 @@ public final class RequestUtils {
 
     }
 
-    public static void insertAppConfiguration(Request request,
-            AppConfiguration appConfiguration) {
+    public static void insertAppConfiguration(Request request, AppConfiguration appConfiguration) {
 
         Map<String, Object> attributes = request.getAttributes();
         attributes.put(APP_CONFIGURATION, appConfiguration);
@@ -48,8 +48,7 @@ public final class RequestUtils {
         return (AppConfiguration) attributes.get(APP_CONFIGURATION);
     }
 
-    public static LdapConfig extractLdapConfig(Request request,
-            Parameter baseDnParameter) {
+    public static LdapConfig extractLdapConfig(Request request, Parameter baseDnParameter) {
 
         AppConfiguration cfg = extractAppConfiguration(request);
         return cfg.getLdapConfig(baseDnParameter);
@@ -59,6 +58,29 @@ public final class RequestUtils {
 
         AppConfiguration cfg = extractAppConfiguration(request);
         return cfg.getFreeMarkerConfig();
+    }
+
+    // always has a trailing slash!
+    public static String getBaseUrl(Request request) {
+
+        Series headers = (Series) request.getAttributes().get("org.restlet.http.headers");
+        String scheme = headers.getFirstValue("X-Forwarded-Scheme");
+        String authority = headers.getFirstValue("Host");
+
+        Reference ref = request.getRootRef();
+        if (authority != null) {
+            ref.setAuthority(authority);
+        }
+        if (scheme != null) {
+            ref.setScheme(scheme);
+        }
+
+        String url = ref.toString();
+        if (url.endsWith("/")) {
+            return url;
+        } else {
+            return url + "/";
+        }
     }
 
 }
