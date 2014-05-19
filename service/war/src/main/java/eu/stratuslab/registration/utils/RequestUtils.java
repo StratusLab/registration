@@ -64,8 +64,13 @@ public final class RequestUtils {
     public static String getBaseUrl(Request request) {
 
         Series headers = (Series) request.getAttributes().get("org.restlet.http.headers");
-        String scheme = headers.getFirstValue("X-Forwarded-Scheme");
-        String authority = headers.getFirstValue("Host");
+
+        String scheme = null;
+        String authority = null;
+        if (headers != null) {
+            scheme = headers.getFirstValue("X-Forwarded-Scheme");
+            authority = headers.getFirstValue("Host");
+        }
 
         Reference ref = request.getRootRef();
         if (authority != null) {
