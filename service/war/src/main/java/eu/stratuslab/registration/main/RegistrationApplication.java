@@ -38,7 +38,6 @@ import eu.stratuslab.registration.cfg.AppConfiguration;
 import eu.stratuslab.registration.cfg.Parameter;
 import eu.stratuslab.registration.guards.LdapVerifier;
 import eu.stratuslab.registration.resources.ActionResource;
-import eu.stratuslab.registration.resources.ForceTrailingSlashResource;
 import eu.stratuslab.registration.resources.HomeResource;
 import eu.stratuslab.registration.resources.PoliciesResource;
 import eu.stratuslab.registration.resources.ProfileResource;
@@ -78,42 +77,40 @@ public class RegistrationApplication extends Application {
 
 		TemplateRoute route = null;
 
-		router.attach("/users/", UsersResource.class);
-		route = router.attach("/users", ForceTrailingSlashResource.class);
+        route = router.attach("/users/", UsersResource.class);
+		router.attach("/users", UsersResource.class);
 		route.setMatchingMode(Template.MODE_EQUALS);
 
 		router.attach("/register/", RegisterResource.class);
-		route = router.attach("/register", ForceTrailingSlashResource.class);
+		router.attach("/register", RegisterResource.class);
 		route.setMatchingMode(Template.MODE_EQUALS);
 
 		router.attach("/success/", SuccessResource.class);
-		route = router.attach("/success", ForceTrailingSlashResource.class);
+		router.attach("/success", SuccessResource.class);
 		route.setMatchingMode(Template.MODE_EQUALS);
 
 		router.attach("/profile/", setupGuard(ProfileResource.class));
-		route = router.attach("/profile", ForceTrailingSlashResource.class);
+		router.attach("/profile", setupGuard(ProfileResource.class));
 		route.setMatchingMode(Template.MODE_EQUALS);
 
 		router.attach("/profile_updated/", ProfileUpdatedResource.class);
-		route = router.attach("/profile_updated",
-				ForceTrailingSlashResource.class);
+		router.attach("/profile_updated", ProfileUpdatedResource.class);
 		route.setMatchingMode(Template.MODE_EQUALS);
 
 		router.attach("/policies/", PoliciesResource.class);
-		route = router.attach("/policies", ForceTrailingSlashResource.class);
+		router.attach("/policies", PoliciesResource.class);
 		route.setMatchingMode(Template.MODE_EQUALS);
 
 		router.attach("/reset/", ResetResource.class);
-		route = router.attach("/reset", ForceTrailingSlashResource.class);
+		router.attach("/reset", ResetResource.class);
 		route.setMatchingMode(Template.MODE_EQUALS);
 
 		router.attach("/reset_started/", ResetStartedResource.class);
-		route = router.attach("/reset_started",
-				ForceTrailingSlashResource.class);
+		router.attach("/reset_started", ResetStartedResource.class);
 		route.setMatchingMode(Template.MODE_EQUALS);
 
 		router.attach("/action/", ActionResource.class);
-		route = router.attach("/action", ForceTrailingSlashResource.class);
+		router.attach("/action", ActionResource.class);
 		route.setMatchingMode(Template.MODE_EQUALS);
 
 		router.attach("/action/{uuid}", ActionResource.class);
@@ -126,7 +123,7 @@ public class RegistrationApplication extends Application {
 		cssDir.setNegotiatingContent(false);
 		cssDir.setIndexName("index.html");
 		router.attach("/css/", cssDir);
-		router.attach("/css", ForceTrailingSlashResource.class);
+		router.attach("/css", cssDir);
 
 		router.attach("/media/", createMediaDirectory(getContext()));
 
