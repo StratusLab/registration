@@ -74,42 +74,42 @@ public class RegistrationApplication extends Application {
 
         Router router = new RootRouter(getContext(), appConfiguration);
 
-        TemplateRoute route = null;
+        TemplateRoute route;
 
-        route = router.attach("/users/", UsersResource.class);
-        router.attach("/users", UsersResource.class);
+        route = router.attach("/users", UsersResource.class);
+        router.attach("/users/", UsersResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/register/", RegisterResource.class);
         router.attach("/register", RegisterResource.class);
+        router.attach("/register/", RegisterResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/success/", SuccessResource.class);
         router.attach("/success", SuccessResource.class);
+        router.attach("/success/", SuccessResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/profile/", setupGuard(ProfileResource.class));
         router.attach("/profile", setupGuard(ProfileResource.class));
+        router.attach("/profile/", setupGuard(ProfileResource.class));
         route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/profile_updated/", ProfileUpdatedResource.class);
         router.attach("/profile_updated", ProfileUpdatedResource.class);
+        router.attach("/profile_updated/", ProfileUpdatedResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/policies/", PoliciesResource.class);
         router.attach("/policies", PoliciesResource.class);
+        router.attach("/policies/", PoliciesResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/reset/", ResetResource.class);
         router.attach("/reset", ResetResource.class);
+        router.attach("/reset/", ResetResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/reset_started/", ResetStartedResource.class);
         router.attach("/reset_started", ResetStartedResource.class);
+        router.attach("/reset_started/", ResetStartedResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
-        router.attach("/action/", ActionResource.class);
         router.attach("/action", ActionResource.class);
+        router.attach("/action/", ActionResource.class);
         route.setMatchingMode(Template.MODE_EQUALS);
 
         router.attach("/action/{uuid}", ActionResource.class);
@@ -120,9 +120,10 @@ public class RegistrationApplication extends Application {
         Directory cssDir = new Directory(getContext(), styleRef);
         cssDir.setNegotiatingContent(false);
         cssDir.setIndexName("index.html");
-        router.attach("/css/", cssDir);
         router.attach("/css", cssDir);
+        router.attach("/css/", cssDir);
 
+        router.attach("/media", createMediaDirectory(getContext()));
         router.attach("/media/", createMediaDirectory(getContext()));
 
         router.attachDefault(HomeResource.class);
