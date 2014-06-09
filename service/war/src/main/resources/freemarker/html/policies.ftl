@@ -8,31 +8,24 @@
     
     <#include "breadcrumbs.ftl">
 
-    <p>
-      The StratusLab reference cloud infrastructures are a technology preview
-      giving users the opportunity to try out the StratusLab cloud distribution
-      and providing the project feedback on its use and operation. 
-    </p>
-
     <h2>Limited Guarantees</h2>
 
     <p>
-      The StratusLab reference cloud infrastructures are operated on a best-effort
+      The StratusLab reference cloud infrastructure is operated on a best-effort
       basis and consequently have very limited guarantees regarding stability, 
       reliability, and availability.
     </p>
     <p>
       <strong>  
-      The project does not accept liability for 
-      any damages resulting from the unavailability of the services or from data 
-      loss.
+      We do not accept liability for any damages resulting from the unavailability
+      of the services or from data loss.
       </strong>
     </p>
     
     <h2>Applicable Policies</h2>
  
      <p>
-       The usage of the StratusLab reference cloud infrastructures is governed by the 
+       The usage of the StratusLab reference cloud infrastructure is governed by the 
        following policies:
      </p>
        <ul>

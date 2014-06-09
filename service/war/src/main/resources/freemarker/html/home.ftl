@@ -4,61 +4,29 @@
 
   <body>
     
-    <h1>Reference Infrastructures</h1>
+    <h1>StratusLab Cloud Infrastructure</h1>
     
     <#include "breadcrumbs.ftl">
 
     <p>
       The <a href="http://stratuslab.eu/">StratusLab</a> reference cloud
-      infrastructures give users and administrators a preview of the StratusLab
-      cloud distribution.
+      infrastructure lets users and administrators try out the software
+      without having to install it.
     </p>
     
     <h2>Getting Started</h2>
-    
-    <table>
-      <tr>
-        <td><a href="policies/">Policies</a></td>
-        <td>View documentation and policies.</td>
-      </tr>
-      <tr>
-        <td><a href="register/">Register</a></td>
-        <td><strong>New user?</strong> Create an account.</td>
-      </tr>
-      <tr>
-        <td><a href="profile/">Profile</a></td>
-        <td><strong>Existing user?</strong> Update your profile.</td>
-      </tr>
-      <tr>
-        <td><a href="reset/">Reset Password</a></td>
-        <td>Reset a forgotten password.</td>
-      </tr>
-    </table>
+
+    <ul>
+        <li>View <a href="http://stratuslab.eu/documentation">documentation<a> and 
+            <a href="policies/">policies</a></li>
+        <li><strong>New user?</strong> <a href="register/">Register</a> for an account.</li>
+        <li><strong>Existing user?</strong> Update your <a href="profile/">profile</a>.</li>
+        <li>Forgot your password?  <a href="reset/">Reset it</a>!</li>
+    </ul>
 
     <h2>Support</h2>
 
-    <table>
-      <tr>
-        <td>
-          <a href="http://www.youtube.com/watch?v=eR8OgKsuBoo">Video</a>
-        </td>
-        <td>Introductory video showing command line client.</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="http://stratuslab.github.com/documentation">Documentation</a>
-        </td>
-        <td>In depth documentation showing all StratusLab features.</td>
-      </tr>
-      <tr>
-        <td><a href="mailto:support@stratuslab.eu">Email</a></td>
-        <td>Contact the support team.</td>
-      </tr>
-      <tr>
-        <td><a href="http://stratuslab.eu/">Web</a></td>
-        <td>Project information and documentation on the web.</td>
-      </tr>
-    </table>
+    <p>Contact the <a href="mailto:support@stratuslab.eu">support team</a>.</p>
 
   </body>
 </html>
