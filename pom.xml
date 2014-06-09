@@ -3,7 +3,7 @@
  
   <groupId>eu.stratuslab.registration</groupId>
   <artifactId>registration</artifactId>
-  <version>14.06.1.RC1-SNAPSHOT</version>
+  <version>14.06.0_RC3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Registration Service (ROOT POM)</name>
@@ -18,7 +18,7 @@ with the infrastructure via a web interface.
   <parent>
     <groupId>eu.stratuslab</groupId>
     <artifactId>distribution</artifactId>
-    <version>14.06.0.RC1</version>
+    <version>14.06.0_RC3</version>
   </parent>
 
   <modules>
