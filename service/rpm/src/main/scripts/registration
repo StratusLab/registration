@@ -169,7 +169,7 @@ then
   ETC=$HOME/etc
 fi
 
-for CONFIG in $ETC/default/registration $HOME/.jettyrc; do
+for CONFIG in $ETC/default/registration; do
   if [ -f "$CONFIG" ] ; then 
     readConfig "$CONFIG"
   fi
