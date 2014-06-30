@@ -17,7 +17,7 @@
     </p>
 
     <form id="form_with_tooltips" 
-          action="../users/" 
+          action="users/" 
           enctype="application/x-www-form-urlencoded" 
           method="POST">
 
