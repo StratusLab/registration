@@ -134,6 +134,17 @@ if [ $? -ne 0 ]; then
 fi
 </script>
           </preinstallScriptlet>
+          <postinstallScriptlet>
+            <script>
+/sbin/chkconfig --add registration || true
+</script>
+          </postinstallScriptlet>
+          <preremoveScriptlet>
+            <script>
+/sbin/service registration stop || true
+/sbin/chkconfig --del registration || true
+</script>
+          </preremoveScriptlet>
 
           <defaultDirmode>755</defaultDirmode>
           <defaultFilemode>644</defaultFilemode>
