@@ -136,6 +136,7 @@ fi
           </preinstallScriptlet>
           <postinstallScriptlet>
             <script>
+/sbin/service nginx reload || true
 /sbin/chkconfig --add registration || true
 </script>
           </postinstallScriptlet>
@@ -145,6 +146,11 @@ fi
 /sbin/chkconfig --del registration || true
 </script>
           </preremoveScriptlet>
+          <postremoveScriptlet>
+            <script>
+/sbin/service nginx reload || true
+</script>
+          </postremoveScriptlet>
 
           <defaultDirmode>755</defaultDirmode>
           <defaultFilemode>644</defaultFilemode>
